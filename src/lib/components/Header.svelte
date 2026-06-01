@@ -26,9 +26,7 @@
                     </Flex>
                 </section>
             </Flex>
-            <a href="/leaderboard">
-                <Button>Classement</Button>
-            </a>
+            <Button href="/leaderboard">Classement</Button>
         </Flex>
     </Frame>
 </div>
