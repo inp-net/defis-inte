@@ -12,8 +12,11 @@ export const load: PageServerLoad = async ({ params }) => {
         { name: "Un group qui possède un nom très long", points: "0" },
     ];
 
+    const userGroup : GroupLeaderboard = { name: "Un group qui possède un nom très long", points: "0" };
+
 	return {
         posts: {
+            userGroup,
             groups
         }
 	};

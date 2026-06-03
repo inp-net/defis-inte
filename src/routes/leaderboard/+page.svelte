@@ -1,6 +1,6 @@
 <script lang="ts">
 
-    import type { Group } from '$lib/types/types.d.ts';
+    import type { GroupLeaderboard } from '$lib/types/types.d.ts';
     import type { PageData } from './$types';
     import { Flex, Stack, Frame } from 'azucar-ui';
     import BackButton from '$lib/components/BackButton.svelte';
@@ -10,6 +10,8 @@
     let { data }: { data: PageData } = $props();
 
     // -- Statistique du profil
+
+    // TODO faire ce calcul coté client sur +server.ts
 
     // Type catégorie, prend un titre de catégories et une liste de string
     // placés dans cette catégorie.
@@ -25,14 +27,10 @@
         { key:"Statistiques groupe", valeurs: ["Points : 1000", "Tu es fort"] }
     ]
 
-    // -- Classement groupe
-    // type Group = {
-    //     groupName: string;
-    //     groupUrl?: string;
-    //     points: string;
-    // };
+    // --
 
-    let groups : Group[] = $derived(data.posts.groups);
+    let groups : GroupLeaderboard[] = $derived(data.posts.groups);
+    let userGroup : GroupLeaderboard[] = $derived(data.posts.userGroup);
 
 </script>
 
