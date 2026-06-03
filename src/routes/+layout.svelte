@@ -2,6 +2,7 @@
 	import favicon from '$lib/assets/favicon.svg';
     import "azucar-ui/tokens.css"
     import "azucar-ui/base.css"
+    import Footer from '$lib/components/Footer.svelte'
 
 	let { children } = $props();
 </script>
@@ -12,6 +13,7 @@
 
 <div class="container">
     {@render children?.()}
+    <Footer />
 </div>
 
 <style>

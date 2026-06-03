@@ -5,15 +5,36 @@
     import Profile from '$lib/components/Profile.svelte';
     import Rank from '$lib/components/Rank.svelte'
 
-    type Ligne = {
+    // -- Statistique du profil
+
+    // Type catégorie, prend un titre de catégories et une liste de string
+    // placés dans cette catégorie.
+    type Categorie = {
         key: String;
         valeurs: String[];
     }
     
-    let categories : Ligne[];
+    // Variable catégorie calculé de la DB
+    let categories : Categorie[];
     categories = [
         { key:"Statistiques personnel", valeurs: ["Points : 100", "Contribution : 20%", "Maximum défi par jours : 10"] },
         { key:"Statistiques groupe", valeurs: ["Points : 1000", "Tu es fort"] }
+    ]
+
+    // -- Classement groupe
+    type Group = {
+        groupName: string;
+        groupUrl?: string;
+        points: string;
+    };
+
+    let groups : Group[] = $state();
+
+    groups = [
+        { groupName: "Groupe 8", points: "1024" },
+        { groupName: "Groupe 9", points: "224" },
+        { groupName: "7Groupe", points: "24" },
+        { groupName: "Un group qui possède un nom très long", points: "0" },
     ]
 
 </script>
@@ -45,7 +66,17 @@
         </Frame>
     </Stack>
 
-    <Rank />
+    <!-- max-width permet d'avoir le scroll horizontal sur les titres groupes -->
+    <Flex gap="sm" justify="space-between" direction="column" style="max-width: 100%;">
+        {#each groups as group, index}
+            <Rank
+                groupName={group.groupName}
+                groupUrl={group.groupUrl}
+                points={group.points}
+                rank={index}
+            />
+        {/each}
+    </Flex>
 </Flex>
 
 <style>
