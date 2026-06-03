@@ -19,8 +19,23 @@ export const load: PageServerLoad = async ({ params }) => {
         nbPoints: "15"
     }
 
+    const defi3 : ChallengeRead = {
+        name: "Se rouler par terre dans l'herbe",
+        description: "Faire des roulades par terre",
+        groupInteSucced: [],
+        type: "video",
+        nbPoints: "15"
+    }
+
     const challenges : GroupChallenge[] = [
-        { challenges: [defi1, defi2], name: "Net7", pictureURL: "" }
+        { challenges: [defi1, defi2], name: "Net7", pictureURL: "" },
+        { challenges: [defi3], name: "BDD", pictureURL: "" },
+        { challenges: [], name: "BDA", pictureURL: "" },
+        { challenges: [], name: "BDS", pictureURL: "" },
+        { challenges: [], name: "Can7", pictureURL: "" },
+        { challenges: [], name: "7robot", pictureURL: "" },
+        { challenges: [], name: "Tvn7", pictureURL: "" },
+        { challenges: [], name: "Test", pictureURL: "" },
     ]
 
 	return {

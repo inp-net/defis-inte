@@ -37,6 +37,7 @@
         position: sticky;
         top: 0;
         padding: 10px;
+        z-index: 100;
     }
 
     @media (max-width: 600px) {

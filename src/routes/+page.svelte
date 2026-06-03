@@ -5,9 +5,23 @@
     import { Flex, Stack } from 'azucar-ui';
     import Header from '$lib/components/Header.svelte';
     import Challenges from '$lib/components/Challenges.svelte';
+    import Filters from '$lib/components/Filters.svelte';
 
     let { data }: { data: PageData } = $props();
     let groupChallenge : GroupChallenge[] = $derived(data.posts.challenges);
+
+    // Extrait les nom des groupes clubs qui peuvent être filtrés.
+    let filterNames = $derived(groupChallenge.map(challenge => challenge.name));
+
+    // Filtres actifs sur défis.
+    let activeIndexes = $state<number[]>([]);
+
+    // Sous liste de groupes filtés.
+    let activeChallenges = $derived(
+        activeIndexes.length === 0 
+            ? groupChallenge
+            : groupChallenge.filter((_, index) => activeIndexes.includes(index))
+    );
 
 </script>
 
@@ -18,9 +32,13 @@
         <p>Défis d'intégration 2026 - 2027.</p>
     </Stack>
     
-    <Stack>
-        <Flex gap="md" direction="column">
-            {#each groupChallenge as group}
+    <Stack style="max-width: 100%; min-width: 0; overflow: hidden;">
+        <Filters
+            filters={filterNames} 
+            bind:activeIndexes={activeIndexes}
+        />
+        <Flex gap="md" direction="column" style="max-width: 100%; width: 100%;">
+            {#each activeChallenges as group}
                 <Challenges
                     groupName={group.name}
                     groupURL={group.groupURL}
