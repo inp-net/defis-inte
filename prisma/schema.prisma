@@ -11,3 +11,121 @@ generator client {
 datasource db {
   provider = "postgresql"
 }
+
+model User {
+  id                String  @id //id churros
+  name              String
+
+  // Dans quel club / bureau de club fait-il partie ?
+  group             GroupClub[] @relation("UserGroups")
+  groupBoard        GroupClub[] @relation("BoardGroups")
+
+  // Dans quel groupe d'intégration fait-il partie ?
+  groupInte         GroupInte? @relation("UserGroupInte", fields: [groupInteId], references: [groupId]) 
+  groupInteId       String?
+
+  // Combien de points a-t-il ?
+  points            Int    @default(0)
+
+  // Quelles preuves a-t-il soumis ?
+  proof             Proof[] @relation("UserProofs")
+
+  // Est-il admin ?
+  isAdmin           Boolean @default(false)
+}
+
+model GroupClub {
+  // Données de Churros
+  groupId           String   @id
+  name              String
+  pictureURL        String?      // image du groupe 
+
+  // Qui fait partie du club ?
+  users             User[]   @relation("UserGroups")
+
+  // Qui est au bureau du club ?
+  board             User[]   @relation("BoardGroups")
+
+  // Quels défis sont liés au club ?
+  challenge         Challenge[]   @relation("GroupChallenges")
+}
+
+model GroupInte {
+  // Données de Churros
+  groupId           String   @id
+  name              String
+  pictureURL        String?      // image du groupe 
+
+  // Qui fait partie du groupe d'inté ?
+  usersInte         User[]   @relation("UserGroupInte")
+
+  // Quels défis ont été validés par le groupe ?
+  challengeSucceed  Challenge[] @relation("ChallengesSucceed")
+
+  // Combien de points a le groupe ?
+  points            Int      @default(0)
+}
+
+model Proof {
+  proofId           String  @id @default(uuid())
+
+  // Qui a envoyé la preuve ?
+  user              User    @relation("UserProofs", fields: [userId], references: [id])
+  userId            String
+
+  // Quel est le contenu de la preuve ? 
+  content           String   
+  type              String   // (photo / video / text)
+  date              DateTime 
+  media             String?  // lien vers le média (si type est photo ou video)
+  text              String?  // texte de la preuve (si type est texte)
+
+  // A quel défi est reliée la preuve ?
+  challenge         Challenge? @relation("ChallengeProofs", fields: [challengeId], references: [challengeId])
+  challengeId       String?
+  
+  // Qui a validé la preuve ?
+  validatorId       String?
+
+  // Dans quel statut est la preuve ?
+  status            String   // (pending / valid / denied) 
+}
+
+model Challenge {
+  challengeId       String  @id
+  name              String
+  description       String?
+  
+  // Quel club propose le défi ?
+  group             GroupClub    @relation("GroupChallenges", fields: [groupId], references: [groupId])
+  groupId           String
+
+  // Qui a proposé le défi ?
+  userId            String
+
+  // Qui a accepté la proposition de défi ?
+  userAcceptId      String
+  defiAccepte       Boolean  @default(false)
+
+  // Quel groupe d'inté à réussi le defi ?
+  groupInteSucceed  GroupInte[] @relation("ChallengesSucceed")
+
+  type              String   // (photo / video / text)
+
+  // Que vaut le défi ?
+  nbPoints          Int      @default(0) 
+  difficulty        Int      @default(0)
+
+  // Où se situe le défi ?
+  locationName      String   @default("ENSEEIHT")
+  location          Location    @relation("DefiPlace", fields: [locationName], references: [name])
+
+  // Quelles preuves sont liées à ce défi ?
+  proofs            Proof[] @relation("ChallengeProofs")
+}
+
+
+model Location {
+  name              String @id
+  challenge         Challenge[] @relation("DefiPlace")
+}
