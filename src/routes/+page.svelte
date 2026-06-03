@@ -19,23 +19,18 @@
     </Stack>
     
     <Stack>
-        <section class="small-container">
-            <Flex gap="md" direction="column">
-                {#each groupChallenge as group}
-                    <Challenges
-                        groupName={group.name}
-                        groupURL={group.groupURL}
-                        challenges={group.challenges}
-                    />
-                {/each}
-            </Flex>
-        </section>
+        <Flex gap="md" direction="column">
+            {#each groupChallenge as group}
+                <Challenges
+                    groupName={group.name}
+                    groupURL={group.groupURL}
+                    challenges={group.challenges}
+                />
+            {/each}
+        </Flex>
     </Stack>
 
 </Flex>
 
 <style>
-    .small-container {
-        max-width: min(100%, 500px);
-    }
 </style>
