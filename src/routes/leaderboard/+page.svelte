@@ -65,8 +65,8 @@
     <Flex gap="sm" justify="space-between" direction="column" style="max-width: 100%;">
         {#each groups as group, i}
             <Rank
-                groupName={group.groupName}
-                groupUrl={group.groupUrl}
+                groupName={group.name}
+                groupUrl={group.pictureURL}
                 points={group.points}
                 rank={(i+1).toString()}
             />
