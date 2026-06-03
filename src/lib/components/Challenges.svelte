@@ -30,7 +30,7 @@
                 <Flex justify="space-between" align="center">
                     <Flex wrap={false} style="flex: 1 1 auto; min-width: 150px; white-space: normal; word-break: break-word;" gap="xs">
                         <p>{challenge.name}</p>
-                        <p>- <b>{challenge.nbPoints} points</b></p>
+                        <p><b>{challenge.nbPoints} points</b></p>
                     </Flex>
                     <Flex style="flex-shrink: 0; margin-between: auto; margin-left: auto;">
                         <Button href="/{challenge.challengeId}"> Valider </Button>
