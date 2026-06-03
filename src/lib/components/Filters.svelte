@@ -1,9 +1,10 @@
 <script lang="ts">
     import { Badge, Flex, Avatar } from "azucar-ui";
+    import { flip } from "svelte/animate";
 
     interface Props {
         readonly filters: readonly string[];
-        activeIndexes?: $bindable<number[]>;
+        activeIndexes?: number[];
         onFilterClick?: (index: number) => void;
     }
 
@@ -52,28 +53,27 @@
     }
 </script>
 
-<div class="scrollable">
-    <Flex gap="xs" wrap={false}>
-        {#each sortedFilters as { name, originalIndex, isTous }}
-            {@const isActive = isTous ? isTousActive : activeIndexes.includes(originalIndex)}
-            
-            <button
-                type="button"
-                class="unstyled filter-btn"
-                onclick={() => handleInternalClick(originalIndex)}
-            >
-                {#if isActive}
-                    <Badge>
-                        {name}
-                    </Badge>
-                {:else}
-                    <Badge variant="outline">
-                        {name}
-                    </Badge>
-                {/if}
-            </button>
-        {/each}
-    </Flex>
+<div class="scrollable flex-container">
+    {#each sortedFilters as { name, originalIndex, isTous } (originalIndex)}
+        {@const isActive = isTous ? isTousActive : activeIndexes.includes(originalIndex)}
+
+        <button
+            type="button"
+            class="unstyled filter-btn"
+            animate:flip={{ duration: 200 }}
+            onclick={() => handleInternalClick(originalIndex)}
+        >
+            {#if isActive}
+                <Badge>
+                    {name}
+                </Badge>
+            {:else}
+                <Badge variant="outline">
+                    {name}
+                </Badge>
+            {/if}
+        </button>
+    {/each}
 </div>
 
 <style>
@@ -99,9 +99,16 @@
         display: none; 
     }
 
+    .flex-container {
+        display: flex;
+        gap: var(--size-xs);
+        flex-wrap: nowrap;
+    }
+
     .filter-btn {
         flex-shrink: 0;
         display: inline-block;
+        will-change: transform;
     }
 </style>
 
