@@ -101,7 +101,7 @@
 
     .flex-container {
         display: flex;
-        gap: var(--size-xs);
+        gap: 5px; /* Doit être fix pour fonctionner avec l'animation. */
         flex-wrap: nowrap;
     }
 
