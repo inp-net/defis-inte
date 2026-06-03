@@ -1,9 +1,13 @@
 <script lang="ts">
 
+    import type { Group } from '$lib/types/types.d.ts';
+    import type { PageData } from './$types';
     import { Flex, Stack, Frame } from 'azucar-ui';
     import BackButton from '$lib/components/BackButton.svelte';
     import Profile from '$lib/components/Profile.svelte';
     import Rank from '$lib/components/Rank.svelte'
+
+    let { data }: { data: PageData } = $props();
 
     // -- Statistique du profil
 
@@ -22,20 +26,13 @@
     ]
 
     // -- Classement groupe
-    type Group = {
-        groupName: string;
-        groupUrl?: string;
-        points: string;
-    };
+    // type Group = {
+    //     groupName: string;
+    //     groupUrl?: string;
+    //     points: string;
+    // };
 
-    let groups : Group[] = $state();
-
-    groups = [
-        { groupName: "Groupe 8", points: "1024" },
-        { groupName: "Groupe 9", points: "224" },
-        { groupName: "7Groupe", points: "24" },
-        { groupName: "Un group qui possède un nom très long", points: "0" },
-    ]
+    let groups : Group[] = $derived(data.posts.groups);
 
 </script>
 
@@ -68,21 +65,16 @@
 
     <!-- max-width permet d'avoir le scroll horizontal sur les titres groupes -->
     <Flex gap="sm" justify="space-between" direction="column" style="max-width: 100%;">
-        {#each groups as group, index}
+        {#each groups as group, i}
             <Rank
                 groupName={group.groupName}
                 groupUrl={group.groupUrl}
                 points={group.points}
-                rank={index}
+                rank={(i+1).toString()}
             />
         {/each}
     </Flex>
 </Flex>
 
 <style>
-    .sticky {
-        position: sticky;
-        top: 0;
-        padding: 10px;
-    }
 </style>
