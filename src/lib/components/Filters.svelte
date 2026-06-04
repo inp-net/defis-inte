@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { Badge, Flex, Avatar } from "azucar-ui";
+    import { Badge } from "azucar-ui";
     import { flip } from "svelte/animate";
 
     interface Props {
@@ -16,10 +16,16 @@
 
     let isTousActive = $derived(activeIndexes.length === 0);
 
+    // 1. Map items with a strictly unique string ID to prevent collision with -1
     let sortedFilters = $derived(
         [
-            { name: "Tous", originalIndex: -1, isTous: true },
-            ...filters.map((name, originalIndex) => ({ name, originalIndex, isTous: false }))
+            { id: "all", name: "Tous", originalIndex: -1, isTous: true },
+            ...filters.map((name, originalIndex) => ({ 
+                id: `filter-${originalIndex}`, 
+                name, 
+                originalIndex, 
+                isTous: false 
+            }))
         ].sort((a, b) => {
             const aActive = a.isTous ? isTousActive : activeIndexes.includes(a.originalIndex);
             const bActive = b.isTous ? isTousActive : activeIndexes.includes(b.originalIndex);
@@ -35,10 +41,6 @@
         })
     );
 
-    /** Méthode qui gère le badge "Tous".
-     * désactive tous les autres badges.
-     * @param index : numéro d'index cliqué.
-     */
     function handleInternalClick(index: number) {
         if (index === -1) {
             activeIndexes = [];
@@ -54,7 +56,7 @@
 </script>
 
 <div class="scrollable flex-container">
-    {#each sortedFilters as { name, originalIndex, isTous } (originalIndex)}
+    {#each sortedFilters as { id, name, originalIndex, isTous } (id)}
         {@const isActive = isTous ? isTousActive : activeIndexes.includes(originalIndex)}
 
         <button
@@ -95,14 +97,13 @@
 
     .flex-container {
         display: flex;
-        gap: 5px; /* Doit être fix pour fonctionner avec l'animation. */
+        gap: 5px;
         flex-wrap: nowrap;
     }
 
     .filter-btn {
         flex-shrink: 0;
-        display: inline-block;
+        display: inline-flex;
         will-change: transform;
     }
 </style>
-

@@ -12,7 +12,7 @@ datasource db {
   provider = "postgresql"
 }
 
-enum TypeRendu {
+enum UploadType {
 	photo
 	video
 	text
@@ -96,7 +96,7 @@ model Proof {
 
   // Quel est le contenu de la preuve ? 
   content           String   
-  type              TypeRendu   // (photo / video / text)
+  type              UploadType // (photo / video / text)
   date              DateTime 
   media             String?  // lien vers le média (si type est photo ou video)
   text              String?  // texte de la preuve (si type est texte)
@@ -131,7 +131,7 @@ model Challenge {
   // Quel groupe d'inté à réussi le defi ?
   groupInteSucceed  GroupInte[] @relation("ChallengesSucceed")
 
-  type              TypeRendu   
+  type              UploadType
 
   // Que vaut le défi ?
   nbPoints          Int      @default(0) 

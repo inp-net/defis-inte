@@ -2,7 +2,7 @@
 
     import type { PageData } from './$types';
     import type { GroupChallenge } from '$lib/types/types.d';
-    import { Flex, Stack } from 'azucar-ui';
+    import { Flex, Stack, Button } from 'azucar-ui';
     import Header from '$lib/components/Header.svelte';
     import Challenges from '$lib/components/Challenges.svelte';
     import Filters from '$lib/components/Filters.svelte';
@@ -30,6 +30,12 @@
     <Stack> 
         <h1>Défis</h1>
         <p>Défis d'intégration 2026 - 2027.</p>
+    </Stack>
+
+    <Stack>
+        <Button href="/challenge">
+        Page défis
+        </Button>
     </Stack>
     
     <Stack style="max-width: 100%; min-width: 0; overflow: hidden;">
