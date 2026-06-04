@@ -1,9 +1,9 @@
 <script lang='ts'>
 
     import Select from '$lib/components/Select.svelte';
-    import { UploadType, Difficulty } from '$generated/prisma';
+    import { UploadType, Difficulty } from '@prisma/client';
     import type { PageData } from './$types';
-    import type { ChallengeInput } from '$lib/types';
+    import type { ChallengeInput } from '$lib/types/types.d';
 
     import {
         Button,
@@ -29,19 +29,20 @@
         selectedDescription: string
     }
 
-    let formState = $state<ChallengeInput>({
-        name: "",
-        description: "",
-        groupId: "",
-        type: UploadType.IMAGE,
-        nbPoints: 10,
-        difficulty: Difficulty.easy,
-        locationName: "ENSEEIHT"
-    });
+    let formState = {
+        challengeId: data.existingChallenge?.challengeId || null,
+        name: data.existingChallenge?.name || "",
+        description: data.existingChallenge?.description || "",
+        groupId: data.existingChallenge?.groupId || "",
+        locationName: data.existingChallenge?.locationName || "",
+        nbPoints: data.existingChallenge?.nbPoints || 0,
+        difficulty: data.existingChallenge?.difficulty || "easy",
+        type: data.existingChallenge?.type || "text"
+    };
 
     // Liste des éléments qui peuvent être séléctionné
 
-    let clubOptions: string[] = data.clubs.map(c => ({ value: c.groupId, label: c.name }));
+    let clubOptions: string[] = data.clubs.map(c => c.name);
     let locationOptions: string[] = data.locations.map(l => l.name);
     let uploadTypes: string[] = Object.values(UploadType);
 
@@ -61,11 +62,6 @@
                 body: JSON.stringify(formState)
             });
 
-            if (response.ok) {
-                showSuccess = true;
-            } else {
-                showFailure = true;
-            }
         } catch (err) {
             console.error("Erreur lors de l'envoi du form : ", err);
             showFailure = true;
