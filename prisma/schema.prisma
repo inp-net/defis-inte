@@ -15,6 +15,7 @@ datasource db {
 model User {
   id                String  @id //id churros
   name              String
+  profilePictureURL String?      // image de profil de l'utilisateur
 
   // Dans quel club / bureau de club fait-il partie ?
   group             GroupClub[] @relation("UserGroups")
