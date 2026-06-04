@@ -33,7 +33,7 @@
     </Stack>
 
     <Stack>
-        <Button href="/challenge">
+        <Button href="/challenge/0">
         Page défis
         </Button>
     </Stack>
