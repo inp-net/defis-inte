@@ -6,13 +6,16 @@
     type Prop = {
         groupName: string,
         groupURL: string,
-        challenges: ChallengeRead[]
+        validChallenges: ChallengeRead[],
+        pendingChallenges: ChallengeRead[],
+
     };
 
     const {
         groupName = "",
         groupURL = "",
-        challenges = []
+        validChallenges = [],
+        pendingChallenges = [],
     }: Prop = $props();
 
 </script>
@@ -25,7 +28,8 @@
         </Flex>
     </Frame>
     <Flex gap="xs" direction="column">
-        {#each challenges as challenge}
+
+        {#each pendingChallenges as challenge}
             <Frame>
                 <Flex justify="space-between" align="center">
                     <Flex wrap={false} style="flex: 1 1 auto; min-width: 150px; white-space: normal; word-break: break-word;" gap="xs">
@@ -34,6 +38,21 @@
                     </Flex>
                     <Flex style="flex-shrink: 0; margin-between: auto; margin-left: auto;">
                         <Button> Accepter le défi </Button>
+                        <Button href="/challenge/{challenge.challengeId}"> Modifier </Button>
+                    </Flex>
+                </Flex>
+            </Frame>
+        {/each}
+
+        {#each validChallenges as challenge}
+            <Frame>
+                <Flex justify="space-between" align="center">
+                    <Flex wrap={false} style="flex: 1 1 auto; min-width: 150px; white-space: normal; word-break: break-word;" gap="xs">
+                        <p>{challenge.name}</p>
+                        <p><b>{challenge.nbPoints} points</b></p>
+                    </Flex>
+                    <Flex style="flex-shrink: 0; margin-between: auto; margin-left: auto;">
+                        <Button disabled={challenge.defiAccepte}> Accepter le défi </Button>
                         <Button href="/challenge/{challenge.challengeId}"> Modifier </Button>
                     </Flex>
                 </Flex>
