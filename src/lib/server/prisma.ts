@@ -48,12 +48,24 @@ export async function userChurrosToPrisma(userChurros: UserChurros): Promise<boo
 function formatUserForPrisma(userChurros: UserChurros): {
     create: Prisma.UserCreateInput;
     update: Prisma.UserUpdateInput;
-} {
-    console.log('Formatage de l\'utilisateur pour Prisma', userChurros); //debug
-    const commonData = {
+} { 
+    console.log('GROUPES:', JSON.stringify(userChurros.churrosGroups, null, 2));
+    console.log('Formatting user for Prisma:', userChurros); //debug
+        const commonData = {
         name: userChurros.fullName,
-        profileURL: userChurros.pictureURL ,
-        admin: false,
+        profilePictureURL: userChurros.pictureURL ,
+        isAdmin: false,
+        is1A: userChurros.yearTier === 1 ? true : false,
+        /*group : userChurros.churrosGroups,
+        groupBoard : userChurros.churrosGroups.filter(g => g.secretary || g.president || g.vicePresident || g.treasurer).map(g => g.group),
+        if (userChurros.yearTier === 1) {
+            for (i in GroupInte) {
+                for (j in userChurros.churrosGroups) {
+                    if (userChurros.churrosGroups[j].group === groupInte[i].groupid) {
+                        groupInteId : i;
+                    }}}
+        }*/
+
     };
 
     const create: Prisma.UserCreateInput = {

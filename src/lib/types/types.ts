@@ -13,6 +13,7 @@ export type UserChurros = {
     fullName: string;
     pictureURL: string;
     churrosGroups: ChurrosGroups[];
+    yearTier: number;
 };
 
 export type ChurrosGroups = {
