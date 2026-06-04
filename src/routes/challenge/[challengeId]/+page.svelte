@@ -1,19 +1,12 @@
 <script lang='ts'>
 
     import Select from '$lib/components/Select.svelte';
+    import ButtonGroupFix from '$lib/components/ButtonGroupFix.svelte';
+    import BackButton from '$lib/components/BackButton.svelte';
     import { UploadType, Difficulty } from '@prisma/client';
     import type { PageData } from './$types';
-    import type { ChallengeInput } from '$lib/types/types.d';
 
-    import {
-        Button,
-            Flex,
-            Stack,
-            ButtonGroup,
-            Frame,
-            Switch,
-            TextInput
-    } from 'azucar-ui';
+    import { Button, Flex, Stack, Frame, TextInput } from 'azucar-ui';
 
     import {
         SearchIcon,
@@ -22,40 +15,41 @@
 
     let { data }: { data: PageData } = $props();
 
-    // Element séléctionné par l'utilisateur
+    // Valeurs initiales du form. Réupéré de la db.
+    const getInitialState = (ec: typeof data.existingChallenge) => ({
+        challengeId: ec?.challengeId ?? null,
+        name: ec?.name ?? "",
+        description: ec?.description ?? "",
+        groupName: ec?.groupName ?? "",
+        locationName: ec?.locationName ?? "",
+        nbPoints: ec?.nbPoints ?? 10,
+        difficulty: ec?.difficulty ?? "easy",
+        type: ec?.type ?? "text"
+    });
 
-    type State = {
-        selectedName: string,
-        selectedDescription: string
-    }
+    let formState = $state(getInitialState(data.existingChallenge));
+    let isSubmitting = $state(false);
 
-    let formState = {
-        challengeId: data.existingChallenge?.challengeId || null,
-        name: data.existingChallenge?.name || "",
-        description: data.existingChallenge?.description || "",
-        groupId: data.existingChallenge?.groupId || "",
-        locationName: data.existingChallenge?.locationName || "",
-        nbPoints: data.existingChallenge?.nbPoints || 0,
-        difficulty: data.existingChallenge?.difficulty || "easy",
-        type: data.existingChallenge?.type || "text"
-    };
+    $effect(() => {
+        formState = getInitialState(data.existingChallenge);
+    });
 
-    // Liste des éléments qui peuvent être séléctionné
 
-    let clubOptions: string[] = data.clubs.map(c => c.name);
-    let locationOptions: string[] = data.locations.map(l => l.name);
+    // Options du Select
+    let clubOptions: string[] = $derived(data.clubs.map(c => c.name));
+    let locationOptions: string[] = $derived(data.locations.map(l => l.name));
     let uploadTypes: string[] = Object.values(UploadType);
+    let presetPoints = [10, 20, 50, 100];
 
-    let showSuccess = $state(false);
-    let showFailure = $state(false);
-
+    /** Fonction envoie du formulaire à l'api api/challenge. */
     async function sendChallenge() {
-        if (!formState.name || !formState.groupId || !formState.locationName) {
+        if (!formState.name || !formState.groupName || !formState.locationName) {
             console.error("Formulaire incomplet");
-            showFailure = true;
             return;
         }
         try {
+            isSubmitting = true;
+
             const response = await fetch('/api/challenge', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -64,7 +58,8 @@
 
         } catch (err) {
             console.error("Erreur lors de l'envoi du form : ", err);
-            showFailure = true;
+        } finally {
+            isSubmitting = false;
         }
     }
 
@@ -73,10 +68,11 @@
 <Flex direction="column" gap="xxl" margin="lg">
 
     <Stack>
-        <Flex>
-        <h2>Ajouter un Défi</h2>
-        </Flex>
-        <p>Remplissez les informations ci-dessous pour proposer un défi.</p>
+        <Stack align="baseline"> 
+            <BackButton backCount={2} />
+            <h2>Ajouter un Défi</h2>
+            <p>Remplissez les informations ci-dessous pour proposer un défi.</p>
+        </Stack>
     </Stack>
 
     <Stack>
@@ -85,13 +81,24 @@
                 
                 <Flex gap="md" align="center">
                     <Flex direction="column" gap="xxs" style="flex-grow: 1;">
-                        <span>Nom du défi</span>
-                        <TextInput type="text" placeholder="Ex: Boire un café en moins de 5s" value={formState.name} required />
+                        <!-- solution temporaire made by AI : Azucar supporte pas bind encore -->
+                        <TextInput
+                            type="text"
+                            placeholder="Ex: Fermer la porte du local Tvn7."
+                            value={formState.name}
+                            required
+                            oninput={(e) => formState.name = (e.target as HTMLInputElement).value}
+                        >Nom du défi</TextInput>
                     </Flex>
                     
                     <Flex direction="column" gap="xxs" style="flex-grow: 2;">
-                        <span>Description</span>
-                        <TextInput type="text" placeholder="Détails ou contraintes du défi..." value={formState.description} />
+                        <!-- solution temporaire made by AI : Azucar supporte pas bind encore -->
+                        <TextInput
+                            type="text"
+                            placeholder="Description et ou contraintes."
+                            value={formState.description}
+                            oninput={(e) => formState.description = (e.target as HTMLInputElement).value}
+                        >Description</TextInput>
                     </Flex>
                 </Flex>
 
@@ -99,10 +106,12 @@
                     
                     <Select
                         options={clubOptions}
-                        bind:value={formState.groupId}
+                        bind:value={formState.groupName}
                         icon={SearchIcon}
                         placeholder="Choisir un club"
                         required
+                        type='datalist'
+                        id='1'
                     >Club Organisateur</Select>
 
                     <Select
@@ -123,32 +132,26 @@
 
                     <Flex direction="column" gap="xxs">
                         <span>Nombre de Points</span>
-                        <TextInput type="number" placeholder="10" min="0" step="5" value={formState.nbPoints}></TextInput>
-                    </Flex>
-
-                    <Flex direction="column" gap="xxs">
-                        <span>Difficulté</span>
-                        <ButtonGroup>
-                            <Button
-                                variant={formState.difficulty === 'easy' ? 'default' : 'outline'}
-                                onclick={() => formState.difficulty = 'easy'}
-                            >Facile</Button>
-                            <Button
-                                variant={formState.difficulty === 'medium' ? 'default' : 'outline'}
-                                onclick={() => formState.difficulty = 'medium'}
-                            >Moyen</Button>
-                            <Button
-                                variant={formState.difficulty === 'hard' ? 'default' : 'outline'}
-                                onclick={() => formState.difficulty = 'hard'}
-                            >Difficile</Button>
-                        </ButtonGroup>
+                        <div style="display: flex; flex-direction: column; gap: 8px;">
+                            <ButtonGroupFix>
+                                {#each presetPoints as pts}
+                                    <Button 
+                                        variant={formState.nbPoints === pts ? 'default' : 'outline'}
+                                        onclick={() => formState.nbPoints = pts}
+                                    >
+                                        {pts}
+                                    </Button>
+                                {/each}
+                            </ButtonGroupFix>
+                        </div>
                     </Flex>
 
                 </Flex>
 
-                <Flex gap="xs" style="flex-grow: 1" justify='right'>
-                    <Button variant="outline" href="/challenges">Annuler</Button>
-                    <Button icon={Check} class="success" name="Success" onclick={sendChallenge}>Créer le défi</Button>
+                <Flex gap="xs" style="flex-grow: 1; margin-top: var(--size-lg);" justify='right'>
+                    <!-- TODO faire retour depuis le navigateur pour meilleur UI -->
+                    <Button variant="outline" href="/">Annuler</Button>
+                    <Button icon={Check} class="success" name="Success" onclick={sendChallenge} disabled={isSubmitting}>Créer le défi</Button>
                 </Flex>
                 
             </Flex>

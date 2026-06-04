@@ -14,11 +14,17 @@ export const load: PageServerLoad = async ({ params }) => {
         const idInt = parseInt(params.challengeId, 10);
         
         if (!isNaN(idInt) && idInt > 0) {
-            fallbackId = idInt;
-            
-            existingChallenge = await prisma.challenge.findUnique({
-                where: { challengeId: idInt }
+            const challengeWithGroup = await prisma.challenge.findUnique({
+                where: { challengeId: idInt },
+                include: { group: true }
             });
+
+            if (challengeWithGroup) {
+                existingChallenge = {
+                    ...challengeWithGroup,
+                    groupName: challengeWithGroup.group.name
+                };
+            }
         }
     }
 
