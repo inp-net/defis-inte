@@ -12,9 +12,30 @@ datasource db {
   provider = "postgresql"
 }
 
+enum TypeRendu {
+	photo
+	video
+	text
+  }
+
+enum Status {
+	pending
+	valid
+	denied
+  }
+
+enum Difficulty {
+	easy
+	medium
+	hard
+	impossible
+}
+
+
 model User {
   id                String  @id //id churros
   name              String
+  is1A              Boolean 
   profilePictureURL String?      // image de profil de l'utilisateur
 
   // Dans quel club / bureau de club fait-il partie ?
@@ -76,7 +97,7 @@ model Proof {
 
   // Quel est le contenu de la preuve ? 
   content           String   
-  type              String   // (photo / video / text)
+  type              TypeRendu   // (photo / video / text)
   date              DateTime 
   media             String?  // lien vers le média (si type est photo ou video)
   text              String?  // texte de la preuve (si type est texte)
@@ -89,11 +110,11 @@ model Proof {
   validatorId       String?
 
   // Dans quel statut est la preuve ?
-  status            String   // (pending / valid / denied) 
+  status            Status   // (pending / valid / denied) 
 }
 
 model Challenge {
-  challengeId       String  @id
+  challengeId       String  @id @default(uuid())
   name              String
   description       String?
   
@@ -111,11 +132,11 @@ model Challenge {
   // Quel groupe d'inté à réussi le defi ?
   groupInteSucceed  GroupInte[] @relation("ChallengesSucceed")
 
-  type              String   // (photo / video / text)
+  type              TypeRendu   
 
   // Que vaut le défi ?
   nbPoints          Int      @default(0) 
-  difficulty        Int      @default(0)
+  difficulty        Difficulty @default(easy)
 
   // Où se situe le défi ?
   locationName      String   @default("ENSEEIHT")

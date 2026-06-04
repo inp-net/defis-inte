@@ -1,4 +1,7 @@
 <script lang="ts">
+
+    import { Flex, Stack } from 'azucar-ui';
+    import Header from '$lib/components/Header.svelte'
     import type { PageData } from "./$types";
     import { signIn, signOut } from "@auth/sveltekit/client";
 
@@ -6,9 +9,26 @@
 
 </script>
 
-<h1>Welcome to SvelteKit</h1>
+<Header />
+<Flex direction="column" gap="xxl" margin="lg">
+    <Stack> 
+        <h1>Défis</h1>
+        <p>Défis d'intégration 2026 - 2027.</p>
+    </Stack>
+    
+    <h1>A</h1>
+    <h1>A</h1>
+    <h1>A</h1>
+    <h1>A</h1>
+    <h1>A</h1>
+    <h1>A</h1>
+    <h1>A</h1>
+    <h1>A</h1>
+    <h1>A</h1>
+    <h1>A</h1>
+    <h1>A</h1>
 
-<p>Visit <a href="https://svelte.dev/docs/kit">svelte.dev/docs/kit</a> to read the documentation</p>
+</Flex>
 
 <!-- bouton pour se connecter avec authentik -->
     <button onclick={() => signIn("authentik", { callbackUrl: "/home"})}>
