@@ -63,15 +63,9 @@
             animate:flip={{ duration: 200 }}
             onclick={() => handleInternalClick(originalIndex)}
         >
-            {#if isActive}
-                <Badge>
-                    {name}
-                </Badge>
-            {:else}
-                <Badge variant="outline">
-                    {name}
-                </Badge>
-            {/if}
+            <Badge variant={isActive ? undefined : "outline"}>
+                {name}
+            </Badge>
         </button>
     {/each}
 </div>
