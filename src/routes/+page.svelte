@@ -25,7 +25,7 @@
 
 </script>
 
-<Header />
+<Header notifications={data.posts.pendingChallengeCount} />
 <Flex direction="column" gap="xxl" margin="lg">
     <Stack> 
         <h1>Défis</h1>

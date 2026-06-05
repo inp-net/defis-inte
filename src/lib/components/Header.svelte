@@ -1,12 +1,21 @@
 <script lang="ts">
 
     import { Flex, Frame, Button } from 'azucar-ui';
-    import { Dot, Settings } from '@lucide/svelte';
+    import { Dot, Settings, Wrench } from '@lucide/svelte';
     import Profile from '$lib/components/Profile.svelte';
+    import ButtonNotification from '$lib/components/ButtonNotification.svelte';
 
     const dotSize = "15px";
     const pointsGroup = "676";
     const percentCommit = "10%";
+
+    type Props = {
+        notifications?: number,
+    }
+
+    const {
+        notifications: notif
+    }: Props = $props();
 
 </script>
 
@@ -26,8 +35,9 @@
                     </Flex>
                 </section>
             </Flex>
-            <Flex wrap={false} gap="xs">
+            <Flex wrap={false} gap="xs" align="center">
                 <Button href="/leaderboard">Classement</Button>
+                <ButtonNotification href="/board" icon={Wrench} variant="outline" notifications={notif}></ButtonNotification>
                 <Button href="/settings" icon={Settings} variant="outline"></Button>
             </Flex>
         </Flex>

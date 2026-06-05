@@ -134,6 +134,9 @@ model Challenge {
 
   // Quelles preuves sont liées à ce défi ?
   proofs Proof[] @relation("ChallengeProofs")
+
+  // Si un admin décide de delete le challenge, il ne s'affiche pas
+  isDeleted Boolean @default(false)
 }
 
 model Location {

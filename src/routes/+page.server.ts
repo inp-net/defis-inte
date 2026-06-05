@@ -1,7 +1,15 @@
 import type { PageServerLoad } from './$types';
 import type { GroupChallenge, ChallengeRead } from '$lib/types/types.d.ts';
+import prisma from "$lib/prisma";
 
 export const load: PageServerLoad = async ({ params }) => {
+
+    const pendingChallengeCount = await prisma.challenge.count({
+        where: {
+            isDeleted: false,
+            defiAccepte: false
+        }
+    })
 
     const defi1 : ChallengeRead = {
         name: "Chocoblast un membre du bureau",
@@ -40,7 +48,8 @@ export const load: PageServerLoad = async ({ params }) => {
 
 	return {
         posts: {
-            challenges
+            challenges,
+            pendingChallengeCount
         }
 	};
 };
