@@ -21,14 +21,14 @@
 
 </script>
 
-<Frame>
+<Frame border={true} shadow={true} onclick={() => isUnfolded = !isUnfolded}>
     <Flex justify="space-between" align="center" wrap={false} style="max-width: 100%; min-width: 0; overflow: hidden">
         <div class="scrollable" style="min-width: 0;">
             <p>{name}</p>
         </div>
         <Flex style="flex-shrink: 0; margin-between: auto; margin-left: auto;" align="center">
             <p><b>{nbPoints} pts</b></p>
-            <Button icon={isUnfolded ? ChevronUp : ChevronDown} onclick={() => isUnfolded = !isUnfolded} ></Button>
+            <!-- <Button icon={isUnfolded ? ChevronUp : ChevronDown} onclick={() => isUnfolded = !isUnfolded} ></Button> -->
         </Flex>
     </Flex>
 

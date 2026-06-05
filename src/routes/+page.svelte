@@ -24,7 +24,7 @@
     </Stack>
     
     <Stack style="max-width: 100%; min-width: 0; overflow: hidden;">
-        <Flex gap="md" direction="column" style="max-width: 100%; width: 100%;">
+        <Flex gap="xs" direction="column" style="max-width: 100%; width: 100%;">
             {#each challenges as challenge}
                 <FrameChallenge
                     name={challenge.name}

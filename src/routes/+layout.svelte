@@ -5,6 +5,11 @@
     import Footer from '$lib/components/Footer.svelte'
 
 	let { children } = $props();
+
+    $effect(() => {
+        document.documentElement.style.setProperty('color-scheme', 'light');
+    });
+
 </script>
 
 <svelte:head>
