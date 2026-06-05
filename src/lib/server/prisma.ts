@@ -25,6 +25,7 @@ export async function userChurrosToPrisma(userChurros: UserChurros): Promise<boo
 
         const { create, update } = await formatUserForPrisma(userChurros);
 
+        console.log("met a jour ou crée l'utilisateur"); //debug
         //met a jour ou crée l'utilisateur
         await prisma.user.upsert({   
             where: { id },
@@ -46,9 +47,18 @@ export async function userChurrosToPrisma(userChurros: UserChurros): Promise<boo
  * @returns true si c'est un groupe d'intégration, false sinon
  */
 function FormatGroupInte(chaine: string): boolean {
-    const modeleGroupInte = /^groupe-.*-202.*$/;
-    
+    const modeleGroupInte = /^groupe-.*-202.*$/; 
     return modeleGroupInte.test(chaine);
+}
+
+/**
+ * Verifie que c'est un groupe de postulant en testant si le nom du groupe correspond au format "groupe-*-202*"
+ * @param chaine le nom du groupe à tester
+ * @returns true si c'est un groupe de postulant, false sinon
+ */
+function FormatGroupPostulant(chaine: string): boolean {
+    const modeleGroupPostulant = /^postulant.*$/; 
+    return modeleGroupPostulant.test(chaine);
 }
 
 /**
@@ -61,43 +71,84 @@ async function formatUserForPrisma(userChurros: UserChurros): Promise<{
     create: Prisma.UserCreateInput;
     update: Prisma.UserUpdateInput;
 }> { 
-    console.log('GROUPES:', JSON.stringify(userChurros.churrosGroups, null, 2)); //debug
-    console.log('Formatting user for Prisma:', userChurros); //debug
-
     let groupInteId = null;
-    let groupBoard = []
+    let groupBoard = [];
+    let group = [];
         // Parcours les groupes reçu de Authentik de l'utilisateurs
-        for (const group of userChurros.churrosGroups ) {
+        console.log("parcours des club") //debug
+        for (const dataGroup of userChurros.churrosGroups ) {
             // Teste si le groupe est dans la db
+            console.log(dataGroup) //debug
             try {
-                if (FormatGroupInte(group.group.uid)) {
-                    groupInteId = group.group.uid;
-                    await prisma.GroupInte.findUnique({ where: { groupId: group.group } });
-                }else {
-                    await prisma.GroupClub.findUnique({ where: { groupId: group.group } });
+                if (FormatGroupInte(dataGroup.group.uid)) {
+                    groupInteId = dataGroup.group.uid;
+                    const groupCree = await prisma.groupInte.findUnique({ where: { groupId: dataGroup.group.uid } });
+                    //si le groupe n'est pas dans la db on synchronise le groupes de churros avec la db
+                    if (groupCree == null){
+                        const groupAdded = await syncGroupFromChurros(dataGroup.group.uid);
+                    }
+                }else if (!FormatGroupPostulant(dataGroup.group.uid)) {
+                    console.log("rentrer")//debug
+                    const groupCree = await prisma.groupClub.findUnique({ where: { groupId: dataGroup.group.uid } });
+                    console.log(groupCree)//debug
+                    //si le groupe n'est pas dans la db on synchronise le groupes de churros avec la db
+                    if (groupCree == null){
+                        console.log("rentrer")//debug
+                        const groupAdded = await syncGroupFromChurros(dataGroup.group.uid);
+                        if (groupAdded) {
+                            console.log("groppppp added   ", dataGroup.group.uid)//debug
+                            group.push(dataGroup.group);
+                            // On vérifie si l'utilisateur est dans un bureau du groupe et si oui on le connecte au groupe en base de données
+                            if (dataGroup.secretary || dataGroup.president || dataGroup.vicePresident || dataGroup.treasurer) {
+                                groupBoard.push(dataGroup.group);
+                            }
+                        }
+                    }else{
+                        console.log("deja add  ", dataGroup.group.uid)//debug
+
+                        group.push(dataGroup.group);
+                        // On vérifie si l'utilisateur est dans un bureau du groupe et si oui on le connecte au groupe en base de données
+                        if (dataGroup.secretary || dataGroup.president || dataGroup.vicePresident || dataGroup.treasurer) {
+                            groupBoard.push(dataGroup.group);
+                        }
+                    }
                 }
-            } 
-            catch (error) {
-                //si le groupe n'est pas dans la db on synchronise le groupes de churros avec la db
-                await syncGroupFromChurros(group.group.uid);
+
+                
+            } catch (error) {
+                console.log("Erreur : ",  error)
             }
 
             // On vérifie si l'utilisateur est dans un bureau du groupe et si oui on le connecte au groupe en base de données
-            if (group.secretary || group.president || group.vicePresident || group.treasurer) {
-                groupBoard.push(group.group);
-            }
+            /*if (dataGroup.secretary || dataGroup.president || dataGroup.vicePresident || dataGroup.treasurer) {
+                groupBoard.push(dataGroup.group);
+            }*/
         }
 
-        const commonData = {
-        name: userChurros.fullName,
-        profilePictureURL: userChurros.pictureURL ,
-        isAdmin: false,
-        is1A: userChurros.yearTier === 1 ? true : false,
-        group : userChurros.churrosGroups,
-        groupBoard : groupBoard,
-        groupInteId : groupInteId
+        console.log("---------------------------------") //debug
+        console.log(group)//debug
+        console.log("---------------------------------")//debug
+        console.log(groupBoard)//debug
+        console.log("---------------------------------")//debug
 
-    };
+
+        const commonData = {
+            name: userChurros.fullName,
+            profilePictureURL: userChurros.pictureURL ,
+            is1A: userChurros.yearTier === 1 ? true : false,
+            group: {
+                connect: (group || []).map(g => ({
+                    groupId: g.uid
+                }))
+                },
+            groupBoard :{
+                connect: (groupBoard || []).map(g => ({
+                    groupId: g.uid
+                }))
+                },
+            groupInteId : groupInteId,
+            isAdmin: false
+        };
 
     const create: Prisma.UserCreateInput = {
         id: userChurros.uid,

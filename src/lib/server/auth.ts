@@ -35,17 +35,9 @@ export const { handle, signIn, signOut } = SvelteKitAuth({
 	},
 	callbacks: {
 		async signIn({ profile, user, account }) {
-			console.log('SignIn debut'); //debug
 			if (profile) {
-				console.log('entre dans if profile'); //debug
 				const { iss, sub, aud, exp, iat, auth_time, jti, acr, amr, sid, ...user } = profile;
-				console.log('------------------------------------------------------------------------------------'); //debug
-				console.log('Profile received in signIn callback:', profile); //debug
-				console.log('------------------------------------------------------------------------------------'); //debug
-				console.log('Profile received in signIn callback:', user); //debug
-				console.log('------------------------------------------------------------------------------------'); //debug
 				if (!await userChurrosToPrisma(user as UserChurros)) {
-					console.log('Failed to sync user with Prisma'); //debug
 					//Si la conversion marche pas on refuse la connexion
 					return false; 
 				}
