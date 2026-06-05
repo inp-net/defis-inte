@@ -93,7 +93,7 @@ async function main() {
                     name: `Défi ${faker.word.verb()} ${faker.word.noun()}`,
                     description: faker.lorem.sentence(),
                     type: faker.helpers.arrayElement(typeRenduOpts),
-                    nbPoints: faker.helpers.arrayElement([10, 20, 40, 80]),
+                    nbPoints: faker.helpers.arrayElement([10, 20, 50, 80, 100]),
                     defiAccepte: faker.datatype.boolean(0.8),
                     groupId: attachedClub.groupId,
                     userId: creator.id,
