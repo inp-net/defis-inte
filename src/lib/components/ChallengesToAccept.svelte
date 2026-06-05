@@ -6,8 +6,6 @@
     type Prop = {
         groupName: string,
         groupURL: string,
-        validChallenges: ChallengeRead[],
-        pendingChallenges: ChallengeRead[],
         challenges: ChallengeRead[],
         onChallengeApprouved : (id: number) => void
     };

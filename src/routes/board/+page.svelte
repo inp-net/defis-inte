@@ -13,17 +13,6 @@
         groupChallenge = data.posts.challenges;
     })
 
-    // Extrait les nom des groupes clubs qui peuvent être filtrés.
-    // let filterNames = $derived(groupChallenge.map(challenge => challenge.name));
-    //
-    //
-    // // Sous liste de groupes filtrés.
-    // let activeChallenges = $derived(
-    //     activeIndexes.length === 0 
-    //         ? groupChallenge
-    //         : groupChallenge.filter((_, index) => activeIndexes.includes(index))
-    // );
-
     // Filtres actifs sur défis.
     let activeIndexes = $state<number[]>([]);
 
@@ -45,20 +34,25 @@
 
     async function approuveChallenge(id: number): Promise<void> {
         try {
+            const formData = new FormData();
+            formData.append('challengeId', id.toString());
 
-            const response = await fetch('/api/challenge/accept', {
+            const response = await fetch('?/accept', {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ challengeId: id })
+                headers: { 'x-sveltekit-action': 'true', },
+                body: formData
             });
-            
             if (response.ok) {
-                const challenge = group.challenge.find(c => c.challengeId === id);
+                const result = await response.json();
+                if (result.type === 'failure') {
+                    console.error("Erreur de validation :", result.data?.message);
+                    return;
+                }
+                const challenge = groupChallenge.find(c => c.challengeId === id);
                 if (challenge) {
                     challenge.defiAccepte = true
                 }
             }
-
         } catch(err) {
             console.error("Erreur lors de l'envoi du form : ", err);
         }

@@ -1,6 +1,7 @@
-import { error } from '@sveltejs/kit';
+import { saveChallenge } from '$lib/server/challengeService'
+import type { Actions } from './$types';
+import { fail } from '@sveltejs/kit';
 import type { PageServerLoad } from "./$types";
-import type { Challenge } from '$lib/types/types.d.ts';
 import prisma from "$lib/prisma";
 
 export const load: PageServerLoad = async ({ params }) => {
@@ -8,7 +9,6 @@ export const load: PageServerLoad = async ({ params }) => {
     const locations = await prisma.location.findMany({});
 
     let existingChallenge = null;
-    let fallbackId = 0;
 
     if (params.challengeId) {
         const idInt = parseInt(params.challengeId, 10);
@@ -35,3 +35,20 @@ export const load: PageServerLoad = async ({ params }) => {
     };
 };
 
+
+export const actions : Actions = {
+    // Action pour crée ou modifier : upsert
+    upsert: async ({ request }) => {
+        try {
+            const body = await request.json();
+            const savedChallenge = await saveChallenge(body);
+            return { sucess: true, data: savedChallenge };
+        } catch (err: any) {
+            if (err.status) {
+                return fail(err.status, { message: err.body?.message || 'Erreur de validation' });
+            }
+            console.error("Erreur critique lors de la création/modification du défi :", err);
+            return fail(500, { message: 'Impossible de sauvegarder le défi (Erreur Serveur).' });
+        }
+    }
+} satisfies Actions;

@@ -79,7 +79,7 @@ async function main() {
 
     console.log("🎯 Seeding Mock Challenges...");
     const nbChallenges = 8;
-    const typeRenduOpts = ["photo", "video", "text"] as const; 
+    const typeRenduOpts = ["PHOTO", "VIDEO", "TEXT"] as const; 
 
     const challenges = await Promise.all(
         Array.from({ length: nbChallenges }, () => {
@@ -94,7 +94,6 @@ async function main() {
                     description: faker.lorem.sentence(),
                     type: faker.helpers.arrayElement(typeRenduOpts),
                     nbPoints: faker.helpers.arrayElement([10, 20, 40, 80]),
-                    difficulty: faker.helpers.arrayElement(["easy", "medium", "hard", "impossible"]),
                     defiAccepte: faker.datatype.boolean(0.8),
                     groupId: attachedClub.groupId,
                     userId: creator.id,
@@ -110,7 +109,7 @@ async function main() {
 
     console.log("📸 Seeding Mock Proofs...");
     const nbProofs = 12;
-    const statusOpts = ["pending", "valid", "denied"] as const;
+    const statusOpts = ["PENDING", "VALID", "DENIED"] as const;
 
     await Promise.all(
         Array.from({ length: nbProofs }, () => {

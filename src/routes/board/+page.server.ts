@@ -1,5 +1,7 @@
 import type { PageServerLoad } from './$types';
-import type { ChallengeRead, GroupChallenge } from '$lib/types/types.d.ts';
+import type { GroupChallenge } from '$lib/types/types.d.ts';
+import { fail, type Actions } from '@sveltejs/kit';
+import { acceptChallenge } from '$lib/server/challengeService';
 import prisma from "$lib/prisma";
 
 export const load: PageServerLoad = async () => {
@@ -21,4 +23,30 @@ export const load: PageServerLoad = async () => {
             challenges
         }
     };
+};
+
+export const actions: Actions = {
+    accept: async ({ request }) => {
+        const data = await request.formData();
+        const challengeId = data.get('challengeId');
+
+        try {
+            const updatedChallenge = await acceptChallenge(challengeId);
+            return { 
+                success: true, 
+                challenge: updatedChallenge 
+            };
+        } catch (error: any) {
+            if (error.status && error.message) {
+                return fail(error.status, { 
+                    message: error.message,
+                    challengeId
+                });
+            }
+            console.error('Action Error:', error);
+            return fail(500, { 
+                message: 'Impossible accepter le défi' 
+            });
+        }
+    }
 };

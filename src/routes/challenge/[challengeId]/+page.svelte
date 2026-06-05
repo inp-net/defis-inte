@@ -3,7 +3,7 @@
     import Select from '$lib/components/Select.svelte';
     import ButtonGroupFix from '$lib/components/ButtonGroupFix.svelte';
     import BackButton from '$lib/components/BackButton.svelte';
-    import { UploadType, Difficulty } from '@prisma/client';
+    import { UploadType } from '@prisma/client';
     import type { PageData } from './$types';
 
     import { Button, Flex, Stack, Frame, TextInput } from 'azucar-ui';
@@ -23,8 +23,7 @@
         groupName: ec?.groupName ?? "",
         locationName: ec?.locationName ?? "",
         nbPoints: ec?.nbPoints ?? 10,
-        difficulty: ec?.difficulty ?? "easy",
-        type: ec?.type ?? "text"
+        type: ec?.type ?? "PHOTO"
     });
 
     let formState = $state(getInitialState(data.existingChallenge));
@@ -39,7 +38,7 @@
     let clubOptions: string[] = $derived(data.clubs.map(c => c.name));
     let locationOptions: string[] = $derived(data.locations.map(l => l.name));
     let uploadTypes: string[] = Object.values(UploadType);
-    let presetPoints = [10, 20, 50, 100];
+    let presetPoints = [10, 20, 50, 80, 100];
 
     /** Fonction envoie du formulaire à l'api api/challenge. */
     async function sendChallenge() {
@@ -50,9 +49,9 @@
         try {
             isSubmitting = true;
 
-            const response = await fetch('/api/challenge/create-modify', {
+            const response = await fetch('?/upsert', {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                headers: { 'x-sveltekit-action': 'true' },
                 body: JSON.stringify(formState)
             });
 
