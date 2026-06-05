@@ -1,5 +1,5 @@
 //Import et export des types prisma pour les modifier si besoin et les utiliser dans le reste du projet
-import type { User } from "@prisma/client";
+import type { User } from "$lib/server/prisma";
 
 export type {
     User,

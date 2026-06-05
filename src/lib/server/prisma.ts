@@ -1,8 +1,8 @@
 import type { UserChurros } from '$lib/types/types';
-import { PrismaClient, Prisma } from '../../../prisma/generated/client.ts';   // lien vers ou le prisma client est généré
-
+import { PrismaClient, Prisma } from '@prisma/client';
 import { PrismaPg } from '@prisma/adapter-pg';
 import { DATABASE_URL } from '$env/static/private';
+import { syncGroupFromChurros } from './pullChurrosData';
 
 const adapter = new PrismaPg({ connectionString: DATABASE_URL });
 /**
@@ -23,7 +23,7 @@ export async function userChurrosToPrisma(userChurros: UserChurros): Promise<boo
             return false;
         }
 
-        const { create, update } = formatUserForPrisma(userChurros);
+        const { create, update } = await formatUserForPrisma(userChurros);
 
         //met a jour ou crée l'utilisateur
         await prisma.user.upsert({   
@@ -41,30 +41,61 @@ export async function userChurrosToPrisma(userChurros: UserChurros): Promise<boo
 }
 
 /**
+ * Verifie que c'est un groupe d'Intégration en testant si le nom du groupe correspond au format "groupe-*-202*"
+ * @param chaine le nom du groupe à tester
+ * @returns true si c'est un groupe d'intégration, false sinon
+ */
+function FormatGroupInte(chaine: string): boolean {
+    const modeleGroupInte = /^groupe-.*-202.*$/;
+    
+    return modeleGroupInte.test(chaine);
+}
+
+/**
  * Formate un utilisateur Churros pour l'adapter au format actuel en base de données
+ * Et ajoute les groupes de l'utilisateur dans la base de données s'ils n'y sont pas déjà
  * @param userChurros L'utilisateur à formater
  * @returns Les données formatées pour la création et la mise à jour
  */
-function formatUserForPrisma(userChurros: UserChurros): {
+async function formatUserForPrisma(userChurros: UserChurros): Promise<{
     create: Prisma.UserCreateInput;
     update: Prisma.UserUpdateInput;
-} { 
-    console.log('GROUPES:', JSON.stringify(userChurros.churrosGroups, null, 2));
+}> { 
+    console.log('GROUPES:', JSON.stringify(userChurros.churrosGroups, null, 2)); //debug
     console.log('Formatting user for Prisma:', userChurros); //debug
+
+    let groupInteId = null;
+    let groupBoard = []
+        // Parcours les groupes reçu de Authentik de l'utilisateurs
+        for (const group of userChurros.churrosGroups ) {
+            // Teste si le groupe est dans la db
+            try {
+                if (FormatGroupInte(group.group.uid)) {
+                    groupInteId = group.group.uid;
+                    await prisma.GroupInte.findUnique({ where: { groupId: group.group } });
+                }else {
+                    await prisma.GroupClub.findUnique({ where: { groupId: group.group } });
+                }
+            } 
+            catch (error) {
+                //si le groupe n'est pas dans la db on synchronise le groupes de churros avec la db
+                await syncGroupFromChurros(group.group.uid);
+            }
+
+            // On vérifie si l'utilisateur est dans un bureau du groupe et si oui on le connecte au groupe en base de données
+            if (group.secretary || group.president || group.vicePresident || group.treasurer) {
+                groupBoard.push(group.group);
+            }
+        }
+
         const commonData = {
         name: userChurros.fullName,
         profilePictureURL: userChurros.pictureURL ,
         isAdmin: false,
         is1A: userChurros.yearTier === 1 ? true : false,
-        /*group : userChurros.churrosGroups,
-        groupBoard : userChurros.churrosGroups.filter(g => g.secretary || g.president || g.vicePresident || g.treasurer).map(g => g.group),
-        if (userChurros.yearTier === 1) {
-            for (i in GroupInte) {
-                for (j in userChurros.churrosGroups) {
-                    if (userChurros.churrosGroups[j].group === groupInte[i].groupid) {
-                        groupInteId : i;
-                    }}}
-        }*/
+        group : userChurros.churrosGroups,
+        groupBoard : groupBoard,
+        groupInteId : groupInteId
 
     };
 

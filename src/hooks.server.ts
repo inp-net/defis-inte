@@ -21,3 +21,4 @@ const handlePerms: Handle = async ({ event, resolve }) => {
 };
 
 export const handle: Handle = sequence(handleAuth, handlePerms);
+
