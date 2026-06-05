@@ -37,7 +37,7 @@
     // Options du Select
     let clubOptions: string[] = $derived(data.clubs.map(c => c.name));
     let locationOptions: string[] = $derived(data.locations.map(l => l.name));
-    let uploadTypes: string[] = Object.values(UploadType);
+    let uploadTypes: string[] = Object.values(UploadType).map(l => l.toUpperCase());
     let presetPoints = [10, 20, 50, 80, 100];
 
     /** Fonction envoie du formulaire à l'api api/challenge. */
