@@ -15,6 +15,7 @@
     // Va stocker temporairement et localement les défis qui viennent d'être
     // accepté pour ne pas refaire une requête serveur.
     let successChallengeIds = $state<number[]>([]);
+    let deletedChallengeIds = $state<number[]>([]);
 
     const {
         groupName = "",
@@ -31,6 +32,7 @@
 
     async function handleDelete(id : number) {
         await onChallengeDeleted(id);
+        deletedChallengeIds.push(id);
     }
 
 </script>
@@ -50,7 +52,7 @@
                     <Flex wrap={false} gap="xs">
                         {#if (challenge.defiAccepte || successChallengeIds.includes(challenge.challengeId)) && !challenge.isDeleted}
                             <Check />
-                        {:else if challenge.isDeleted}
+                        {:else if challenge.isDeleted || deletedChallengeIds.includes(challenge.challengeId)}
                             <XIcon />
                         {/if}
                         <p>{challenge.name}</p>
@@ -62,14 +64,14 @@
                             icon={XIcon}
                             class="danger"
                             name="Delete"
-                            disabled={challenge.defiAccepte || successChallengeIds.includes(challenge.challengeId) || challenge.isDeleted} 
+                            disabled={challenge.defiAccepte || successChallengeIds.includes(challenge.challengeId) || challenge.isDeleted || deletedChallengeIds.includes(challenge.challengeId)} 
                             onclick={() => handleDelete(challenge.challengeId)}
                         />
                         <Button
                             icon={Check}
                             class="success"
                             name="Success"
-                            disabled={challenge.defiAccepte || successChallengeIds.includes(challenge.challengeId) || challenge.isDeleted} 
+                            disabled={challenge.defiAccepte || successChallengeIds.includes(challenge.challengeId) || challenge.isDeleted || deletedChallengeIds.includes(challenge.challengeId)} 
                             onclick={() => handleAccept(challenge.challengeId)}
                         />
                     </Flex>

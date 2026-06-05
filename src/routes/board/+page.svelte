@@ -2,7 +2,7 @@
 
     import type { PageData } from '../$types';
     import type { GroupChallenge } from '$lib/types/types.d';
-    import { Flex, Stack, Frame, Button } from 'azucar-ui';
+    import { Flex, Stack } from 'azucar-ui';
     import Filters from '$lib/components/Filters.svelte';
     import ChallengesToAccept from '$lib/components/ChallengesToAccept.svelte';
 
