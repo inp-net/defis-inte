@@ -5,6 +5,7 @@
     import { Flex, Stack } from 'azucar-ui';
     import Filters from '$lib/components/Filters.svelte';
     import ChallengesToAccept from '$lib/components/ChallengesToAccept.svelte';
+    import BackButton from '$lib/components/BackButton.svelte';
 
     let { data }: { data: PageData } = $props();
     let groupChallenge : GroupChallenge[] = $state(data.posts.challenges);
@@ -88,6 +89,7 @@
 
 <Flex direction="column" gap="xxl" margin="lg">
     <Stack>
+        <BackButton />
         <h2>Défis proposés</h2>
     </Stack>
     <Stack style="max-width: 100%; min-width: 0; overflow: hidden;">
