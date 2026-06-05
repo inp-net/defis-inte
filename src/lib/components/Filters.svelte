@@ -85,6 +85,7 @@
     }
 
     .scrollable {
+        padding: var(--size-xxs) 0px; 
         width: 100%; 
         overflow-x: auto; 
         -webkit-overflow-scrolling: touch;
