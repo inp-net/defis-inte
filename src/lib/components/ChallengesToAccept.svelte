@@ -2,12 +2,14 @@
 
     import type { ChallengeRead } from '$lib/types/types.d';
     import { Avatar, Flex, Frame, Button } from 'azucar-ui'
+    import { Check, XIcon } from '@lucide/svelte'
 
     type Prop = {
         groupName: string,
         groupURL: string,
         challenges: ChallengeRead[],
         onChallengeApprouved : (id: number) => void
+        onChallengeDeleted : (id: number) => void
     };
 
     // Va stocker temporairement et localement les défis qui viennent d'être
@@ -18,12 +20,17 @@
         groupName = "",
         groupURL = "",
         challenges = [],
-        onChallengeApprouved
+        onChallengeApprouved,
+        onChallengeDeleted
     }: Prop = $props();
 
     async function handleAccept(id : number) {
         await onChallengeApprouved(id);
         successChallengeIds.push(id);
+    }
+
+    async function handleDelete(id : number) {
+        await onChallengeDeleted(id);
     }
 
 </script>
@@ -39,14 +46,32 @@
 
         {#each challenges as challenge}
             <Frame>
-                <Flex justify="space-between" align="center">
-                    <Flex wrap={false} style="flex: 1 1 auto; min-width: 150px; white-space: normal; word-break: break-word;" gap="xs">
+                <Flex justify="space-between" align="center" gap="md">
+                    <Flex wrap={false} gap="xs">
+                        {#if (challenge.defiAccepte || successChallengeIds.includes(challenge.challengeId)) && !challenge.isDeleted}
+                            <Check />
+                        {:else if challenge.isDeleted}
+                            <XIcon />
+                        {/if}
                         <p>{challenge.name}</p>
                         <p><b>{challenge.nbPoints} points</b></p>
                     </Flex>
-                    <Flex style="flex-shrink: 0; margin-between: auto; margin-left: auto;">
-                        <Button disabled={challenge.defiAccepte || successChallengeIds.includes(challenge.challengeId)} onclick={() => handleAccept(challenge.challengeId)}> Accepter le défi </Button>
-                        <Button href="/challenge/{challenge.challengeId}"> Modifier </Button>
+                    <Flex style="flex-shrink: 0; margin-left: auto;" gap="xs">
+                        <Button href="/challenge/{challenge.challengeId}" variant="outline"> Modifier </Button>
+                        <Button
+                            icon={XIcon}
+                            class="danger"
+                            name="Delete"
+                            disabled={challenge.defiAccepte || successChallengeIds.includes(challenge.challengeId) || challenge.isDeleted} 
+                            onclick={() => handleDelete(challenge.challengeId)}
+                        />
+                        <Button
+                            icon={Check}
+                            class="success"
+                            name="Success"
+                            disabled={challenge.defiAccepte || successChallengeIds.includes(challenge.challengeId) || challenge.isDeleted} 
+                            onclick={() => handleAccept(challenge.challengeId)}
+                        />
                     </Flex>
                 </Flex>
             </Frame>

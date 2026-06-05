@@ -57,6 +57,32 @@
             console.error("Erreur lors de l'envoi du form : ", err);
         }
     }
+
+    async function deleteChallenge(id: number): Promise<void> {
+        try {
+            const formData = new FormData();
+            formData.append('challengeId', id.toString());
+
+            const response = await fetch('?/delete', {
+                method: 'POST',
+                headers: { 'x-sveltekit-action': 'true', },
+                body: formData
+            });
+            if (response.ok) {
+                const result = await response.json();
+                if (result.type === 'failure') {
+                    console.error("Erreur de validation :", result.data?.message);
+                    return;
+                }
+                const challenge = groupChallenge.find(c => c.challengeId === id);
+                if (challenge) {
+                    challenge.defiAccepte = true
+                }
+            }
+        } catch(err) {
+            console.error("Erreur lors de l'envoi du form : ", err);
+        }
+    }
     
 </script>
 
@@ -76,6 +102,7 @@
                     groupURL={group.groupURL}
                     challenges={group.challenges}
                     onChallengeApprouved={approuveChallenge}
+                    onChallengeDeleted={deleteChallenge}
                 />
             {/each}
         </Flex>

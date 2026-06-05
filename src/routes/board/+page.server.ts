@@ -1,7 +1,7 @@
 import type { PageServerLoad } from './$types';
 import type { GroupChallenge } from '$lib/types/types.d.ts';
 import { fail, type Actions } from '@sveltejs/kit';
-import { acceptChallenge } from '$lib/server/challengeService';
+import { acceptChallenge, deleteChallenge } from '$lib/server/challengeService';
 import prisma from "$lib/prisma";
 
 export const load: PageServerLoad = async () => {
@@ -46,6 +46,26 @@ export const actions: Actions = {
             console.error('Action Error:', error);
             return fail(500, { 
                 message: 'Impossible accepter le défi' 
+            });
+        }
+    },
+    delete: async ({ request }) => {
+        const data = await request.formData();
+        const challengeId = data.get('challengeId');
+
+        try {
+            await deleteChallenge(challengeId);
+            return { success: true, };
+        } catch (error: any) {
+            if (error.status && error.message) {
+                return fail(error.status, { 
+                    message: error.message,
+                    challengeId
+                });
+            }
+            console.error('Action Error:', error);
+            return fail(500, { 
+                message: 'Impossible de supprimer le défi', error
             });
         }
     }

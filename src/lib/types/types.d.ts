@@ -16,7 +16,7 @@ export type {
 export type GroupLeaderboard = Pick<GroupInte, "name", "pictureURL", "points"> | null;
 
 // Type Challenge Read utilisé uniquement pour l'affichage UI du challenge
-export type ChallengeRead = Pick<Challenge, "challengeId", "name", "description", "groupInteSucceed", "type", "nbPoints", "locationName", "challengeId", "defiAccepte">;
+export type ChallengeRead = Pick<Challenge, "challengeId", "name", "description", "groupInteSucceed", "type", "nbPoints", "locationName", "challengeId", "defiAccepte", "isDeleted">;
 
 export type ChallengeInput = {
     name: string;
@@ -24,7 +24,6 @@ export type ChallengeInput = {
     groupId: string;
     type: UploadType;
     nbPoints: number;
-    difficulty: Difficulty;
     locationName: string;
 };
 

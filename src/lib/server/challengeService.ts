@@ -98,6 +98,10 @@ export async function acceptChallenge(challengeIdRaw: any) {
         throw { status: 409, message: 'challenge déjà accepté' };
     }
 
+    if (challengeExist.isDeleted) {
+        throw { status: 409, message: 'challenge supprimé' };
+    }
+
     // TODO utiliser un vrai UUID
     const fallbackUserId = "00000000-0000-0000-0000-000000000000"; 
 
@@ -116,4 +120,29 @@ export async function acceptChallenge(challengeIdRaw: any) {
     });
 
     return updatedChallenge;
+}
+
+
+/** Supprimer un défi. */
+export async function deleteChallenge(challengeIdRaw: any) {
+    if (!challengeIdRaw || isNaN(Number(challengeIdRaw))) {
+        throw { status: 400, message: 'challengeId invalide' };
+    }
+
+    const idToFind = parseInt(challengeIdRaw, 10);
+
+    const challengeExist = await prisma.challenge.findUnique({
+        where: { challengeId: idToFind }
+    });
+
+    if (!challengeExist) {
+        throw { status: 404, message: 'challengeId introuvable' };
+    }
+
+    await prisma.challenge.update({
+        where: { challengeId: idToFind },
+        data: {
+            isDeleted: true,
+        }
+    });
 }
