@@ -1,7 +1,8 @@
 <script lang="ts">
 
     import type { ChallengeRead } from '$lib/types/types.d';
-    import { Avatar, Flex, Frame, Button } from 'azucar-ui'
+    import { Avatar, Flex, Frame} from 'azucar-ui'
+    import FrameChallenge from './FrameChallenge.svelte';
 
     type Prop = {
         groupName: string,
@@ -26,17 +27,7 @@
     </Frame>
     <Flex gap="xs" direction="column">
         {#each challenges as challenge}
-            <Frame>
-                <Flex justify="space-between" align="center">
-                    <Flex wrap={false} style="flex: 1 1 auto; min-width: 150px; white-space: normal; word-break: break-word;" gap="xs">
-                        <p>{challenge.name}</p>
-                        <p><b>{challenge.nbPoints} points</b></p>
-                    </Flex>
-                    <Flex style="flex-shrink: 0; margin-between: auto; margin-left: auto;">
-                        <Button href="/{challenge.challengeId}"> Valider </Button>
-                    </Flex>
-                </Flex>
-            </Frame>
+            <FrameChallenge name={challenge.name} nbPoints={challenge.nbPoints} isText={challenge.type === "text"} desc={challenge.description} ></FrameChallenge>
         {/each}
     </Flex>
 </Flex>
