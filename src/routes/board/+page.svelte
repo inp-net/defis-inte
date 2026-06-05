@@ -8,10 +8,28 @@
 
     let { data }: { data: PageData } = $props();
     let groupChallenge : GroupChallenge[] = $state(data.posts.challenges);
+<<<<<<< HEAD
 
     $effect(() => {
         groupChallenge = data.posts.challenges;
     })
+=======
+
+    $effect(() => {
+        groupChallenge = data.posts.challenges;
+    })
+
+    // Extrait les nom des groupes clubs qui peuvent être filtrés.
+    // let filterNames = $derived(groupChallenge.map(challenge => challenge.name));
+    //
+    //
+    // // Sous liste de groupes filtrés.
+    // let activeChallenges = $derived(
+    //     activeIndexes.length === 0 
+    //         ? groupChallenge
+    //         : groupChallenge.filter((_, index) => activeIndexes.includes(index))
+    // );
+>>>>>>> 271b554 (feat(ui): accepter un défi et db mise à jour)
 
     // Filtres actifs sur défis.
     let activeIndexes = $state<number[]>([]);
@@ -34,6 +52,7 @@
 
     async function approuveChallenge(id: number): Promise<void> {
         try {
+<<<<<<< HEAD
             const formData = new FormData();
             formData.append('challengeId', id.toString());
 
@@ -75,10 +94,25 @@
                     return;
                 }
                 const challenge = groupChallenge.find(c => c.challengeId === id);
+=======
+
+            const response = await fetch('/api/challenge/accept', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ challengeId: id })
+            });
+            
+            if (response.ok) {
+                const challenge = group.challenge.find(c => c.challengeId === id);
+>>>>>>> 271b554 (feat(ui): accepter un défi et db mise à jour)
                 if (challenge) {
                     challenge.defiAccepte = true
                 }
             }
+<<<<<<< HEAD
+=======
+
+>>>>>>> 271b554 (feat(ui): accepter un défi et db mise à jour)
         } catch(err) {
             console.error("Erreur lors de l'envoi du form : ", err);
         }
@@ -102,7 +136,10 @@
                     groupURL={group.groupURL}
                     challenges={group.challenges}
                     onChallengeApprouved={approuveChallenge}
+<<<<<<< HEAD
                     onChallengeDeleted={deleteChallenge}
+=======
+>>>>>>> 271b554 (feat(ui): accepter un défi et db mise à jour)
                 />
             {/each}
         </Flex>
