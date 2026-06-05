@@ -8,15 +8,25 @@
         groupURL: string,
         validChallenges: ChallengeRead[],
         pendingChallenges: ChallengeRead[],
-
+        challenges: ChallengeRead[],
+        onChallengeApprouved : (id: number) => void
     };
+
+    // Va stocker temporairement et localement les défis qui viennent d'être
+    // accepté pour ne pas refaire une requête serveur.
+    let successChallengeIds = $state<number[]>([]);
 
     const {
         groupName = "",
         groupURL = "",
-        validChallenges = [],
-        pendingChallenges = [],
+        challenges = [],
+        onChallengeApprouved
     }: Prop = $props();
+
+    async function handleAccept(id : number) {
+        await onChallengeApprouved(id);
+        successChallengeIds.push(id);
+    }
 
 </script>
 
@@ -29,7 +39,7 @@
     </Frame>
     <Flex gap="xs" direction="column">
 
-        {#each pendingChallenges as challenge}
+        {#each challenges as challenge}
             <Frame>
                 <Flex justify="space-between" align="center">
                     <Flex wrap={false} style="flex: 1 1 auto; min-width: 150px; white-space: normal; word-break: break-word;" gap="xs">
@@ -37,22 +47,7 @@
                         <p><b>{challenge.nbPoints} points</b></p>
                     </Flex>
                     <Flex style="flex-shrink: 0; margin-between: auto; margin-left: auto;">
-                        <Button> Accepter le défi </Button>
-                        <Button href="/challenge/{challenge.challengeId}"> Modifier </Button>
-                    </Flex>
-                </Flex>
-            </Frame>
-        {/each}
-
-        {#each validChallenges as challenge}
-            <Frame>
-                <Flex justify="space-between" align="center">
-                    <Flex wrap={false} style="flex: 1 1 auto; min-width: 150px; white-space: normal; word-break: break-word;" gap="xs">
-                        <p>{challenge.name}</p>
-                        <p><b>{challenge.nbPoints} points</b></p>
-                    </Flex>
-                    <Flex style="flex-shrink: 0; margin-between: auto; margin-left: auto;">
-                        <Button disabled={challenge.defiAccepte}> Accepter le défi </Button>
+                        <Button disabled={challenge.defiAccepte || successChallengeIds.includes(challenge.challengeId)} onclick={() => handleAccept(challenge.challengeId)}> Accepter le défi </Button>
                         <Button href="/challenge/{challenge.challengeId}"> Modifier </Button>
                     </Flex>
                 </Flex>

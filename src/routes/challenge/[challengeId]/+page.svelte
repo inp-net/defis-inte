@@ -50,7 +50,7 @@
         try {
             isSubmitting = true;
 
-            const response = await fetch('/api/challenge', {
+            const response = await fetch('/api/challenge/create-modify', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(formState)
