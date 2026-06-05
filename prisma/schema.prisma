@@ -13,22 +13,15 @@ datasource db {
 }
 
 enum UploadType {
-  photo
-  video
-  text
+  PHOTO
+  VIDEO
+  TEXT
 }
 
 enum Status {
-  pending
-  valid
-  denied
-}
-
-enum Difficulty {
-  easy
-  medium
-  hard
-  impossible
+  PENDING
+  VALID
+  DENIED
 }
 
 model User {
@@ -124,7 +117,7 @@ model Challenge {
   userId String
 
   // Qui a accepté la proposition de défi ?
-  userAcceptId String
+  userAcceptId String?
   defiAccepte  Boolean @default(false)
 
   // Quel groupe d'inté à réussi le defi ?
@@ -134,7 +127,6 @@ model Challenge {
 
   // Que vaut le défi ?
   nbPoints   Int        @default(0)
-  difficulty Difficulty @default(easy)
 
   // Où se situe le défi ?
   locationName String   @default("ENSEEIHT")
