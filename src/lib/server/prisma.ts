@@ -1,5 +1,5 @@
 import type { UserChurros } from '$lib/types/types';
-import { PrismaClient, Prisma } from '@prisma/client';
+import { PrismaClient, Prisma } from '../../../prisma/generated/prisma/client';
 import { PrismaPg } from '@prisma/adapter-pg';
 import { DATABASE_URL } from '$env/static/private';
 import { syncGroupFromChurros } from './pullChurrosData';

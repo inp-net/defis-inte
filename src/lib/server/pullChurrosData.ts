@@ -1,9 +1,4 @@
 // Récupèrer des données de churros 
-
-import type { UserChurros } from '$lib/types/types';
-import { PrismaClient, Prisma } from '@prisma/client';
-import { PrismaPg } from '@prisma/adapter-pg';
-import { DATABASE_URL } from '$env/static/private';
 import {prisma} from '$lib/server/prisma'
 
 

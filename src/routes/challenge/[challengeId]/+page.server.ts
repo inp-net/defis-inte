@@ -2,7 +2,7 @@ import { saveChallenge } from '$lib/server/challengeService'
 import type { Actions } from './$types';
 import { fail } from '@sveltejs/kit';
 import type { PageServerLoad } from "./$types";
-import prisma from "$lib/prisma";
+import {prisma} from "$lib/server/prisma";
 
 export const load: PageServerLoad = async ({ params }) => {
     const clubs = await prisma.groupClub.findMany({});

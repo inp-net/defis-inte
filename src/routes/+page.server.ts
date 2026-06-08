@@ -1,6 +1,15 @@
 import type { PageServerLoad } from './$types';
-import type { GroupChallenge, ChallengeRead } from '$lib/types/types.d.ts';
-import prisma from "$lib/prisma";
+import type { GroupChallenge, ChallengeRead } from '$lib/types/types.d';
+import {prisma} from "$lib/server/prisma";
+
+//debug
+const fields = await prisma.$queryRaw`
+  SELECT column_name FROM information_schema.columns 
+  WHERE table_name = 'Challenge'
+`;
+console.log(fields);
+console.log(Object.keys(prisma.challenge.fields));
+//debug
 
 export const load: PageServerLoad = async () => {
 

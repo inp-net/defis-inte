@@ -38,9 +38,5 @@
 
 </Flex>
 
-
-<!--     <button onclick={() => signIn("authentik", { callbackUrl: "/home"})}>
-        Se connecter
-    </button>-->
 <style>
 </style>

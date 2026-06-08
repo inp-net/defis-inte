@@ -2,7 +2,7 @@ import type { PageServerLoad } from './$types';
 import type { GroupChallenge } from '$lib/types/types.d.ts';
 import { fail, type Actions } from '@sveltejs/kit';
 import { acceptChallenge, deleteChallenge } from '$lib/server/challengeService';
-import prisma from "$lib/prisma";
+import {prisma} from "$lib/server/prisma";
 
 export const load: PageServerLoad = async () => {
 

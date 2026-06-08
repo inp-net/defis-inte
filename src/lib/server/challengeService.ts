@@ -1,6 +1,6 @@
-import prisma from '$lib/prisma';
+import {prisma} from '$lib/server/prisma';
 import { error } from '@sveltejs/kit';
-import { UploadType } from '@prisma/client';
+import { UploadType } from '../../../prisma/generated/prisma/enums';
 
 export interface ChallengeInput {
     challengeId?: string | number | null;
