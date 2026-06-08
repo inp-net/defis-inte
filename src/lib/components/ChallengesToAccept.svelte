@@ -1,14 +1,15 @@
 <script lang="ts">
 
     import type { ChallengeRead } from '$lib/types/types.d';
-    import { Avatar, Flex, Frame, Button } from 'azucar-ui'
-    import { Check, XIcon } from '@lucide/svelte'
+    import { Avatar, Flex, Frame, Button } from 'azucar-ui';
+    import EditableChallenge from '$lib/components/EditableChallenge.svelte';
 
     type Prop = {
         groupName: string,
         groupURL: string,
         challenges: ChallengeRead[],
-        onChallengeApproved : (id: number) => void
+        hideDone: boolean,
+        onChallengeApprouved : (id: number) => void
         onChallengeDeleted : (id: number) => void
     };
 
@@ -21,18 +22,19 @@
         groupName = "",
         groupURL = "",
         challenges = [],
-        onChallengeApproved,
+        hideDone = $bindable(),
+        onChallengeApprouved,
         onChallengeDeleted
     }: Prop = $props();
 
     async function handleAccept(id : number) {
-        await onChallengeApproved(id);
-        successChallengeIds.push(id);
+        await onChallengeApprouved(id);
+        successChallengeIds = [...successChallengeIds, id];
     }
 
     async function handleDelete(id : number) {
         await onChallengeDeleted(id);
-        deletedChallengeIds.push(id);
+        deletedChallengeIds = [...deletedChallengeIds, id];
     }
 
 </script>
@@ -47,36 +49,18 @@
     <Flex gap="xs" direction="column">
 
         {#each challenges as challenge}
-            <Frame>
-                <Flex justify="space-between" align="center" gap="md">
-                    <Flex wrap={false} gap="xs">
-                        {#if (challenge.defiAccepte || successChallengeIds.includes(challenge.challengeId)) && !challenge.isDeleted}
-                            <Check />
-                        {:else if challenge.isDeleted || deletedChallengeIds.includes(challenge.challengeId)}
-                            <XIcon />
-                        {/if}
-                        <p>{challenge.name}</p>
-                        <p><b>{challenge.nbPoints} points</b></p>
-                    </Flex>
-                    <Flex style="flex-shrink: 0; margin-left: auto;" gap="xs">
-                        <Button href="/challenge/{challenge.challengeId}" variant="outline"> Modifier </Button>
-                        <Button
-                            icon={XIcon}
-                            class="danger"
-                            name="Delete"
-                            disabled={challenge.defiAccepte || successChallengeIds.includes(challenge.challengeId) || challenge.isDeleted || deletedChallengeIds.includes(challenge.challengeId)} 
-                            onclick={() => handleDelete(challenge.challengeId)}
-                        />
-                        <Button
-                            icon={Check}
-                            class="success"
-                            name="Success"
-                            disabled={challenge.defiAccepte || successChallengeIds.includes(challenge.challengeId) || challenge.isDeleted || deletedChallengeIds.includes(challenge.challengeId)} 
-                            onclick={() => handleAccept(challenge.challengeId)}
-                        />
-                    </Flex>
-                </Flex>
-            </Frame>
+            <!-- ne pas afficher les Challenges dones si hideDone est true -->
+            {#if !hideDone || (!challenge.defiAccepte && !successChallengeIds.includes(challenge.challengeId))}
+                <EditableChallenge
+                    challengeId={challenge.challengeId}
+                    name={challenge.name}
+                    points={challenge.nbPoints}
+                    isApprouved={(challenge.defiAccepte || successChallengeIds.includes(challenge.challengeId)) && !challenge.isDeleted}
+                    isDisabled={challenge.isDeleted || deletedChallengeIds.includes(challenge.challengeId)}
+                    onAccepted={() => handleAccept(challenge.challengeId)}
+                    onDeleted={() => handleDelete(challenge.challengeId)}
+                />
+            {/if}
         {/each}
     </Flex>
 </Flex>
