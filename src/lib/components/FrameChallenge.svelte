@@ -21,7 +21,8 @@
 
 </script>
 
-<Frame border={true} shadow={true} onclick={() => isUnfolded = !isUnfolded}>
+<Frame border={true} shadow={true}>
+    <button class="no-style" onclick={() => isUnfolded = !isUnfolded}>
     <Flex justify="space-between" align="center" wrap={false} style="max-width: 100%; min-width: 0; overflow: hidden">
         <div class="scrollable" style="min-width: 0;">
             <p>{name}</p>
@@ -31,6 +32,7 @@
             <!-- <Button icon={isUnfolded ? ChevronUp : ChevronDown} onclick={() => isUnfolded = !isUnfolded} ></Button> -->
         </Flex>
     </Flex>
+    </button>
 
     {#if isUnfolded}
             <Flex 
@@ -62,5 +64,15 @@
 
     .scrollable::-webkit-scrollbar { 
         display: none; 
+    }
+
+    .no-style {
+        background: none;
+        color: inherit;
+        border: none;
+        padding: 0;
+        font: inherit;
+        cursor: pointer;
+        outline: inherit;
     }
 </style>
