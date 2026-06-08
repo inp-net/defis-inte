@@ -15,6 +15,9 @@
     <Stack> 
         <h1>Défis d'inté</h1>
     </Stack>
+
+    <img src="/static/logo/logoAE.jpg" alt="AE">
+
     <!-- bouton pour se connecter avec authentik -->
     <Button onclick={() => signIn("authentik", { callbackUrl: "/"})}>
         Se connecter
