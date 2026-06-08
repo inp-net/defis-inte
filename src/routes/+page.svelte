@@ -77,6 +77,8 @@
                     name={challenge.name}
                     nbPoints={challenge.nbPoints}
                     isText={challenge.type === "TEXT"}
+                    location={challenge.locationName}
+                    clubName={challenge.groupName}
                     desc={challenge.description}
                 />
             {/each}

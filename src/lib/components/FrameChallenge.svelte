@@ -1,19 +1,23 @@
 <script lang="ts">
-    import { ChevronDown, ChevronUp, Upload } from '@lucide/svelte';
+    import { ChevronDown, ChevronUp, Upload, MapPin, Building } from '@lucide/svelte';
     import { Frame, Flex, Button } from 'azucar-ui';
     import UploadProof from './UploadProof.svelte';
     
     type Prop = {
-        name: string
-        nbPoints: number
-        isText: boolean
-        desc?: string | null
+        name: string,
+        nbPoints: number,
+        isText: boolean,
+        location: string,
+        clubName: stirng,
+        desc?: string | null,
     }
 
     const {
         name = "",
         nbPoints = 0,
         isText = true,
+        location,
+        clubName,
         desc,
     }: Prop = $props();
 
@@ -40,12 +44,17 @@
     {#if isUnfolded}
             <Flex 
             direction="column" 
+            gap="md"
             style="
                 margin-top: 8px; 
                 width: 95%; 
                 padding-top: 12px; 
                 border-top: 1px solid #eaeaea;
             ">
+                <Flex gap="xs" direction="column">
+                    <Flex gap="xs" align="center"><Building size="15px"/> {clubName}</Flex>
+                    <Flex gap="xs" align="center"><MapPin size="15px"/> {location}</Flex>
+                </Flex>
                 <UploadProof desc={desc} isText={isText}></UploadProof>
             </Flex>
         {/if}
