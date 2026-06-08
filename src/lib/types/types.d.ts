@@ -1,0 +1,31 @@
+import type {
+    User,
+    GroupClub,
+    GroupInte,
+    Proof,
+    Challenge,
+    Location,
+    UploadType
+} from '@prisma/client';
+
+export type {
+    Challenge
+}
+
+// Type GroupLeaderboard utilisé pour l'affichage du classement
+export type GroupLeaderboard = Pick<GroupInte, "name", "pictureURL", "points"> | null;
+
+// Type Challenge Read utilisé uniquement pour l'affichage UI du challenge
+export type ChallengeRead = Pick<Challenge, "challengeId", "name", "description", "groupInteSucceed", "type", "nbPoints", "locationName", "challengeId", "defiAccepte", "isDeleted">;
+
+export type ChallengeInput = {
+    name: string;
+    description: string | null;
+    groupId: string;
+    type: UploadType;
+    nbPoints: number;
+    locationName: string;
+};
+
+// Type Group Challenge réunit les ChallengeRead dans des groupes
+export type GroupChallenge = Pick<GroupClub, "name", "pictureURL"> & {challenges: ChallengeRead[]};

@@ -8,6 +8,7 @@
         size?: 'small' | 'large';
         firstName: string;
         lastName: string;
+        hideName?: boolean; // Will hide the name on small screens
     };
 
     const {
@@ -15,17 +16,20 @@
         alt = 'Avatar',
         size = 'small',
         firstName,
-        lastName
+        lastName,
+        hideName = false
     }: Props = $props();
 
 </script>
 
 <Flex align="center" gap="md">
     <Avatar src={src} alt={alt} size={size} />
-    <Flex direction="column" gap="xxs">
-        <h4 class={`title-${size}`}>{firstName}</h4>
-        <h4 class={`title-${size}`}>{lastName}</h4>
-    </Flex>
+    <div class:hidden-mobile={hideName}>
+        <Flex direction="column" gap="xxs">
+            <h4 class={`title-${size}`}>{firstName}</h4>
+            <h4 class={`title-${size}`}>{lastName}</h4>
+        </Flex>
+    </div>
 </Flex>
 
 <style>
@@ -35,5 +39,11 @@
 
     .title-small {
         font-size: var(--size-md);
+    }
+
+    @media (max-width: 767px) {
+        .hidden-mobile {
+            display: none;
+        }
     }
 </style>
