@@ -8,7 +8,12 @@ export const load: PageServerLoad = async () => {
 
     const clubsWithChallenges = await prisma.groupClub.findMany({
         include: {
-            challenge: true,
+            challenge: {
+                orderBy: {
+                    // Trier dans l'ordre de création
+                    challengeId: 'desc',
+                },
+            }
         },
     });
 
