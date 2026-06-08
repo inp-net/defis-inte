@@ -1,7 +1,6 @@
 <script lang="ts">
 
     import type { PageData } from './$types';
-    import { onMount } from 'svelte';
     import { Flex, Stack } from 'azucar-ui';
     import type { ChallengeRead } from '$lib/types/types.d.ts';
     import Header from '$lib/components/Header.svelte';
@@ -14,33 +13,44 @@
     let { data }: { data: PageData } = $props();
     let challenges : ChallengeRead[] = $state(data.posts.challenges);
 
+    // Recherche de défis
+
+    let searchValue : string = $state("");
+    let searchedItems = $derived(
+        challenges.filter(
+            (a) => {
+                // On met tout en minuscule moins sensible
+                const search = searchValue.toLowerCase();
+                if (!search) return true;
+                // True ou false si contient
+                const containsName = a.name.toLowerCase().includes(search);
+                const containsClub = a.groupName.toLowerCase().includes(search);
+                return containsName || containsClub;
+            }
+        )
+    );
+
+    // Trier les défis
+
     const sortList : string[] = ["points", "clubs", "lieux", "date"];
     let sortBind : string = $state(sortList[0]);
-
-    let sortChallenge = (option: string, desc: boolean) => {
-        // Convertie le boolean 0 et 1 en -1 et 1
-        let flip = 2 * Number(desc) - 1;
-        console.log(option);
-        switch(option) {
+    let isSortDesc = $state(true);
+    let sortedSearchedChallenges = $derived.by(() => {
+        const items = [...searchedItems]; 
+        const flip = isSortDesc ? 1 : -1;
+        switch(sortBind) {
             case "points":
-                challenges.sort((a, b) => flip * (Number(b.nbPoints) - Number(a.nbPoints)));
-                break;
+                return items.sort((a, b) => flip * (Number(b.nbPoints) - Number(a.nbPoints)));
             case "clubs":
-                challenges.sort((a, b) => flip * b.groupName.localeCompare(a.groupName))
-                break;
+                return items.sort((a, b) => flip * b.groupName.localeCompare(a.groupName));
             case "lieux":
-                challenges.sort((a, b) => flip * b.locationName.localeCompare(a.locationName))
-                break;
+                return items.sort((a, b) => flip * (b.locationName || "").localeCompare(a.locationName || ""));
             case "date":
-                challenges.sort((a, b) => flip * (b.challengeId - a.challengeId))
-                break;
-        };
-    };
-
-    onMount(() => {
-        // trie les défis par points au lancement
-        sortChallenge("points", true);
-	});
+                return items.sort((a, b) => flip * (b.challengeId - a.challengeId));
+            default:
+                return items;
+        }
+    });
 
 </script>
 
@@ -58,11 +68,11 @@
 
     <Stack style="max-width: 100%; min-width: 0; overflow: hidden;">
         <Flex gap="xs" wrap={false} align="center">
-            <SearchBar />
-            <Sort bind={sortBind} options={sortList} onSorted={sortChallenge}/>
+            <SearchBar bind:value={searchValue} />
+            <Sort bind:bind={sortBind} options={sortList} bind:isDesc={isSortDesc} />
         </Flex>
         <Flex gap="xs" direction="column" style="max-width: 100%; width: 100%;" wrap={false}>
-            {#each challenges as challenge}
+            {#each sortedSearchedChallenges as challenge}
                 <FrameChallenge
                     name={challenge.name}
                     nbPoints={challenge.nbPoints}

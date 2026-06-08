@@ -6,16 +6,16 @@
     type Props = {
         bind: string,
         options: string[],
+        isDesc: boolean,
         onSorted?: (option: string, desc: boolean) => void;
     }
 
     let {
         bind = $bindable(),
         options = [],
+        isDesc = $bindable(true),
         onSorted
     }: Props = $props();
-
-    let descSort = $state(true);
 
     function capitalizeFirstLetter(val : string) {
         return String(val).charAt(0).toUpperCase() + String(val).slice(1);
@@ -26,13 +26,13 @@
      * @param option: string l'option cliqué.
      */
     function handleInternalClick(option: string) {
-        onSorted?.(option, descSort);
+        onSorted?.(option, isDesc);
     }
 
     /** FlipFlop pour trier dans l'ordre croissant ou décroissant. */
     function flipSortType() {
-        descSort = !descSort;
-        onSorted?.(bind, descSort);
+        isDesc = !isDesc;
+        onSorted?.(bind, isDesc);
     }
 
 </script>
@@ -46,7 +46,7 @@
 
     <Button variant="outline">
         
-        {#if descSort}
+        {#if isDesc}
             <ArrowUp size="20px" onclick={() => flipSortType()} />
         {:else}
             <ArrowDown size="20px" onclick={() => flipSortType()}/>
