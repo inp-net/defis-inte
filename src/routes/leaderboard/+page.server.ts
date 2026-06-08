@@ -1,16 +1,22 @@
 import type { PageServerLoad } from './$types';
 import type { GroupLeaderboard } from '$lib/types/types.d.ts';
+import prisma from "$lib/prisma";
 
 export const load: PageServerLoad = async ({ params }) => {
 
     // TODO récupérer groups de la DB.
     // Ils doivent arriver trier dans la page
-    const groups : GroupLeaderboard[] = [
-        { name: "Groupe 8", points: "1025" },
-        { name: "Groupe 9", points: "224" },
-        { name: "7Groupe7", points: "24" },
-        { name: "Un group qui possède un nom très long", points: "0" },
-    ];
+
+    const groups: GroupLeaderboard[] = await prisma.groupInte.findMany({
+    orderBy: {
+        points: 'desc',
+    },
+    select: {
+        name: true,
+        pictureURL: true,
+        points: true,
+    }
+});
 
     const userGroup : GroupLeaderboard = { name: "Un group qui possède un nom très long", points: "0" };
 
