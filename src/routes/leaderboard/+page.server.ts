@@ -1,6 +1,7 @@
 import type { PageServerLoad } from './$types';
 import type { GroupLeaderboard } from '$lib/types/types.d.ts';
-import prisma from "$lib/prisma";
+import { prisma } from "$lib/server/prisma";
+
 
 export const load: PageServerLoad = async ({ params }) => {
 

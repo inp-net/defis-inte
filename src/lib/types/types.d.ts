@@ -6,7 +6,7 @@ import type {
     Challenge,
     Location,
     UploadType
-} from '@prisma/client';
+} from '../../../prisma/generated/prisma/client';
 
 export type {
     Challenge

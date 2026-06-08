@@ -3,7 +3,7 @@
     import Select from '$lib/components/Select.svelte';
     import ButtonGroupFix from '$lib/components/ButtonGroupFix.svelte';
     import BackButton from '$lib/components/BackButton.svelte';
-    import { UploadType } from '@prisma/client';
+    import { UploadType } from '../../../../prisma/generated/prisma/enums';
     import type { PageData } from './$types';
 
     import { Button, Flex, Stack, Frame, TextInput } from 'azucar-ui';
