@@ -32,12 +32,12 @@
 
 </script>
 
-<Frame border={true} shadow={true}>
+<Frame border={true}>
     <button class="no-style" style="width: 100%;" onclick={() => isUnfolded = !isUnfolded}>
         <!-- Forcer max-width et min-width permet de ne pas dépasser de l'écran et de laisser le nom avoir un scroll -->
         <Flex justify="space-between" align="center" gap="sm" wrap={false} style="max-width: 100%; min-width: 0; overflow: hidden; flex-grow: 1;">
             {#if clubUrl}
-                <img {clubUrl} {clubName} />
+                <img src={clubUrl} alt={clubName} />
             {:else}
                 <span class="initials">{initials(clubName)}</span>
             {/if}
@@ -89,8 +89,8 @@
     }
 
     img {
-        width: 100%;
-        height: 100%;
+        width: var(--size-lg);
+        height: var(--size-lg);
         object-fit: cover;
     }
 

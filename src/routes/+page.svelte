@@ -79,6 +79,7 @@
                     isText={challenge.type === "TEXT"}
                     location={challenge.locationName}
                     clubName={challenge.groupName}
+                    clubUrl="https://media.gettyimages.com/id/78038972/fr/photo/london-a-seven-foot-tall-waxwork-figure-of-movie-characture-shrek-is-unveiled-at-madame.jpg?s=612x612&w=gi&k=20&c=dq3bowem92dUWxW2DtFzCq6s4XTVxau7jN8afRSIBhM="
                     desc={challenge.description}
                 />
             {/each}

@@ -78,7 +78,7 @@ async function main() {
     );
 
     console.log("🎯 Seeding Mock Challenges...");
-    const nbChallenges = 50;
+    const nbChallenges = 350;
     const typeRenduOpts = ["PHOTO", "VIDEO", "TEXT"] as const; 
 
     const challenges = await Promise.all(
