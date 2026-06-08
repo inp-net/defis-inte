@@ -88,9 +88,10 @@
 </script>
 
 <Flex direction="column" gap="xxl" margin="lg">
-    <Stack>
+    <Stack align="baseline">
         <BackButton />
-        <h2>Défis proposés</h2>
+        <h2>Board admin</h2>
+        <p>Toutes les fonctionnalités admin.</p>
     </Stack>
     <Stack style="max-width: 100%; min-width: 0; overflow: hidden;">
         <Filters
