@@ -1,35 +1,28 @@
 import type { PageServerLoad } from './$types';
-import type { GroupChallenge } from '$lib/types/types.d.ts';
-import { fail, type Actions } from '@sveltejs/kit';
-import { acceptChallenge, deleteChallenge } from '$lib/server/challengeService';
+//import { fail, type Actions } from '@sveltejs/kit';
+//import { acceptChallenge, deleteChallenge } from '$lib/server/challengeService';
 import { prisma } from "$lib/server/prisma";
 
 export const load: PageServerLoad = async () => {
 
-    const clubsWithChallenges = await prisma.groupClub.findMany({
-        include: {
-            challenge: {
-                orderBy: {
-                    // Trier dans l'ordre de création
-                    challengeId: 'desc',
-                },
-            }
+    const proofs = await prisma.proof.findMany({
+        where: {
+            status: 'PENDING',
         },
+        include :{
+            user: true,
+            challenge: true,
+        }
     });
-
-    const challenges: GroupChallenge[] = clubsWithChallenges.map((club) => ({
-        name: club.name,
-        pictureURL: club.pictureURL ?? "",
-        challenges: club.challenge,
-    }))
 
     return {
         posts: {
-            challenges
+            proofs
         }
     };
 };
 
+/*
 export const actions: Actions = {
     accept: async ({ request }) => {
         const data = await request.formData();
@@ -75,3 +68,4 @@ export const actions: Actions = {
         }
     }
 };
+*/

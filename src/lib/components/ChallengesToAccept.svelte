@@ -8,7 +8,7 @@
         groupName: string,
         groupURL: string,
         challenges: ChallengeRead[],
-        onChallengeApprouved : (id: number) => void
+        onChallengeApproved : (id: number) => void
         onChallengeDeleted : (id: number) => void
     };
 
@@ -21,12 +21,12 @@
         groupName = "",
         groupURL = "",
         challenges = [],
-        onChallengeApprouved,
+        onChallengeApproved,
         onChallengeDeleted
     }: Prop = $props();
 
     async function handleAccept(id : number) {
-        await onChallengeApprouved(id);
+        await onChallengeApproved(id);
         successChallengeIds.push(id);
     }
 

@@ -33,7 +33,7 @@
             : sortedGroupsByChallenge.filter((_, index) => activeIndexes.includes(index))
     );
 
-    async function approuveChallenge(id: number): Promise<void> {
+    async function approveChallenge(id: number): Promise<void> {
         try {
             const formData = new FormData();
             formData.append('challengeId', id.toString());
@@ -104,7 +104,7 @@
                     groupName={group.name}
                     groupURL={group.groupURL}
                     challenges={group.challenges}
-                    onChallengeApprouved={approuveChallenge}
+                    onChallengeApproved={approveChallenge}
                     onChallengeDeleted={deleteChallenge}
                 />
             {/each}

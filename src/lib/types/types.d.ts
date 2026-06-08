@@ -29,5 +29,7 @@ export type ChallengeInput = {
     locationName: string;
 };
 
+export type ProofRead = Pick<Proof, "proofId", "user", "challenge", "status", "type", "content", "date", "media", "text">;
+
 // Type Group Challenge réunit les ChallengeRead dans des groupes
 export type GroupChallenge = Pick<GroupClub, "name", "pictureURL"> & {challenges: ChallengeRead[]};

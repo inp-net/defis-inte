@@ -81,7 +81,7 @@ model GroupInte {
 }
 
 model Proof {
-  proofId String @id @default(uuid())
+  proofId Int @id @default(autoincrement())
 
   // Qui a envoyé la preuve ?
   user   User   @relation("UserProofs", fields: [userId], references: [id])
