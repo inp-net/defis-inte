@@ -37,7 +37,7 @@
     .scrollable-text {
         white-space: nowrap;
         overflow-x: auto;
-        margin: 0;
+        padding: 1em 0;
         -webkit-overflow-scrolling: touch; 
     }
 

@@ -4,6 +4,8 @@
     import { Flex, Stack, Button } from 'azucar-ui';
     import Header from '$lib/components/Header.svelte';
     import FrameChallenge from '$lib/components/FrameChallenge.svelte';
+    import AddChallenge from '$lib/components/AddChallenge.svelte';
+
     import { signIn, signOut } from "@auth/sveltekit/client";
     let { data }: { data: PageData } = $props();
     let challenges = $state(data.posts.challenges);
@@ -17,14 +19,13 @@
         <p>Défis d'intégration 2026 - 2027.</p>
     </Stack>
 
+    <!-- A afficher que pour les membres 2A de groupes et plus -->
     <Stack>
-        <Button href="/challenge/-1">
-        Page défis
-        </Button>
+        <AddChallenge />
     </Stack>
-    
+
     <Stack style="max-width: 100%; min-width: 0; overflow: hidden;">
-        <Flex gap="xs" direction="column" style="max-width: 100%; width: 100%;">
+        <Flex gap="xs" direction="column" style="max-width: 100%; width: 100%;" wrap={false}>
             {#each challenges as challenge}
                 <FrameChallenge
                     name={challenge.name}

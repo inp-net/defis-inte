@@ -9,7 +9,7 @@ const adapter = new PrismaPg({
 const prisma = new PrismaClient({ adapter });
 
 async function main() {
-    faker.seed(20);
+    faker.seed(10);
 
     console.log("⏳ Cleaning old data...");
     // Clear dependent tables first to avoid breaking foreign key constraints
@@ -78,7 +78,7 @@ async function main() {
     );
 
     console.log("🎯 Seeding Mock Challenges...");
-    const nbChallenges = 8;
+    const nbChallenges = 50;
     const typeRenduOpts = ["PHOTO", "VIDEO", "TEXT"] as const; 
 
     const challenges = await Promise.all(
@@ -124,8 +124,8 @@ async function main() {
                     type: selectedType,
                     date: faker.date.recent(),
                     status: faker.helpers.arrayElement(statusOpts),
-                    media: selectedType !== "text" ? "https://picsum.photos/400/300" : null,
-                    text: selectedType === "text" ? faker.lorem.paragraph() : null,
+                    media: selectedType !== "TEXT" ? "https://picsum.photos/400/300" : null,
+                    text: selectedType === "TEXT" ? faker.lorem.paragraph() : null,
                     userId: submitter.id,
                     challengeId: targetChallenge.challengeId,
                     validatorId: validator.id
