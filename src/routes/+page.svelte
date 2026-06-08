@@ -13,7 +13,7 @@
     let { data }: { data: PageData } = $props();
     let challenges : ChallengeRead[] = $state(data.posts.challenges);
 
-    const sortList : string[] = ["points", "clubs", "lieux"];
+    const sortList : string[] = ["points", "clubs", "lieux", "date"];
     let sortBind : string = $state(sortList[0]);
 
     let sortChallenge = (option: string, desc: boolean) => {
@@ -29,6 +29,9 @@
                 break;
             case "lieux":
                 challenges.sort((a, b) => flip * b.locationName.localeCompare(a.locationName))
+                break;
+            case "date":
+                challenges.sort((a, b) => flip * (b.challengeId - a.challengeId))
                 break;
         };
     };
