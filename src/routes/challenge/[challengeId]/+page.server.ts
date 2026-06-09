@@ -1,12 +1,15 @@
-import { saveChallenge } from '$lib/server/challengeService'
+import { saveChallenge } from '$lib/server/challengeService';
 import type { Actions } from './$types';
+import type { Location, GroupClub } from '$lib/types/types.d';
 import { fail } from '@sveltejs/kit';
 import type { PageServerLoad } from "./$types";
-import {prisma} from "$lib/server/prisma";
+import { prisma } from "$lib/server/prisma";
+
+const presetPoints = [10, 20, 50, 80, 100];
 
 export const load: PageServerLoad = async ({ params }) => {
-    const clubs = await prisma.groupClub.findMany({});
-    const locations = await prisma.location.findMany({});
+    const clubs : GroupClub = await prisma.groupClub.findMany({});
+    const locations : Location = await prisma.location.findMany({});
 
     let existingChallenge = null;
 
@@ -31,7 +34,8 @@ export const load: PageServerLoad = async ({ params }) => {
     return {
         clubs,
         locations,
-        existingChallenge
+        existingChallenge,
+        presetPoints
     };
 };
 
@@ -41,6 +45,11 @@ export const actions : Actions = {
     upsert: async ({ request }) => {
         try {
             const body = await request.json();
+
+            // Vérifie que le nombre de points entré est valide
+            if (!presetPoints.includes(body.nbPoints))
+                return;
+
             const savedChallenge = await saveChallenge(body);
             return { sucess: true, data: savedChallenge };
         } catch (err: any) {
