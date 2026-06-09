@@ -88,14 +88,45 @@
     <Stack style="max-width: 100%; min-width: 0; overflow: hidden;">
         <Flex gap="md" direction="column" style="max-width: 100%; width: 100%;">
             {#each proofs as proof}
-                <Frame>
-                    <Flex justify="space-between" align="center" gap="md">
-                        <Flex>
+                <Frame border style="height: 100%; max-width: 700px; margin: auto 1%;">
+                    <Flex style="height: 100%; width: 100%;" gap="md">
+                        
+                        <Flex direction="column" style="width: 100%;">
+                            <h3>{proof.challenge.name}</h3>
+                            <p>Description : {proof.challenge.description}</p>
                             <p>Preuve de : {proof.user.name}</p>
-                            <p>Défi : {proof.challenge.name}</p>
+                            {#if (proof.type == "TEXT")}
+                                <p>Réponse : <b>{proof.content}</b></p>
+                            {:else if (proof.type == "VIDEO")}
+                                <video style="max-width: 250px; max-height: 250px; width: auto; height: auto; border-radius: 8px; object-fit: contain;" controls>
+                                    <source src={proof.content}>
+                                </video>
+                            {:else}
+                                <img 
+                                    src={proof.content} 
+                                    alt="Une photo" 
+                                    style="max-width: 250px; max-height: 250px; width: auto; height: auto; border-radius: 8px; object-fit: contain;"
+                                >
+                            {/if}
+                            <Flex direction="row" style="justify-content: flex-end;">
+                                <Button 
+                                    icon={XIcon}
+                                    class="danger"
+                                    name="Delete"
+                                    onclick={() => handleDeny(proof.proofId)}
+                                />
+                                <Button
+                                    icon={Check}
+                                    class="success"
+                                    name="Success"
+                                    onclick={() => handleAccept(proof.proofId)}
+                                />
+                            </Flex>
                         </Flex>
-                        <Flex style="flex-shrink: 0; margin-left: auto;" gap="xs">
-                            <Button
+
+                        <!-- Colonne de droite : 10% de l'espace 
+                        <Flex direction="row" style="flex: 1; align-items: flex-start; justify-content: center;" gap="xs">
+                            <Button 
                                 icon={XIcon}
                                 class="danger"
                                 name="Delete"
@@ -107,7 +138,7 @@
                                 name="Success"
                                 onclick={() => handleAccept(proof.proofId)}
                             />
-                        </Flex>
+                        </Flex> -->
                     </Flex>
                 </Frame>
             {/each}

@@ -22,14 +22,13 @@ export const load: PageServerLoad = async () => {
     };
 };
 
-/*
 export const actions: Actions = {
-    accept: async ({ request }) => {
+    approve: async ({ request }) => {
         const data = await request.formData();
         const challengeId = data.get('challengeId');
 
         try {
-            const updatedChallenge = await acceptChallenge(challengeId);
+            const updatedChallenge = await approveProof(challengeId);
             return { 
                 success: true, 
                 challenge: updatedChallenge 
@@ -47,12 +46,12 @@ export const actions: Actions = {
             });
         }
     },
-    delete: async ({ request }) => {
+    deny: async ({ request }) => {
         const data = await request.formData();
         const challengeId = data.get('challengeId');
 
         try {
-            await deleteChallenge(challengeId);
+            await denyProof(challengeId);
             return { success: true, };
         } catch (error: any) {
             if (error.status && error.message) {
