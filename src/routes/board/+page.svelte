@@ -100,7 +100,7 @@
     <Stack>
         <Frame>
             <Flex direction="column">
-                <Switch checked={hideDone}>Masquer les défis validés</Switch>
+                <Switch bind:checked={hideDone}>Masquer les défis validés</Switch>
             </Flex>
         </Frame>
     </Stack>

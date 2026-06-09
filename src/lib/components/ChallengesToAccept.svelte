@@ -27,6 +27,18 @@
         onChallengeDeleted
     }: Prop = $props();
 
+    const visibleChallenges = $derived(
+        challenges.filter(challenge => {
+            const isApproved = challenge.defiAccepte || successChallengeIds.includes(challenge.challengeId);
+            const isDeleted = challenge.isDeleted || deletedChallengeIds.includes(challenge.challengeId);
+
+            if (isDeleted) return false;
+            if (hideDone && isApproved) return false;
+
+            return true;
+        })
+    );
+
     async function handleAccept(id : number) {
         await onChallengeApprouved(id);
         successChallengeIds = [...successChallengeIds, id];
@@ -47,20 +59,17 @@
         </Flex>
     </Frame>
     <Flex gap="xs" direction="column">
-
-        {#each challenges as challenge}
-            <!-- ne pas afficher les Challenges dones si hideDone est true -->
-            {#if !hideDone || (!challenge.defiAccepte && !successChallengeIds.includes(challenge.challengeId))}
-                <EditableChallenge
-                    challengeId={challenge.challengeId}
-                    name={challenge.name}
-                    points={challenge.nbPoints}
-                    isApprouved={(challenge.defiAccepte || successChallengeIds.includes(challenge.challengeId)) && !challenge.isDeleted}
-                    isDisabled={challenge.isDeleted || deletedChallengeIds.includes(challenge.challengeId)}
-                    onAccepted={() => handleAccept(challenge.challengeId)}
-                    onDeleted={() => handleDelete(challenge.challengeId)}
-                />
-            {/if}
+        <!-- ne pas afficher les Challenges dones si hideDone est true -->
+        {#each visibleChallenges as challenge (challenge.challengeId)}
+            <EditableChallenge
+                challengeId={challenge.challengeId}
+                name={challenge.name}
+                points={challenge.nbPoints}
+                isApprouved={(challenge.defiAccepte || successChallengeIds.includes(challenge.challengeId)) && !challenge.isDeleted}
+                isDisabled={challenge.isDeleted || deletedChallengeIds.includes(challenge.challengeId)}
+                onAccepted={() => handleAccept(challenge.challengeId)}
+                onDeleted={() => handleDelete(challenge.challengeId)}
+            />
         {/each}
     </Flex>
 </Flex>

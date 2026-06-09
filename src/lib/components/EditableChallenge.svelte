@@ -9,8 +9,8 @@
         isDisabled?: boolean
         name: string
         points: number
-        onAccepted: () => void
-        onDeleted: () => void
+        onAccepted: (id: number) => void
+        onDeleted: (id: number) => void
     };
 
     let {
@@ -45,14 +45,14 @@
                 class="danger"
                 name="Delete"
                 disabled={isApprouved || isDisabled}
-                onclick={onDeleted(challengeId)}
+                onclick={() => onDeleted(challengeId)}
             />
             <Button
                 icon={Check}
                 class="success"
                 name="Success"
                 disabled={isApprouved || isDisabled} 
-                onclick={onAccepted(challengeId)}
+                onclick={() => onAccepted(challengeId)}
             />
         </Flex>
     </Flex>
