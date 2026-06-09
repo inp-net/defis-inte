@@ -26,7 +26,7 @@
 </script>
 
 <Frame>
-    <Flex justify="space-between" align="center" gap="md">
+    <Flex justify="space-between" gap="md" direction="column">
         <!-- Section défi -->
         <Flex wrap={false} gap="xs">
             {#if isApprouved}
@@ -35,7 +35,9 @@
                 <XIcon />
             {/if}
             <p>{name}</p>
-            <p><b>{points} points</b></p>
+            <Flex style="margin-left: auto">
+                <p><b>{points} pts</b></p>
+            </Flex>
         </Flex>
         <Flex style="flex-shrink: 0; margin-left: auto;" gap="xs">
         <!-- Section Bouton du défis, valider et refuser -->
