@@ -34,7 +34,7 @@
     );
 
     /** Masquer les défis déjà validés. */
-    let hideDone : boolean = $state(false);
+    let hideDone : boolean = $state(true);
 
     async function approuveChallenge(id: number): Promise<void> {
         try {
