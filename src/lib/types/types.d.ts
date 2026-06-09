@@ -12,6 +12,11 @@ export type {
     Challenge
 }
 
+type Category = {
+    key: String;
+    valeurs: String[];
+}
+
 // Type GroupLeaderboard utilisé pour l'affichage du classement
 export type GroupLeaderboard = Pick<GroupInte, "name", "pictureURL", "points"> | null;
 
