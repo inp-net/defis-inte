@@ -2,7 +2,7 @@
 
     import type { GroupLeaderboard } from '$lib/types/types.d.ts';
     import type { PageData } from './$types';
-    import { Flex, Stack, Frame } from 'azucar-ui';
+    import { Flex, Stack, ButtonGroup, Button } from 'azucar-ui';
     import BackButton from '$lib/components/BackButton.svelte';
     import Rank from '$lib/components/Rank.svelte'
 
@@ -40,17 +40,26 @@
         <p>Classement des groupes.</p>
     </Stack>
 
-    <!-- max-width permet d'avoir le scroll horizontal sur les titres groupes -->
-    <Flex gap="sm" justify="space-between" direction="column" style="max-width: 100%;">
-        {#each groups as group, i}
-            <Rank
-                groupName={group.name}
-                groupUrl={group.pictureURL}
-                points={group.points}
-                rank={(i+1).toString()}
-            />
-        {/each}
-    </Flex>
+    <Stack style="max-width: 100%;">
+        <Flex align="center" justify="center">
+            <ButtonGroup>
+                <Button>Groupe</Button>
+                <Button variant='outline'>Individuel</Button>
+            </ButtonGroup>
+        </Flex>
+
+        <!-- max-width permet d'avoir le scroll horizontal sur les titres groupes -->
+        <Flex gap="sm" justify="space-between" direction="column" style="max-width: 100%;">
+            {#each groups as group, i}
+                <Rank
+                    groupName={group.name}
+                    groupUrl={group.pictureURL}
+                    points={group.points}
+                    rank={(i+1).toString()}
+                />
+            {/each}
+        </Flex>
+    </Stack>
 </Flex>
 
 <style>

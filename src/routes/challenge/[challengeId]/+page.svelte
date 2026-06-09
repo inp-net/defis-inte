@@ -71,7 +71,7 @@
                 toast.error("Une erreur est survenue lors de " + action + " du défi.");
             }
         } catch (err) {
-            toast.error('Erreur dans l\'envoie du défi');
+            toast.error('Erreur dans l\'envoie du défi.');
             console.error("Erreur lors de l'envoi du form : ", err);
         } finally {
             isSubmitting = false;
