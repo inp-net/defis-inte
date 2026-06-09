@@ -3,6 +3,7 @@
     import Select from '$lib/components/Select.svelte';
     import ButtonGroupFix from '$lib/components/ButtonGroupFix.svelte';
     import BackButton from '$lib/components/BackButton.svelte';
+    import type { Location, GroupClub } from '$lib/types/types.d';
     import { UploadType } from '../../../../prisma/generated/prisma/enums';
     import type { PageData } from './$types';
 
@@ -35,8 +36,10 @@
 
 
     // Options du Select
-    let clubOptions: string[] = $derived(data.clubs.map(c => c.name));
-    let locationOptions: string[] = $derived(data.locations.map(l => l.name));
+    let locations : Location[] = $derived(data.locations);
+    let clubs : GroupClub[] = $derived(data.clubs);
+    let clubOptions: string[] = $derived(clubs.map(c => c.name));
+    let locationOptions: string[] = $derived(locations.map(l => l.name));
     let uploadTypes: string[] = Object.values(UploadType).map(l => l.toUpperCase());
     let presetPoints = $derived(data.presetPoints);
 
