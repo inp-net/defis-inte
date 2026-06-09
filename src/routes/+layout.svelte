@@ -1,5 +1,4 @@
 <script lang="ts">
-	import favicon from '$lib/assets/favicon.svg';
     import "azucar-ui/tokens.css"
     import "azucar-ui/base.css"
     import Footer from '$lib/components/Footer.svelte'
@@ -12,9 +11,9 @@
 
 </script>
 
-<svelte:head>
-	<link rel="icon" href={favicon} />
-</svelte:head>
+<!-- <svelte:head> -->
+<!-- 	<link rel="icon" href={favicon} /> -->
+<!-- </svelte:head> -->
 
 <div class="container">
     {@render children?.()}

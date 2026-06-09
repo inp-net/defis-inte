@@ -29,6 +29,7 @@
 		"@auth/sveltekit": "^1.11.2",
 		"@prisma/adapter-pg": "^7.8.0",
 		"@prisma/client": "^7.8.0",
+		"auth": "",
 		"azucar-ui": "^0.0.5",
 		"dotenv": "^17.4.2",
 		"pg": "^8.21.0"
