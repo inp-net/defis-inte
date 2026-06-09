@@ -88,11 +88,9 @@ model Proof {
   userId String
 
   // Quel est le contenu de la preuve ? 
-  content String
+  content String[]  // lien si media ou contenu si texte
   type    UploadType // (photo / video / text)
   date    DateTime
-  media   String? // lien vers le média (si type est photo ou video)
-  text    String? // texte de la preuve (si type est texte)
 
   // A quel défi est reliée la preuve ?
   challenge   Challenge? @relation("ChallengeProofs", fields: [challengeId], references: [challengeId])
@@ -102,7 +100,10 @@ model Proof {
   validatorId String?
 
   // Dans quel statut est la preuve ?
-  status Status // (pending / valid / denied) 
+  status Status @default(PENDING)// (pending / valid / denied) 
+
+  // Céder droit a l'image à TVn7
+  hasCededImageRights Boolean @default(false) 
 }
 
 model Challenge {
