@@ -7,7 +7,7 @@ import { userChurrosToPrisma } from './prisma';
 import { BETTER_AUTH_SECRET, AUTH_AUTHENTIK_SECRET, AUTH_AUTHENTIK_ID } from '$env/static/private';
 import { PUBLIC_AUTH_AUTHENTIK_ISSUER } from '$env/static/public';
 import type { CredentialInput, CredentialsConfig, OAuthConfig } from '@auth/core/providers';
-
+import { prisma } from '$lib/server/prisma';
 
 type Provider = OAuthConfig<AuthentikProfile> | CredentialsConfig<Record<string, CredentialInput>>;
 
@@ -53,6 +53,15 @@ export const { handle, signIn, signOut } = SvelteKitAuth({
 		},
 		async session({ session, token }: { session: Session; token: Record<string, unknown> }) {
 			session.uid = token.uid as string;
+			const droitUser = await prisma.user.findUnique({
+				where: {
+					id : session.uid
+				},
+				select:{
+					is1A :true
+				}
+			});
+			session.is1A = droitUser.is1A;
 			return session;
 		}
 	}

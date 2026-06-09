@@ -7,6 +7,7 @@ console.log('app LOADED'); //debug
 declare module '@auth/core/types' {
 	interface Session {
 		uid?: string;
+		is1A?: boolean;
 	}
 }
 

@@ -6,14 +6,6 @@ import { fail, type Actions } from '@sveltejs/kit';
 import { uploadUserFile } from '$lib/server/filesManagement';
 
 
-//debug
-const fields = await prisma.$queryRaw`
-  SELECT column_name FROM information_schema.columns 
-  WHERE table_name = 'Challenge'
-`;
-console.log(fields);
-console.log(Object.keys(prisma.challenge.fields));
-//debug
 
 export const load: PageServerLoad = async (locals) => {
 
