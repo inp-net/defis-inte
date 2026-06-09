@@ -6,6 +6,7 @@
     import type { Location, GroupClub } from '$lib/types/types.d';
     import { UploadType } from '../../../../prisma/generated/prisma/enums';
     import type { PageData } from './$types';
+    import { goto } from '$app/navigation';
 
     import { Button, Flex, Stack, Frame, TextInput } from 'azucar-ui';
 
@@ -14,15 +15,15 @@
         Check
     } from '@lucide/svelte';
 
-    let { data }: { data: PageData } = $props();
+    let { data, redirect = "/" }: { data: PageData, redirect: string } = $props();
 
     // Valeurs initiales du form. Réupéré de la db.
     const getInitialState = (ec: typeof data.existingChallenge) => ({
-        challengeId: ec?.challengeId ?? null,
+        challengeId: ec?.challengeId ?? -1,
         name: ec?.name ?? "",
         description: ec?.description ?? "",
         groupName: ec?.groupName ?? "",
-        locationName: ec?.locationName ?? "",
+        locationName: ec?.locationName ?? "ENSEEIHT",
         nbPoints: ec?.nbPoints ?? 10,
         type: ec?.type ?? "PHOTO"
     });
@@ -43,6 +44,8 @@
     let uploadTypes: string[] = Object.values(UploadType).map(l => l.toUpperCase());
     let presetPoints = $derived(data.presetPoints);
 
+    let isNew : boolean = $derived(data.existingChallenge == null);
+
     /** Fonction envoie du formulaire à l'api api/challenge. */
     async function sendChallenge() {
         if (!formState.name || !formState.groupName || !formState.locationName) {
@@ -51,13 +54,16 @@
         }
         try {
             isSubmitting = true;
-
             const response = await fetch('?/upsert', {
                 method: 'POST',
                 headers: { 'x-sveltekit-action': 'true' },
                 body: JSON.stringify(formState)
             });
-
+            const result = await response.json();
+            if (result.type = "success" && challengeId < 0) {
+                formState.name = "";
+                formState.description = "";
+            }
         } catch (err) {
             console.error("Erreur lors de l'envoi du form : ", err);
         } finally {
@@ -72,7 +78,13 @@
     <Stack>
         <Stack align="baseline"> 
             <BackButton backCount={2} />
-            <h2>Ajouter un Défi</h2>
+            <h2>
+                {#if isNew}
+                    Ajouter un Défi
+                {:else}
+                    Modifier un Défi
+                {/if}
+            </h2>
             <p>Remplissez les informations ci-dessous pour proposer un défi.</p>
         </Stack>
     </Stack>
@@ -120,7 +132,7 @@
                         options={locationOptions}
                         bind:value={formState.locationName}
                         icon={SearchIcon}
-                        placeholder="Lieu du défi"
+                        placeholder="Lieu du défi";
                         required
                     >Lieu</Select>
 
@@ -153,7 +165,13 @@
                 <Flex gap="xs" style="flex-grow: 1; margin-top: var(--size-lg);" justify='right'>
                     <!-- TODO faire retour depuis le navigateur pour meilleur UI -->
                     <Button variant="outline" href="/">Annuler</Button>
-                    <Button icon={Check} class="success" name="Success" onclick={sendChallenge} disabled={isSubmitting}>Créer le défi</Button>
+                    <Button icon={Check} class="success" name="Success" onclick={sendChallenge} disabled={isSubmitting}>
+                        {#if isNew}
+                            Crée le défi
+                        {:else}
+                            Modifier le défi
+                        {/if}
+                    </Button>
                 </Flex>
                 
             </Flex>

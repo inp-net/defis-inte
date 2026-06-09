@@ -57,7 +57,7 @@
 </script>
 
 <Flex gap="xs" direction="column">
-    <Frame transparent={true} border={true} style="position: sticky; top: -1px">
+    <Frame transparent={true} border={true}>
         <Flex align="center">
             <Avatar src={groupURL} alt={groupName} />
             <p>{groupName}</p>
