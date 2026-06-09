@@ -4,6 +4,9 @@ import path from 'path';
 
 export default defineConfig({
 	plugins: [sveltekit()],
+    optimizeDeps: {
+		include: ['svelte-sonner']
+	},
 	resolve: {
     alias: {
       '~generated': path.resolve('./prisma/generated')

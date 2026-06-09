@@ -6,14 +6,9 @@
     import type { Location, GroupClub } from '$lib/types/types.d';
     import { UploadType } from '../../../../prisma/generated/prisma/enums';
     import type { PageData } from './$types';
-    import { goto } from '$app/navigation';
-
+    import { Toaster, toast } from 'svelte-sonner';
     import { Button, Flex, Stack, Frame, TextInput } from 'azucar-ui';
-
-    import {
-        SearchIcon,
-        Check
-    } from '@lucide/svelte';
+    import { SearchIcon, Check } from '@lucide/svelte';
 
     let { data, redirect = "/" }: { data: PageData, redirect: string } = $props();
 
@@ -48,11 +43,14 @@
 
     /** Fonction envoie du formulaire à l'api api/challenge. */
     async function sendChallenge() {
+        // Prétests clients
         if (!formState.name || !formState.groupName || !formState.locationName) {
-            console.error("Formulaire incomplet");
+            toast.error("Formulaire incomplet.");
             return;
         }
         try {
+            toast.info('Requête envoyé.')
+
             isSubmitting = true;
             const response = await fetch('?/upsert', {
                 method: 'POST',
@@ -60,11 +58,20 @@
                 body: JSON.stringify(formState)
             });
             const result = await response.json();
-            if (result.type = "success" && challengeId < 0) {
-                formState.name = "";
-                formState.description = "";
+
+            if (result.type === "success") {
+                let mot : string = isNew ? 'crée' : 'modifié';
+                toast.success('Défi ' + mot + ' avec succès');
+                if (formState.challengeId < 0) {
+                    formState.name = "";
+                    formState.description = "";
+                }
+            } else {
+                let action : string = isNew ? 'la création' : 'la modification';
+                toast.error("Une erreur est survenue lors de " + action + " du défi.");
             }
         } catch (err) {
+            toast.error('Erreur dans l\'envoie du défi');
             console.error("Erreur lors de l'envoi du form : ", err);
         } finally {
             isSubmitting = false;
@@ -78,13 +85,11 @@
     <Stack>
         <Stack align="baseline"> 
             <BackButton backCount={2} />
-            <h2>
-                {#if isNew}
-                    Ajouter un Défi
-                {:else}
-                    Modifier un Défi
-                {/if}
-            </h2>
+            {#if isNew}
+                <h2>Ajouter un Défi</h2>
+            {:else}
+                <h2>Modifier un Défi</h2>
+            {/if}
             <p>Remplissez les informations ci-dessous pour proposer un défi.</p>
         </Stack>
     </Stack>
@@ -173,6 +178,8 @@
                         {/if}
                     </Button>
                 </Flex>
+
+                <Toaster />
                 
             </Flex>
         </Frame>

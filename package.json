@@ -34,6 +34,6 @@
 		"dotenv": "^17.4.2",
 		"fs": "",
 		"pg": "^8.21.0",
-		"svelte-sonner": ""
+		"svelte-sonner": "^1.1.1"
 	}
 }
