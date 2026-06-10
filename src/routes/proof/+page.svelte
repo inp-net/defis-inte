@@ -4,19 +4,20 @@
     import { Flex, Stack, Button, Frame } from 'azucar-ui';
     import { Check, XIcon } from '@lucide/svelte';
     import BackButton from '$lib/components/BackButton.svelte';
+    import type { Proof } from '$lib/types/types.d';
 
     let { data }: { data: PageData } = $props();
-    let proofs = $state(data.posts.proofs);
-    let len = $derived(proofs.length);
+    let proofs : Proof[] = $state(data.posts.proofs);
 
     $effect(() => {
         proofs = data.posts.proofs;
     })
 
     async function approveProof(id: number): Promise<void> {
+        console.log("Tentative d'accepter la preuve");
         try {
             const formData = new FormData();
-            formData.append('challengeId', id.toString());
+            formData.append('proofId', id.toString());
 
             const response = await fetch('?/approve', {
                 method: 'POST',
@@ -24,15 +25,18 @@
                 body: formData
             });
             if (response.ok) {
+                // Changement local des modifications serveur
                 const result = await response.json();
                 if (result.type === 'failure') {
                     console.error("Erreur de validation :", result.data?.message);
                     return;
                 }
-                const proof = proofs.find(c => c.challengeId === id);
+                const proof : Proof = proofs.find(c => c.proofId === id);
                 if (proof) {
                     proof.status = 'VALID'
                 }
+
+                console.log("OK preuve validé");
             }
         } catch(err) {
             console.error("Erreur lors de l'envoi du form : ", err);
@@ -42,7 +46,7 @@
     async function denyProof(id: number): Promise<void> {
         try {
             const formData = new FormData();
-            formData.append('challengeId', id.toString());
+            formData.append('proofId', id.toString());
 
             const response = await fetch('?/deny', {
                 method: 'POST',

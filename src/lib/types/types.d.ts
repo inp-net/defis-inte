@@ -5,16 +5,32 @@ import type {
     Proof,
     Challenge,
     Location,
-    UploadType
+    UploadType,
 } from '../../../prisma/generated/prisma/client';
 
 export type {
-    Challenge
+    Challenge,
+    Proof,
+    UploadType,
 }
 
 type Category = {
     key: String;
     valeurs: String[];
+}
+
+// Input pour crée une preuve
+export interface ProofInput {
+    challengeId: number;
+    userId: string;
+    type: UploadType;
+    content: String[];
+}
+
+export enum Status {
+  PENDING = 'PENDING',
+  VALID = 'VALID',
+  DENIED = 'DENIED'
 }
 
 // Type GroupLeaderboard utilisé pour l'affichage du classement

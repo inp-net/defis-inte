@@ -2,10 +2,11 @@ import type { PageServerLoad } from './$types';
 import { fail, type Actions } from '@sveltejs/kit';
 import { approveProof, denyProof } from '$lib/server/proofService';
 import { prisma } from "$lib/server/prisma";
+import type { Proof } from '$lib/types/types.d';
 
 export const load: PageServerLoad = async () => {
 
-    const proofs = await prisma.proof.findMany({
+    const proofs : Proof[] = await prisma.proof.findMany({
         where: {
             status: 'PENDING',
         },
@@ -23,24 +24,21 @@ export const load: PageServerLoad = async () => {
 };
 
 export const actions: Actions = {
-    
-    // action ?/approve
     approve: async ({ request }) => {
-
-        // Récupérer les données du form
         const data = await request.formData();
-        const proofId = data.get('proofId');
+        const proofIdString = data.get('proofId');
+
+        const proofId: number = (typeof proofIdString === 'string') 
+            ? parseInt(proofIdString, 10) 
+            : NaN;
 
         try {
-            // appel à modifier la database -> approuver la preuve sélectionnée
-            const updatedProof = await approveProof(proofId);
+            const fallbackUserId = "00000000-0000-0000-0000-000000000000"; 
+            const updatedProof = await approveProof(proofId, fallbackUserId);
             return { 
                 success: true,
-                // jsp si c'est utile
                 proof: updatedProof 
             };
-
-        // Erreurs
         } catch (error: any) {
             if (error.status && error.message) {
                 return fail(error.status, { 
@@ -54,28 +52,18 @@ export const actions: Actions = {
             });
         }
     },
-
-    // Action ?/deny
     deny: async ({ request }) => {
-
-        // Récupérer les données du form
         const data = await request.formData();
-        const proofId = data.get('proofId');
+        const proofIdString = data.get('proofId');
+
+        const proofId: number = (typeof proofIdString === 'string') 
+            ? parseInt(proofIdString, 10) 
+            : NaN;
 
         try {
-            // appel à modifier la database -> refuser la preuve sélectionnée
-            await denyProof(proofId);
+            const fallbackUserId = "00000000-0000-0000-0000-000000000000"; 
+            await denyProof(proofId, fallbackUserId);
             return { success: true, };
-
-            // Lequel est mieux ? JSP
-            //const updatedProof = await denyProof(proofId);
-            //return { 
-            //    success: true,
-                // jsp si c'est utile
-            //    proof: updatedProof 
-            //};
-
-        // Erreurs
         } catch (error: any) {
             if (error.status && error.message) {
                 return fail(error.status, { 
