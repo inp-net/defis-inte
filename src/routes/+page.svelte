@@ -54,7 +54,7 @@
 
 </script>
 
-<Header notifications={data.posts.pendingChallengeCount} />
+<Header notificationsDefis={data.posts.pendingChallengeCount} notificationsPreuves={data.posts.pendingProofCount}/>
 <Flex direction="column" gap="xxl" margin="lg">
     <Stack> 
         <h1>Défis</h1>

@@ -1,5 +1,5 @@
 import type { PageServerLoad } from './$types';
-import type { GroupChallenge, ChallengeRead } from '$lib/types/types.d';
+import type { ChallengeRead, ProofRead } from '$lib/types/types.d';
 import {prisma} from "$lib/server/prisma";
 
 //debug
@@ -43,10 +43,18 @@ export const load: PageServerLoad = async () => {
     const challenges : ChallengeRead[] = allChallenges.filter((a) => a.defiAccepte);
     const pendingChallengeCount = allChallenges.length - challenges.length;
 
+    const allPendingProofs = await prisma.proof.findMany({
+        where: {status: "PENDING"}
+    })
+
+
+    const pendingProofCount = allPendingProofs.length; 
+
     return {
         posts: {
             challenges,
-            pendingChallengeCount
+            pendingChallengeCount,
+            pendingProofCount
         }
     };
 };
