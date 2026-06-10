@@ -13,7 +13,7 @@
         clubUrl: string,
         desc?: string | null,
         type: string
-        onSave: (fichiers : FileList | null, textePreuve : string, isText : Boolean, isOkTVn7: boolean, challengeId: number) => void;
+        onSave: (fichiers: FileList | null, textePreuve: string, type: string, isOkTVn7: boolean, challengeId: number) => void;
     }
 
     const {
@@ -77,7 +77,7 @@
                         <Flex gap="xs" align="center"><File size="15px"/>{type}</Flex>
                     {/if}
                 </Flex>
-                <UploadProof challengeId={challengeId} desc={desc} isText={type === "TEXT"} onSave={onSave}></UploadProof>
+                <UploadProof challengeId={challengeId} desc={desc} type={type} onSave={onSave}></UploadProof>
             </Flex>
         {/if}
 </Frame>

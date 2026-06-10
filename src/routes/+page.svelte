@@ -13,6 +13,7 @@
     import { signIn, signOut } from "@auth/sveltekit/client";
     let { data }: { data: PageData } = $props();
     let challenges : ChallengeRead[] = $state(data.posts.challenges);
+    const user = data.user;
 
     // Recherche de défis
 
@@ -31,14 +32,16 @@
         )
     );
 
-    async function handleSave(fichiers: FileList | null, textePreuve: string, isOkTVn7: boolean, challengeId: number){
+    async function handleSave(fichiers: FileList | null, textePreuve: string, type: string, isOkTVn7: boolean, challengeId: number){
         console.log("Tentative de création de la preuve");
         try {
             const formData = new FormData();
+            formData.append('userId', user.id);
             formData.append('challengeId', challengeId.toString());
+            formData.append('type', type)
             if (textePreuve){
                 formData.append('textePreuve', textePreuve);
-            }else{
+            } else {
                 formData.append('isOkTVn7', isOkTVn7.toString());
                 for (const file of fichiers){
                     formData.append('file',file);

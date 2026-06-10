@@ -5,8 +5,8 @@
     type Prop = {
         challengeId: number
         desc: String
-        isText: Boolean
-        onSave: (fichiers: FileList | null, textePreuve: string, isOkTVn7: boolean, challengeId: number) => void;
+        type: string
+        onSave: (fichiers: FileList | null, textePreuve: string, type: string, isOkTVn7: boolean, challengeId: number) => void;
     }
 
     let fichiers = $state<FileList | null>(null);
@@ -25,14 +25,14 @@
     const {
         challengeId = 0,
         desc = '',
-        isText = false,
+        type = "TEXT",
         onSave,
     }: Prop = $props();
 </script>
 
 <Flex direction="column" gap="md">
     <p><b>Description :</b> {desc}</p>
-    {#if isText}
+    {#if type === "TEXT"}
         <TextInput 
             type="text"
             placeholder="Saisissez votre réponse ici"
@@ -56,8 +56,8 @@
     <Flex justify="flex-end" align="center">
         <Switch bind:checked = {isOkTVn7}>Is U Ok To Donner TVn7 rights ?</Switch>
         <Button 
-            onclick={() => onSave(fichiers, textePreuve, isOkTVn7, challengeId)} 
-            disabled={boutonvalider(fichiers, textePreuve, isText)}
+            onclick={() => onSave(fichiers, textePreuve, type, isOkTVn7, challengeId)} 
+            disabled={boutonvalider(fichiers, textePreuve, type === "TEXT")}
         >
             Envoyer la preuve
         </Button>
