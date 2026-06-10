@@ -1,18 +1,23 @@
 <script lang="ts">
-    import { ChevronDown, ChevronUp, Upload, MapPin, Building } from '@lucide/svelte';
+    import { ChevronDown, ChevronUp, Upload, MapPin, Building, File } from '@lucide/svelte';
     import { Frame, Flex, Button, Avatar } from 'azucar-ui';
     import UploadProof from './UploadProof.svelte';
     
     type Prop = {
+        challengeId: number,
         name: string,
         nbPoints: number,
         isText: boolean,
         location: string,
         clubName: string,
+        clubUrl: string,
         desc?: string | null,
+        type: string
+        onSave: (fichiers : FileList | null, textePreuve : string, isText : Boolean, isOkTVn7: boolean, challengeId: number) => void;
     }
 
     const {
+        challengeId = 0,
         name = "",
         nbPoints = 0,
         isText = true,
@@ -20,6 +25,8 @@
         clubName,
         clubUrl,
         desc,
+        type,
+        onSave,
     }: Prop = $props();
 
     let isUnfolded = $state(false);
@@ -66,8 +73,11 @@
                 <Flex gap="xs" direction="column">
                     <Flex gap="xs" align="center"><Building size="15px"/> {clubName}</Flex>
                     <Flex gap="xs" align="center"><MapPin size="15px"/> {location}</Flex>
+                    {#if (type != "TEXT")}
+                        <Flex gap="xs" align="center"><File size="15px"/>{type}</Flex>
+                    {/if}
                 </Flex>
-                <UploadProof desc={desc} isText={isText}></UploadProof>
+                <UploadProof challengeId={challengeId} desc={desc} isText={type === "TEXT"} onSave={onSave}></UploadProof>
             </Flex>
         {/if}
 </Frame>

@@ -8,6 +8,7 @@
     import AddChallenge from '$lib/components/AddChallenge.svelte';
     import Sort from '$lib/components/Sort.svelte';
     import SearchBar from '$lib/components/SearchBar.svelte';
+    import type { Proof } from '$lib/types/types.d';
 
     import { signIn, signOut } from "@auth/sveltekit/client";
     let { data }: { data: PageData } = $props();
@@ -29,6 +30,44 @@
             }
         )
     );
+
+    async function handleSave(fichiers: FileList | null, textePreuve: string, isOkTVn7: boolean, challengeId: number){
+        console.log("Tentative de création de la preuve");
+        try {
+            const formData = new FormData();
+            formData.append('challengeId', challengeId.toString());
+            if (textePreuve){
+                formData.append('textePreuve', textePreuve);
+            }else{
+                formData.append('isOkTVn7', isOkTVn7.toString());
+                for (const file of fichiers){
+                    formData.append('file',file);
+                }
+            }
+            
+            const response = await fetch('?/save', {
+                method: 'POST',
+                headers: { 'x-sveltekit-action': 'true', },
+                body: formData
+            });
+            if (response.ok) {
+                // Changement local des modifications serveur
+                const result = await response.json();
+                if (result.type === 'failure') {
+                    console.error("Erreur de validation :", result.data?.message);
+                    return;
+                }
+                /*
+                const proof : Proof = proofs.find(c => c.proofId === id);
+                if (proof) {
+                    proof.status = 'VALID'
+                }
+                console.log("OK preuve validé");*/
+            }
+        } catch(err) {
+            console.error("Erreur lors de l'envoi du form : ", err);
+        }
+    }
 
     // Trier les défis
 
@@ -74,6 +113,7 @@
         <Flex gap="xs" direction="column" style="max-width: 100%; width: 100%;" wrap={false}>
             {#each sortedSearchedChallenges as challenge}
                 <FrameChallenge
+                    challengeId={challenge.challengeId}
                     name={challenge.name}
                     nbPoints={challenge.nbPoints}
                     isText={challenge.type === "TEXT"}
@@ -81,6 +121,8 @@
                     clubName={challenge.groupName}
                     clubUrl="https://media.gettyimages.com/id/78038972/fr/photo/london-a-seven-foot-tall-waxwork-figure-of-movie-characture-shrek-is-unveiled-at-madame.jpg?s=612x612&w=gi&k=20&c=dq3bowem92dUWxW2DtFzCq6s4XTVxau7jN8afRSIBhM="
                     desc={challenge.description}
+                    type={challenge.type}
+                    onSave={handleSave}
                 />
             {/each}
         </Flex>

@@ -103,7 +103,7 @@ model Proof {
   status Status @default(PENDING)// (pending / valid / denied) 
 
   // Céder droit a l'image à TVn7
-  hasCededImageRights Boolean @default(false) 
+  isOkTVn7 Boolean @default(false) 
 }
 
 model Challenge {

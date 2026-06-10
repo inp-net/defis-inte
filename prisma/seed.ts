@@ -126,7 +126,8 @@ async function main() {
                     status: faker.helpers.arrayElement(statusOpts),
                     userId: submitter.id,
                     challengeId: targetChallenge.challengeId,
-                    validatorId: validator.id
+                    validatorId: validator.id,
+                    isOkTVn7: faker.datatype.boolean(),
                 }
             });
         })

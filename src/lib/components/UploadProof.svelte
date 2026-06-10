@@ -1,18 +1,18 @@
 <script lang="ts">
 
-    import { Flex, Button, TextInput } from 'azucar-ui'
+    import { Flex, Button, TextInput, Switch } from 'azucar-ui'
 
     type Prop = {
+        challengeId: number
         desc: String
         isText: Boolean
+        onSave: (fichiers: FileList | null, textePreuve: string, isOkTVn7: boolean, challengeId: number) => void;
     }
 
     let fichiers = $state<FileList | null>(null);
     let textePreuve = $state("");
 
-    function handleValidation() {
-        // TODO
-    }
+    let isOkTVn7: boolean = $state(false);
 
     function boutonvalider(fichiers: FileList | null, textePreuve: String, isText: Boolean){
         if (isText){
@@ -23,8 +23,10 @@
     }
 
     const {
+        challengeId = 0,
         desc = '',
         isText = false,
+        onSave,
     }: Prop = $props();
 </script>
 
@@ -51,9 +53,10 @@
         </Flex>
     {/if}
 
-    <Flex justify="flex-end">
+    <Flex justify="flex-end" align="center">
+        <Switch bind:checked = {isOkTVn7}>Is U Ok To Donner TVn7 rights ?</Switch>
         <Button 
-            onclick={handleValidation} 
+            onclick={() => onSave(fichiers, textePreuve, isOkTVn7, challengeId)} 
             disabled={boutonvalider(fichiers, textePreuve, isText)}
         >
             Envoyer la preuve
