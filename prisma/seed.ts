@@ -120,7 +120,7 @@ async function main() {
 
             return prisma.proof.create({
                 data: {
-                    content: selectedType === "TEXT" ? faker.lorem.paragraph() : (selectedType === "VIDEO" ? "https://www.youtube.com/watch?v=dQw4w9WgXcQ" : "https://picsum.photos/400/300"),
+                    content: selectedType === "TEXT" ? [faker.lorem.paragraph()] : (selectedType === "VIDEO" ? ["https://www.youtube.com/watch?v=dQw4w9WgXcQ"] : ["https://picsum.photos/400/300"]),
                     type: selectedType,
                     date: faker.date.recent(),
                     status: faker.helpers.arrayElement(statusOpts),
