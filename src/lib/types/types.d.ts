@@ -35,6 +35,12 @@ export enum Status {
 
 // Type GroupLeaderboard utilisé pour l'affichage du classement
 export type GroupLeaderboard = Pick<GroupInte, "name", "pictureURL", "points"> | null;
+export type UserLeaderboard = Pick<User, "name", "points", "profilePictureURL"> | null;
+export type Leaderboard = {
+    name: string,
+    pictureURL?: string
+    points: number,
+}
 
 // Type Challenge Read utilisé uniquement pour l'affichage UI du challenge
 export type ChallengeRead = Pick<
