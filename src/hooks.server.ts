@@ -11,37 +11,35 @@ const handlePerms: Handle = async ({ event, resolve }) => {
 
 	if (session?.uid) {
         try {
-            event.locals.user = await prisma.user.findUnique({
-                where: { id: session.uid }
+            const user = await prisma.user.findUnique({
+                where: { id: session.uid },
+                select:{
+                        groupBoard : true,
+                        isAdmin :true
+                    }
             });
+            event.locals.user = {...event.locals.user, ...user};
+
+            // Gestion authorisation de connexion
+            const protectedRoutes = ['/admin', '/board'];
+            const currentPath = event.url.pathname;
+
+            // Si pas connecter rediriger vers la page de connection
+            if (!session && !currentPath.endsWith('/connection')){
+                throw redirect(302, '/connection');
+            }
+
+            // Empecher l'accés dans les branches interdites aux utilisateurs normales
+            if (protectedRoutes.some(route => currentPath.startsWith(route)) && (!user.groupBoard || user.isAdmin )) {
+                throw error(403, 'Accès interdit');
+            }
+
+
         } catch (e) {
             console.error('PRISMA ERROR:', e);
         }
 	}
 
-    // Gestion authorisation de connexion
-    const protectedRoutes = ['/admin', '/board'];
-    const currentPath = event.url.pathname;
-
-    // Si pas connecter rediriger vers la page de connection
-    if (!session){
-        throw redirect(302, '/connection');
-    }
-
-    const droitUser = await prisma.user.findUnique({
-        where: {
-            id : event.locals.user.id
-        },
-        select:{
-            groupBoard : true,
-            isAdmin :true
-        }
-    });
-
-    // Empecher l'accés dans les branches interdites aux utilisateurs normales
-    if (protectedRoutes.some(route => currentPath.startsWith(route)) && (!droitUser.groupBoard || droitUser.isAdmin )) {
-        throw error(403, 'Accès interdit');
-    }
 
 	return resolve(event);
 };
