@@ -1,6 +1,6 @@
 import type { PageServerLoad } from './$types';
 import { fail, type Actions } from '@sveltejs/kit';
-import { approveProof, denyProof } from '$lib/server/challengeService';
+import { approveProof, denyProof } from '$lib/server/proofService';
 import { prisma } from "$lib/server/prisma";
 
 export const load: PageServerLoad = async () => {
@@ -23,21 +23,29 @@ export const load: PageServerLoad = async () => {
 };
 
 export const actions: Actions = {
+    
+    // action ?/approve
     approve: async ({ request }) => {
+
+        // Récupérer les données du form
         const data = await request.formData();
-        const challengeId = data.get('challengeId');
+        const proofId = data.get('proofId');
 
         try {
-            const updatedChallenge = await approveProof(challengeId);
+            // appel à modifier la database -> approuver la preuve sélectionnée
+            const updatedProof = await approveProof(proofId);
             return { 
-                success: true, 
-                challenge: updatedChallenge 
+                success: true,
+                // jsp si c'est utile
+                proof: updatedProof 
             };
+
+        // Erreurs
         } catch (error: any) {
             if (error.status && error.message) {
                 return fail(error.status, { 
                     message: error.message,
-                    challengeId
+                    proofId
                 });
             }
             console.error('Action Error:', error);
@@ -46,18 +54,33 @@ export const actions: Actions = {
             });
         }
     },
+
+    // Action ?/deny
     deny: async ({ request }) => {
+
+        // Récupérer les données du form
         const data = await request.formData();
-        const challengeId = data.get('challengeId');
+        const proofId = data.get('proofId');
 
         try {
-            await denyProof(challengeId);
+            // appel à modifier la database -> refuser la preuve sélectionnée
+            await denyProof(proofId);
             return { success: true, };
+
+            // Lequel est mieux ? JSP
+            //const updatedProof = await denyProof(proofId);
+            //return { 
+            //    success: true,
+                // jsp si c'est utile
+            //    proof: updatedProof 
+            //};
+
+        // Erreurs
         } catch (error: any) {
             if (error.status && error.message) {
                 return fail(error.status, { 
                     message: error.message,
-                    challengeId
+                    proofId
                 });
             }
             console.error('Action Error:', error);
