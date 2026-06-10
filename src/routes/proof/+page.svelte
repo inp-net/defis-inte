@@ -3,6 +3,7 @@
     import type { PageData } from '../$types';
     import { Flex, Stack, Button, Frame } from 'azucar-ui';
     import { Check, XIcon } from '@lucide/svelte';
+    import BackButton from '$lib/components/BackButton.svelte';
 
     let { data }: { data: PageData } = $props();
     let proofs = $state(data.posts.proofs);
@@ -82,8 +83,10 @@
 </script>
 
 <Flex direction="column" gap="xxl" margin="lg">
-    <Stack>
+    <Stack align="baseline">
+        <BackButton />
         <h2>Preuves à traiter</h2>
+        <p>Validation des preuves</p>
     </Stack>
     <Stack style="max-width: 100%; min-width: 0; overflow: hidden;">
         <Flex gap="md" style="max-width: 100%; width: 100%; align-items: center;">
