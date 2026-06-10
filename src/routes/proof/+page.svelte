@@ -86,7 +86,7 @@
         <h2>Preuves à traiter</h2>
     </Stack>
     <Stack style="max-width: 100%; min-width: 0; overflow: hidden;">
-        <Flex gap="md" direction="column" style="max-width: 100%; width: 100%;">
+        <Flex gap="md" style="max-width: 100%; width: 100%; align-items: center;">
             {#each proofs as proof}
                 <Frame border style="height: 100%; max-width: 700px; margin: auto 1%;">
                     <Flex style="height: 100%; width: 100%;" gap="md">
@@ -123,22 +123,6 @@
                                 />
                             </Flex>
                         </Flex>
-
-                        <!-- Colonne de droite : 10% de l'espace 
-                        <Flex direction="row" style="flex: 1; align-items: flex-start; justify-content: center;" gap="xs">
-                            <Button 
-                                icon={XIcon}
-                                class="danger"
-                                name="Delete"
-                                onclick={() => handleDeny(proof.proofId)}
-                            />
-                            <Button
-                                icon={Check}
-                                class="success"
-                                name="Success"
-                                onclick={() => handleAccept(proof.proofId)}
-                            />
-                        </Flex> -->
                     </Flex>
                 </Frame>
             {/each}

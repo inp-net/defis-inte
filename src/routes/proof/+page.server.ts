@@ -1,6 +1,6 @@
 import type { PageServerLoad } from './$types';
-//import { fail, type Actions } from '@sveltejs/kit';
-//import { acceptChallenge, deleteChallenge } from '$lib/server/challengeService';
+import { fail, type Actions } from '@sveltejs/kit';
+import { approveProof, denyProof } from '$lib/server/challengeService';
 import { prisma } from "$lib/server/prisma";
 
 export const load: PageServerLoad = async () => {
@@ -67,4 +67,4 @@ export const actions: Actions = {
         }
     }
 };
-*/
+
