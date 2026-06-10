@@ -12,16 +12,39 @@ export const load: PageServerLoad = async () => {
                 orderBy: {
                     // Trier dans l'ordre de création
                     challengeId: 'desc',
-                },
+                }
             }
         },
     });
 
-    const challenges: GroupChallenge[] = clubsWithChallenges.map((club) => ({
+    const allUserIds = [
+        ...new Set(clubsWithChallenges.flatMap(club => club.challenge.map(ch => ch.userId)))
+    ];
+
+    const users = await prisma.user.findMany({
+        where: { id: { in: allUserIds } },
+        select: { id: true, name: true }
+    });
+
+    const userMap = new Map(users.map(u => [u.id, u.name]));
+
+    const challenges = clubsWithChallenges.map((club) => ({
         name: club.name,
         pictureURL: club.pictureURL ?? "",
-        challenges: club.challenge,
-    }))
+        challenges: club.challenge.map((ch) => ({
+            challengeId: ch.challengeId,
+            name: ch.name,
+            description: ch.description,
+            type: ch.type,
+            nbPoints: ch.nbPoints,
+            locationName: ch.locationName,
+            defiAccepte: ch.defiAccepte,
+            isDeleted: ch.isDeleted,
+            groupName: club.name,
+            groupUrl: club.pictureURL,
+            userName: userMap.get(ch.userId) ?? "Utilisateur inconnu"
+        }))
+    }));
 
     return {
         posts: {

@@ -20,11 +20,22 @@ type Category = {
 }
 
 // Input pour crée une preuve
-export interface ProofInput {
+export type ProofInput = {
     challengeId: number;
     userId: string;
     type: UploadType;
     content: String[];
+}
+
+// Input pour crée un challenge
+export type ChallengeInput = {
+    challengeId?: string | number | null;
+    name: string;
+    description?: string | null;
+    groupName: string;
+    locationName: string;
+    type?: string | null;
+    nbPoints?: string | number | null;
 }
 
 export enum Status {
@@ -45,18 +56,9 @@ export type Leaderboard = {
 // Type Challenge Read utilisé uniquement pour l'affichage UI du challenge
 export type ChallengeRead = Pick<
     Challenge, "challengeId" | "name" | "description" | "type" | "nbPoints" | "locationName" | "defiAccepte" | "isDeleted"
-> & { groupName: string; groupUrl: string | null; }
-
-export type ChallengeInput = {
-    name: string;
-    description: string | null;
-    groupId: string;
-    type: UploadType;
-    nbPoints: number;
-    locationName: string;
-};
+> & { groupName: string; groupUrl: string | null; } & { userName: string }
 
 export type ProofRead = Pick<Proof, "proofId", "user", "challenge", "status", "type", "content", "date", "media", "text">;
 
 // Type Group Challenge réunit les ChallengeRead dans des groupes
-export type GroupChallenge = Pick<GroupClub, "name", "pictureURL"> & {challenges: ChallengeRead[]};
+export type GroupChallenge = Pick<GroupClub, "name", "pictureURL"> & { challenges: ChallengeRead[] };

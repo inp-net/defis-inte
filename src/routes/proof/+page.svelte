@@ -2,9 +2,11 @@
 
     import type { PageData } from '../$types';
     import { Flex, Stack, Button, Frame } from 'azucar-ui';
-    import { Check, XIcon } from '@lucide/svelte';
+    import { User, Clock, File } from '@lucide/svelte';
     import BackButton from '$lib/components/BackButton.svelte';
     import type { Proof } from '$lib/types/types.d';
+    import { Status } from '$lib/types/types.d';
+    import AcceptableCard from '$lib/components/AcceptableCard.svelte';
 
     let { data }: { data: PageData } = $props();
     let proofs : Proof[] = $state(data.posts.proofs);
@@ -82,56 +84,66 @@
         deniedProofIds.push(id);
     }
 
-
-    
+    function formatDateTime(date: Date | string): string {
+        const d = new Date(date);
+        return d.toLocaleString('fr-FR', {
+          day: '2-digit',
+          month: '2-digit',
+          year: 'numeric',
+          hour: '2-digit',
+          minute: '2-digit',
+          hour12: false
+        });
+    }
 </script>
 
 <Flex direction="column" gap="xxl" margin="lg">
     <Stack align="baseline">
         <BackButton />
-        <h2>Preuves à traiter</h2>
+        <h2>Preuves</h2>
         <p>Validation des preuves</p>
     </Stack>
-    <Stack style="max-width: 100%; min-width: 0; overflow: hidden;">
-        <Flex gap="md" style="max-width: 100%; width: 100%; align-items: center;">
+    <Stack style="max-width: 100%; width: 100%; min-width: 0; display: flex; flex-direction: column;">
+        <Flex gap="xs" direction="column" style="display: flex; flex-direction: column; width: 100%; min-width: 0;">
             {#each proofs as proof}
-                <Frame border style="height: 100%; max-width: 700px; margin: auto 1%;">
-                    <Flex style="height: 100%; width: 100%;" gap="md">
-                        
-                        <Flex direction="column" style="width: 100%;">
-                            <h3>{proof.challenge.name}</h3>
-                            <p>Description : {proof.challenge.description}</p>
-                            <p>Preuve de : {proof.user.name}</p>
-                            {#if (proof.type == "TEXT")}
-                                <p>Réponse : <b>{proof.content}</b></p>
-                            {:else if (proof.type == "VIDEO")}
-                                <video style="max-width: 250px; max-height: 250px; width: auto; height: auto; border-radius: 8px; object-fit: contain;" controls>
-                                    <source src={proof.content}>
-                                </video>
-                            {:else}
-                                <img 
-                                    src={proof.content} 
-                                    alt="Une photo" 
-                                    style="max-width: 250px; max-height: 250px; width: auto; height: auto; border-radius: 8px; object-fit: contain;"
-                                >
-                            {/if}
-                            <Flex direction="row" style="justify-content: flex-end;">
-                                <Button 
-                                    icon={XIcon}
-                                    class="danger"
-                                    name="Delete"
-                                    onclick={() => handleDeny(proof.proofId)}
-                                />
-                                <Button
-                                    icon={Check}
-                                    class="success"
-                                    name="Success"
-                                    onclick={() => handleAccept(proof.proofId)}
-                                />
-                            </Flex>
+                <AcceptableCard
+                    id={proof.proofId}
+                    name={"Défi : " + proof.challenge.name}
+                    points={proof.challenge.nbPoints}
+                    isModifiable={false}
+                    onAccepted={() => handleAccept(proof.proofId)}
+                    onDeleted={() => handleDeny(proof.proofId)}
+                    isApprouved={proof.status === Status.VALID || validProofIds.includes(proof.proofId)}
+                    isDisabled={proof.status === Status.DENIED || deniedProofIds.includes(proof.proofId)}
+                >
+                    <Flex direction="column" gap="xs" style="max-width: 100%; width: 100%; min-width: 0;">
+                        <Flex wrap={false} gap="xs" align="center">
+                            <User size='15px'/> 
+                            <p>{proof.user.name}</p>
+                        </Flex>
+                        <Flex wrap={false} gap="xs" align="center">
+                            <Clock size='15px'/> 
+                            <p>{formatDateTime(proof.date)}</p>
+                        </Flex>
+                        <Flex wrap={false} gap="xs" align="center">
+                            <File size='15px'/> 
+                            <p>{proof.type.toLowerCase()}</p>
                         </Flex>
                     </Flex>
-                </Frame>
+                    {#if (proof.type == "TEXT")}
+                        <p><b>Réponse :</b> {proof.content}</p>
+                    {:else if (proof.type == "VIDEO")}
+                        <video style="max-width: 250px; max-height: 250px; width: auto; height: auto; border-radius: 8px; object-fit: contain;" controls>
+                            <source src={proof.content}>
+                        </video>
+                    {:else}
+                        <img 
+                            src={proof.content} 
+                            alt="Une photo" 
+                            style="max-width: 250px; max-height: 250px; width: auto; height: auto; border-radius: 8px; object-fit: contain;"
+                        >
+                    {/if}
+                </AcceptableCard>
             {/each}
         </Flex>
     </Stack>

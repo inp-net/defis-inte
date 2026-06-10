@@ -116,7 +116,7 @@ model Challenge {
   groupId String
 
   // Qui a proposé le défi ?
-  userId String
+  userId  String
 
   // Qui a accepté la proposition de défi ?
   userAcceptId String?

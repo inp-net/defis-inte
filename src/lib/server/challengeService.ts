@@ -1,16 +1,6 @@
 import { prisma } from '$lib/server/prisma';
 import { error } from '@sveltejs/kit';
-import { UploadType } from '../../../prisma/generated/prisma/enums';
-
-export interface ChallengeInput {
-    challengeId?: string | number | null;
-    name: string;
-    description?: string | null;
-    groupName: string;
-    locationName: string;
-    type?: string | null;
-    nbPoints?: string | number | null;
-}
+import { UploadType, ChallengeInput } from '$lib/types/types.d';
 
 /** Action pour sauvegarder ou modifier le challenge.
  * Si le challengeId = 0, crée un nouveau défi.
