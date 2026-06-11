@@ -47,7 +47,7 @@
             <input 
                 type="file" 
                 bind:files={fichiers} 
-                accept=".png, .jpeg, .jpg, .mp3, .mp4" 
+                accept=".png, .jpeg, .jpg, .mp4, .tif, .tiff, .avif, .heif, .heic, .webm, .mov, .webp, .gif" 
                 style="width: 100%; cursor: pointer;"
             />
         </Flex>
