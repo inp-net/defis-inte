@@ -4,11 +4,12 @@
     import { Dot, Settings, Wrench, ImageUp } from '@lucide/svelte';
     import Profile from '$lib/components/Profile.svelte';
     import ButtonNotification from '$lib/components/ButtonNotification.svelte';
+    import type { User } from '$lib/types/types.d';
 
     const dotSize = "15px";
 
     type Props = {
-        user: any,
+        user: User,
         notificationsDefis?: number,
         notificationsPreuves?: number,
     }
@@ -19,10 +20,10 @@
         notificationsPreuves: notifProof
     }: Props = $props();
 
-    const [firstName, ...reste] = (user.name.split(" "))
-    const lastName = $state(reste.join(" "))
+    const [firstName, ...reste] = $derived(user.name.split(" "))
+    const lastName = $derived(reste.join(" "))
 
-    const percentCommit = (user.groupInte.points ? Math.round((user.points/user.groupInte.points)*100) : 0) 
+    const percentCommit = $derived(user.groupInte.points ? Math.round((user.points/user.groupInte.points)*100) : 0) 
 
 </script>
 
