@@ -108,10 +108,13 @@
     </Stack>
 
     <!-- A afficher que pour les membres 2A de groupes et plus -->
-    <Stack>
-        <AddChallenge />
-    </Stack>
+    {#if !user.is1A}
+        <Stack>
+            <AddChallenge />
+        </Stack>
+    {/if}
 
+    <!-- Liste des défis -->
     <Stack style="max-width: 100%; min-width: 0; overflow: hidden;">
         <Flex gap="xs" wrap={false} align="center">
             <SearchBar bind:value={searchValue} />
@@ -126,7 +129,7 @@
                     isText={challenge.type === "TEXT"}
                     location={challenge.locationName}
                     clubName={challenge.groupName}
-                    clubUrl="https://media.gettyimages.com/id/78038972/fr/photo/london-a-seven-foot-tall-waxwork-figure-of-movie-characture-shrek-is-unveiled-at-madame.jpg?s=612x612&w=gi&k=20&c=dq3bowem92dUWxW2DtFzCq6s4XTVxau7jN8afRSIBhM="
+                    clubUrl={challenge.groupUrl}
                     desc={challenge.description}
                     type={challenge.type}
                     onSave={handleSave}

@@ -30,6 +30,7 @@ export type ProofInput = {
 
 // Input pour crée un challenge
 export type ChallengeInput = {
+    userId?: string | null;
     challengeId?: string | number | null;
     name: string;
     description?: string | null;

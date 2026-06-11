@@ -42,9 +42,10 @@ export const load: PageServerLoad = async ({ params }) => {
 
 export const actions : Actions = {
     // Action pour crée ou modifier : upsert
-    upsert: async ({ request }) => {
+    upsert: async ({ request, locals }) => {
         try {
             const body = await request.json();
+            body.userId = locals.user.id
 
             // Vérifie que le nombre de points entré est valide
             if (!presetPoints.includes(body.nbPoints))
