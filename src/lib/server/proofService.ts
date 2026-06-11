@@ -1,6 +1,7 @@
 import { prisma } from '$lib/server/prisma';
 import { error } from '@sveltejs/kit';
-import { UploadType, Status, ProofInput } from '$lib/types/types.d';
+import { Status, ProofInput } from '$lib/types/types.d';
+import { UploadType } from '@prisma/client' 
 
 async function canModifyProof(proofId: number, userId: string) {
     const proof = await prisma.proof.findUnique({
@@ -40,15 +41,17 @@ export async function newProof(body: ProofInput) {
     // TODO check si l'user existe
 
     const coreData = {
-        userId: userId,
         user: {
-            connect: { userId: userId }
+            connect: { id: userId }
         },
         content: content,
         type: type,
-        challengeId: challengeId,
+        challenge: {
+            connect: {challengeId: challengeId}
+        },        
         status: Status.PENDING,
         isOkTVn7: isOkTVn7,
+        date: new Date()
     };
 
     return await prisma.proof.create({

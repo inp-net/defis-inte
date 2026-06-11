@@ -65,7 +65,7 @@ export const actions: Actions = {
         const challengeId = parseInt(data.get('challengeId') as string, 10);
         const type = data.get('type') as string;
         const textePreuve = data.get('textePreuve') as string;
-        const files: File[] = data.get('file');
+        const files: File[] = data.getAll('file');
         const isOkTVn7 = data.get('isOkTVn7') === "true";
         const userId = locals.user.id;
 
@@ -74,12 +74,11 @@ export const actions: Actions = {
             content = [textePreuve]
         } else {
             for (const file of files){
-                const url = uploadUserFile(file, userId);
+                const url = await uploadUserFile(file, userId);
                 content.push(url)
             }
         }
         const body: ProofInput = { challengeId, userId, type, content, isOkTVn7 } 
-        
         try {
             const proof = await newProof(body);
             return { 
