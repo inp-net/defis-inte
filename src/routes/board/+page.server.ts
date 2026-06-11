@@ -54,12 +54,12 @@ export const load: PageServerLoad = async () => {
 };
 
 export const actions: Actions = {
-    accept: async ({ request }) => {
+    accept: async ({ request , locals}) => {
         const data = await request.formData();
         const challengeId = data.get('challengeId');
 
         try {
-            const updatedChallenge = await acceptChallenge(challengeId);
+            const updatedChallenge = await acceptChallenge(challengeId, locals.user.uid);
             return { 
                 success: true, 
                 challenge: updatedChallenge 
@@ -77,12 +77,12 @@ export const actions: Actions = {
             });
         }
     },
-    delete: async ({ request }) => {
+    delete: async ({ request , locals}) => {
         const data = await request.formData();
         const challengeId = data.get('challengeId');
 
         try {
-            await deleteChallenge(challengeId);
+            await deleteChallenge(challengeId, locals.user.uid);
             return { success: true, };
         } catch (error: any) {
             if (error.status && error.message) {
