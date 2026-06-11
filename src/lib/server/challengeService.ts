@@ -57,6 +57,10 @@ export async function saveChallenge(body: ChallengeInput) {
         throw error(400, 'Champs requis manquants : name, groupName ou locationName.');
     }
 
+    if (!await prisma.user.findUnique({where : {id : userId}, select : {is1A:true}})){
+        throw error(403, 'Tu n\'es pas un 1A');
+    }
+
     const targetGroup = await prisma.groupClub.findFirst({
         where: { name: groupName }
     });
