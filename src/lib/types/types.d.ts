@@ -25,6 +25,7 @@ export type ProofInput = {
     userId: string;
     type: UploadType;
     content: String[];
+    isOkTVn7: boolean;
 }
 
 // Input pour crée un challenge

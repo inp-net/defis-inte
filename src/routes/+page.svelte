@@ -35,7 +35,6 @@
         console.log("Tentative de création de la preuve");
         try {
             const formData = new FormData();
-            formData.append('userId', user.id);
             formData.append('challengeId', challengeId.toString());
             formData.append('type', type)
             if (textePreuve){

@@ -23,7 +23,7 @@ async function canModifyProof(proofId: number, userId: string) {
 }
 
 export async function newProof(body: ProofInput) {
-    const { challengeId, userId, type, content } = body;
+    const { challengeId, userId, type, content, isOkTVn7 } = body;
 
     const challenge = await prisma.challenge.findFirst({
         where: { challengeId: challengeId }
@@ -48,7 +48,7 @@ export async function newProof(body: ProofInput) {
         type: type,
         challengeId: challengeId,
         status: Status.PENDING,
-        hasCededImageRights: true
+        isOkTVn7: isOkTVn7,
     };
 
     return await prisma.proof.create({
