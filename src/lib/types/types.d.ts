@@ -8,7 +8,6 @@ import type {
     UploadType,
 } from '../../../prisma/generated/prisma/client';
 
-
 export type ChurrosGroups = {
     group: ClubInfo;
     secretary: boolean;

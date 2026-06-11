@@ -94,15 +94,11 @@
         }
     });
 
-    const username = $derived(user?.name ?? 'Invité');
-    const [firstName, ...reste] = $derived(username.split(" "))
-    const lastName = $derived(reste.join(" "))
-
 </script>
 
 <Header
-    firstName={firstName}
-    lastName={lastName}
+    firstName={user?.firstName ?? 'Invité'}
+    lastName={user?.lastName ?? 'Non connecté'}
     picture={user?.profilePictureURL ?? 'Invité'}
     accessAdmin={user?.isAdmin || (user?.groupBoard.length > 0)}
     notificationsDefis={data.posts.pendingChallengeCount}

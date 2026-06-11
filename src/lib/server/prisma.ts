@@ -104,9 +104,12 @@ async function formatUserForPrisma(userChurros: UserChurros): Promise<{
         }
     }
 
+    const firstName = userChurros.firstName || userChurros.uid;
+    const lastName = userChurros.lastName || "Étudiant";
 
     const commonData = {
-        name: userChurros.fullName,
+        firstName: firstName, 
+        lastName: lastName,
         profilePictureURL: userChurros.pictureURL ,
         is1A: userChurros.yearTier === 1 ? true : false,
         group: {connect: (group || []).map(g => ({groupId: g.uid}))}, 

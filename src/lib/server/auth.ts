@@ -47,12 +47,19 @@ export const { handle, signIn, signOut } = SvelteKitAuth({
         async jwt({ token, profile, user, account }: { token: Record<string, unknown>; profile?: Profile | null; user?: { id?: string | null }; account?: { provider?: string } | null }) {
 
             if (profile) {
+                const churrosProfile = profile as UserChurros;
                 token.uid = (profile as UserChurros).uid;
+                token.firstName = churrosProfile.firstName;
+                token.lastName = churrosProfile.lastName;
             }
             return token;
         },
         async session({ session, token }: { session: Session; token: Record<string, unknown> }) {
             session.uid = token.uid as string;
+            if (session.user) {
+                session.user.firstName = token.firstName as string;
+                session.user.lastName = token.lastName as string;
+            }
             const droitUser = await prisma.user.findUnique({
                 where: {
                     id : session.uid

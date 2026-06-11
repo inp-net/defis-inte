@@ -24,10 +24,11 @@ enum Status {
 }
 
 model User {
-  id   String  @id @default(uuid()) //id churros
-  name String
-  is1A Boolean
-  profilePictureURL String?      // image de profil de l'utilisateur
+    id                 String   @id  @default(uuid())
+    firstName          String        
+    lastName           String        
+    is1A               Boolean       
+    profilePictureURL  String?       
 
 
   // Dans quel club / bureau de club fait-il partie ?

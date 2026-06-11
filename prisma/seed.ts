@@ -96,7 +96,8 @@ async function main() {
 
             return prisma.user.create({
                 data: {
-                    name: faker.person.fullName(),
+                    firstName: faker.person.firstName(),
+                    lastName: faker.person.lastName(),
                     is1A: faker.datatype.boolean(0.6),
                     points: faker.number.int({ min: 0, max: 100 }),
                     isAdmin: faker.datatype.boolean(0.1),
