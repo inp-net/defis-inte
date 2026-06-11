@@ -6,7 +6,11 @@
 
     let { data }: { data: PageData } = $props();
 
-    let categories = $derived(data.returnCategories);
+    let categories = $derived(data.posts.returnCategories);
+    let user = $derived(data.user);
+
+    const [firstName, ...reste] = (user.name.split(" "))
+    const lastName = $state(reste.join(" "))
 
 </script>
 
@@ -20,7 +24,7 @@
     <Stack>
         <Frame transparent={true} border={true} shadow={true}>
             <Flex direction="column" gap="lg">
-                <Profile size='large' firstName="Bilèle" lastName="El Haddadi" alt="Photo"/>
+                <Profile size='large' firstName={firstName} lastName={lastName} src={user.profilePictureURL}/>
                 <Flex gap="xl">
                     {#each categories as category}
                         <Flex direction="column" gap="md">
