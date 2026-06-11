@@ -60,7 +60,7 @@
             const result = await response.json();
 
             if (result.type === "success") {
-                let mot : string = isNew ? 'crée' : 'modifié';
+                let mot : string = isNew ? 'créé' : 'modifié';
                 toast.success('Défi ' + mot + ' avec succès');
                 if (formState.challengeId < 0) {
                     formState.name = "";
@@ -172,7 +172,7 @@
                     <Button variant="outline" href="/">Annuler</Button>
                     <Button icon={Check} class="success" name="Success" onclick={sendChallenge} disabled={isSubmitting}>
                         {#if isNew}
-                            Crée le défi
+                            Créer le défi
                         {:else}
                             Modifier le défi
                         {/if}

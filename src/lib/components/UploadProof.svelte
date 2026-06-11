@@ -54,7 +54,9 @@
     {/if}
 
     <Flex justify="flex-end" align="center">
-        <Switch bind:checked = {isOkTVn7}>Is U Ok To Donner TVn7 rights ?</Switch>
+        {#if type != "TEXT"}
+            <Switch bind:checked = {isOkTVn7}>J'accepte que TVN7 utilise ces fichiers (+ d'infos dans Paramètres)</Switch>
+        {/if}
         <Button 
             onclick={() => onSave(fichiers, textePreuve, type, isOkTVn7, challengeId)} 
             disabled={boutonvalider(fichiers, textePreuve, type === "TEXT")}
