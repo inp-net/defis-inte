@@ -109,42 +109,122 @@
                 <AcceptableCard
                     id={proof.proofId}
                     name={"Défi : " + proof.challenge.name}
-                    points={proof.challenge.nbPoints}
                     isModifiable={false}
                     onAccepted={() => handleAccept(proof.proofId)}
                     onDeleted={() => handleDeny(proof.proofId)}
                     isApprouved={proof.status === Status.VALID || validProofIds.includes(proof.proofId)}
                     isDisabled={proof.status === Status.DENIED || deniedProofIds.includes(proof.proofId)}
                 >
-                    <Flex direction="column" gap="xs" style="max-width: 100%; width: 100%; min-width: 0;">
-                        <Flex wrap={false} gap="xs" align="center">
-                            <User size='15px'/> 
-                            <p>{proof.user.name}</p>
+                    <Flex direction="column" gap="lg">
+                        <Flex direction="column" gap="xs" style="max-width: 100%; width: 100%; min-width: 0;">
+                            <Flex wrap={false} gap="xs" align="center">
+                                <User size='15px'/> 
+                                <p>{proof.user.name}</p>
+                            </Flex>
+                            <Flex wrap={false} gap="xs" align="center">
+                                <Clock size='15px'/> 
+                                <p>{formatDateTime(proof.date)}</p>
+                            </Flex>
+                            <Flex wrap={false} gap="xs" align="center">
+                                <File size='15px'/> 
+                                <p>{proof.type.toLowerCase()}</p>
+                            </Flex>
                         </Flex>
-                        <Flex wrap={false} gap="xs" align="center">
-                            <Clock size='15px'/> 
-                            <p>{formatDateTime(proof.date)}</p>
-                        </Flex>
-                        <Flex wrap={false} gap="xs" align="center">
-                            <File size='15px'/> 
-                            <p>{proof.type.toLowerCase()}</p>
-                        </Flex>
+                        <div class="proof-media-list">
+                            {#each proof.content as content, index}
+                                {#if proof.type == "TEXT"}
+                                    <div class="text-response">
+                                        <p><b>Réponse {proof.content.length > 1 ? index + 1 : ''} :</b> {content}</p>
+                                    </div>
+                                {:else if proof.type == "VIDEO"}
+                                    <div class="media-container video-container">
+                                        <video controls preload="metadata">
+                                            <source src={content}>
+                                            <p>Votre navigateur ne supporte pas la vidéo</p>
+                                        </video>
+                                    </div>
+                                {:else}
+                                    <div class="media-container image-container">
+                                        <img 
+                                            src={content} 
+                                            alt={`Preuve image ${index + 1}`}
+                                            loading="lazy"
+                                        >
+                                    </div>
+                                {/if}
+                            {/each}
+                        </div>
                     </Flex>
-                    {#if (proof.type == "TEXT")}
-                        <p><b>Réponse :</b> {proof.content}</p>
-                    {:else if (proof.type == "VIDEO")}
-                        <video style="max-width: 250px; max-height: 250px; width: auto; height: auto; border-radius: 8px; object-fit: contain;" controls>
-                            <source src={proof.content}>
-                        </video>
-                    {:else}
-                        <img 
-                            src={proof.content} 
-                            alt="Une photo" 
-                            style="max-width: 250px; max-height: 250px; width: auto; height: auto; border-radius: 8px; object-fit: contain;"
-                        >
-                    {/if}
                 </AcceptableCard>
             {/each}
         </Flex>
     </Stack>
 </Flex>
+
+<style>
+    .proof-content {
+        max-width: 100%;
+        overflow-x: hidden;
+    }
+    
+    .proof-media-list {
+        display: flex;
+        flex-direction: column;
+        gap: var(--size-md);
+        width: 100%;
+        max-width: 100%;
+    }
+    
+    .media-container {
+        width: 100%;
+        max-width: 100%;
+        border-radius: 8px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        overflow: hidden;
+    }
+    
+    .video-container {
+        background: #000;
+        min-height: 200px;
+    }
+    
+    .image-container {
+        min-height: 100px;
+    }
+    
+    .video-container video {
+        width: 100%;
+        height: auto;
+        max-width: 100%;
+        max-height: 300px;
+        aspect-ratio: 16 / 9;
+        object-fit: contain;
+        display: block;
+    }
+    
+    .image-container img {
+        width: auto;
+        max-width: 100%;
+        max-height: 300px;
+        height: auto;
+        object-fit: contain;
+        display: block;
+    }
+    
+    .text-response {
+        width: 100%;
+        padding: var(--size-sm);
+        border-radius: 8px;
+        word-wrap: break-word;
+        overflow-wrap: break-word;
+    }
+    
+    @media (max-width: 640px) {
+        .video-container video,
+        .image-container img {
+            max-height: 250px;
+        }
+    }
+</style>

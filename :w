@@ -13,17 +13,11 @@
         isDisabled?: boolean
         /** Nom affiché de l'élément. Horizontal scroll si dépasse.*/
         name: string
-        /** Nombre de points requis pour l'élément.*/
-        points?: number
-        /** Si true, affiche un bouton "Modifier" avec le lien fourni.*/
+        points: number
         isModifiable: boolean
-        /** URL de destination pour le bouton "Modifier" (requis si isModifiable=true).*/
         modifiableURL: string
-        /** Callback déclenché lors de l'acceptation, reçoit l'id de l'élément.*/
         onAccepted: (id: number) => void
-        /** Callback déclenché lors du refus/suppression, reçoit l'id de l'élément.*/
         onDeleted: (id: number) => void
-        /** Contenu optionnel affiché dans la zone pliable lorsqu'on clique sur l'en-tête.*/
         children?: import('svelte').Snippet;
     };
 
@@ -46,13 +40,14 @@
 
 <!--
 @component
-Carte interactive pour afficher des éléments à valider, refuser ou modifier.
+Composant qui à un bouton accepter, refuser et modifier (optionel). Si on
+appuie dessus, il se défold et laisse apparaitre l'enfant contenu dedans.
 -->
 <main class="custom-frame">
     <Frame style="overflow: visible">
         <Flex justify="space-between" gap="md" direction="column" style="width: 100%; max-width: 100%; min-width: 0;">
             <button class="no-style" onclick={() => showChildren = !showChildren}>
-                <Flex justify="space-between" align="center" gap="xs">
+                <div class="header-row">
                     {#if isApprouved}
                         <Check style="flex-shrink: 0;" />
                     {:else if isDisabled}
@@ -63,12 +58,10 @@ Carte interactive pour afficher des éléments à valider, refuser ou modifier.
                         <p class="scrollable-text">{name}</p>
                     </div>
                     
-                    {#if points}
-                        <Flex style="margin-left: auto; flex-shrink: 0;">
-                            <p style="text-wrap: nowrap;"><b>{points} pts</b></p>
-                        </Flex>
-                    {/if}
-                </Flex>
+                    <Flex style="margin-left: auto; flex-shrink: 0;">
+                        <p style="text-wrap: nowrap;"><b>{points} pts</b></p>
+                    </Flex>
+                </div>
             </button>
             
             {#if children && showChildren}
@@ -78,7 +71,7 @@ Carte interactive pour afficher des éléments à valider, refuser ou modifier.
                 </div>
             {/if}
             
-            <Flex gap="xs" style="margin-left: auto; flex-shrink: 0;">
+            <div class="actions-row">
                 {#if isModifiable}
                     <Button href={modifiableURL} variant="outline"> Modifier </Button>
                 {/if}
@@ -96,7 +89,7 @@ Carte interactive pour afficher des éléments à valider, refuser ou modifier.
                     disabled={isApprouved || isDisabled} 
                     onclick={() => onAccepted(id)}
                 />
-            </Flex>
+            </div>
         </Flex>
     </Frame>
 </main>
@@ -113,8 +106,7 @@ Carte interactive pour afficher des éléments à valider, refuser ou modifier.
     }
 
     hr {
-        color: var(--color-border);
-        margin: var(--size-md) 0;
+        color: var(--color-bg-subtle);
     }
 
     .no-style {
@@ -128,6 +120,15 @@ Carte interactive pour afficher des éléments à valider, refuser ou modifier.
         width: 100%;
         min-width: 0;
         display: block;
+    }
+
+    .header-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: var(--size-xs);
+        width: 100%;
+        min-width: 0;
     }
 
     .scrollable-container {
@@ -148,5 +149,17 @@ Carte interactive pour afficher des éléments à valider, refuser ou modifier.
         margin: 0;
         text-align: left;
         width: max-content;
+    }
+
+    .points-text {
+        flex-shrink: 0;
+        white-space: nowrap;
+    }
+
+    .actions-row {
+        display: flex;
+        gap: var(--size-xs);
+        margin-left: auto;
+        flex-shrink: 0;
     }
 </style>
