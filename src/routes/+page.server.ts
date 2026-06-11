@@ -2,7 +2,7 @@ import type { PageServerLoad } from './$types';
 import { ProofInput, type ChallengeRead } from '$lib/types/types.d';
 import { newProof } from '$lib/server/proofService';
 import { prisma } from "$lib/server/prisma";
-import { fail, type Actions } from '@sveltejs/kit';
+import { error, fail, type Actions } from '@sveltejs/kit';
 import { uploadUserFile } from '$lib/server/filesManagement';
 
 // explication user le locals doit etre entre crochet pour la destructuration
@@ -80,6 +80,10 @@ export const actions: Actions = {
         }
         const body: ProofInput = { challengeId, userId, type, content, isOkTVn7 } 
         try {
+            // Verifie si c'est un 1A 
+            if (!locals.user.is1A){
+                throw error (402, "Tu n'es pas un 1A")
+            }
             const proof = await newProof(body);
             return { 
                 success: true,
