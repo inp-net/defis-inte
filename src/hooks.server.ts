@@ -28,7 +28,6 @@ const handlePerms: Handle = async ({ event, resolve }) => {
             }
 
         } catch (e) {
-            console.log("in catch error")
             if (e instanceof Response) throw e;
             console.error('PRISMA ERROR:', e);
         }

@@ -6,7 +6,7 @@
  * @returns true si c'est un groupe d'intégration, false sinon
  */
 export function FormatGroupInte(chaine: string): boolean {
-    const modeleGroupInte = /^groupe-.*-202.*$/; 
+    const modeleGroupInte = /^groupe-.*-202.*$/; // A changer chaque année pour récup les groupes que de cette année 
     return modeleGroupInte.test(chaine);
 }
 
