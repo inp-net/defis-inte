@@ -5,9 +5,7 @@ import { prisma } from "$lib/server/prisma";
 import { error, fail, type Actions } from '@sveltejs/kit';
 import { uploadUserFile } from '$lib/server/filesManagement';
 
-// explication user le locals doit etre entre crochet pour la destructuration
-export const load: PageServerLoad = async ({locals}) => {
-console.log("on est sur le /")//debug
+export const load: PageServerLoad = async ({ locals }) => {
 
     const allChallengesUntyped = await prisma.challenge.findMany({
         where: { isDeleted: false },
@@ -32,8 +30,8 @@ console.log("on est sur le /")//debug
 
     const allChallenges = allChallengesUntyped.map(({ group, ...challenge }) => ({
         ...challenge,
-        groupName: group.name,
-        groupUrl: group.pictureURL,
+        groupName: group.name ?? "",
+        groupUrl: group.pictureURL ?? "",
     }));
 
     const challenges : ChallengeRead[] = allChallenges.filter((a) => a.defiAccepte);
@@ -46,7 +44,6 @@ console.log("on est sur le /")//debug
 
     const pendingProofCount = allPendingProofs.length; 
 
-    //explication user
     const session = await locals.auth();
     const user = locals.user;
  

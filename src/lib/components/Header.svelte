@@ -9,21 +9,26 @@
     const dotSize = "15px";
 
     type Props = {
-        user: User,
+        firstName: string,
+        lastName: string,
+        picture: string,
+        accessAdmin: boolean,
         notificationsDefis?: number,
         notificationsPreuves?: number,
     }
 
     const {
-        user,
-        notificationsDefis: notifDefi,
-        notificationsPreuves: notifProof
+        firstName,
+        lastName,
+        picture,
+        accessAdmin,
+        notificationsDefis,
+        notificationsPreuves
     }: Props = $props();
 
-    const [firstName, ...reste] = $derived(user.name.split(" "))
-    const lastName = $derived(reste.join(" "))
-
-    const percentCommit = $derived(user.groupInte.points ? Math.round((user.points/user.groupInte.points)*100) : 0) 
+    // const username = $derived(user?.name ?? 'Invité');
+    // const [firstName, ...reste] = $derived(username.split(" "))
+    // const lastName = $derived(reste.join(" "))
 
 </script>
 
@@ -31,25 +36,13 @@
     <Frame transparent={true} border={true} shadow={true}>
         <Flex justify="space-between" align="center" wrap={false}>
             <Flex align="center" gap="md">
-                <Profile firstName={firstName} lastName={lastName} src={user.profilePictureURL} hideName={true}/> 
-                {#if user.is1A}
-                    <section class="remove-small">
-                        <Dot size={dotSize}/>
-                    </section>
-                    <section class="remove-small">
-                        <Flex direction="column" gap="xxs">
-                            <h4>{user.groupInte.name}</h4>
-                            <p>Points groupe : {user.groupInte.points}</p>
-                            <p>Contribution : {percentCommit}%</p>
-                        </Flex>
-                    </section>
-                {/if}
+                <Profile firstName={firstName} lastName={lastName} src={picture} hideName={true}/> 
             </Flex>
             <Flex wrap={false} gap="xs" align="center">
                 <Button href="/leaderboard">Classement</Button>
-                {#if user.groupBoard || user.isAdmin}
-                    <ButtonNotification href="/board" icon={Wrench} variant="outline" notifications={notifDefi}></ButtonNotification>
-                    <ButtonNotification href="/proof" icon={ImageUp} variant="outline" notifications={notifProof}></ButtonNotification>
+                {#if accessAdmin}
+                    <ButtonNotification href="/board" icon={Wrench} variant="outline" notifications={notificationsDefis}></ButtonNotification>
+                    <ButtonNotification href="/proof" icon={ImageUp} variant="outline" notifications={notificationsPreuves}></ButtonNotification>
                 {/if}
                 <Button href="/settings" icon={Settings} variant="outline"></Button>
             </Flex>
@@ -65,12 +58,5 @@
         padding: 10px;
         z-index: 100;
     }
-
-    @media (max-width: 600px) {
-        .remove-small {
-            display: none;
-        }
-    }
-
 
 </style>

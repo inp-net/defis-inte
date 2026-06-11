@@ -14,7 +14,7 @@
     let challenges : ChallengeRead[] = $state(data.posts.challenges);
     
     // Données liées au profil de l'utilisateur
-    const user = data.user;   // explication user  faut let {data} = $pops puis cette ligne qui permet d'avoir l'objet user 
+    const user = $derived(data.user);
 
     // Recherche de défis
 
@@ -94,13 +94,20 @@
         }
     });
 
-
+    const username = $derived(user?.name ?? 'Invité');
+    const [firstName, ...reste] = $derived(username.split(" "))
+    const lastName = $derived(reste.join(" "))
 
 </script>
+
 <Header
-    user={user}
+    firstName={firstName}
+    lastName={lastName}
+    picture={user?.profilePictureURL ?? 'Invité'}
+    accessAdmin={user?.isAdmin || (user?.groupBoard.length > 0)}
     notificationsDefis={data.posts.pendingChallengeCount}
-    notificationsPreuves={data.posts.pendingProofCount}/>
+    notificationsPreuves={data.posts.pendingProofCount}>
+</Header>
 <Flex direction="column" gap="xxl" margin="lg">
     <Stack> 
         <h1>Défis</h1>
@@ -108,7 +115,7 @@
     </Stack>
 
     <!-- A afficher que pour les membres 2A de groupes et plus -->
-    {#if !user.is1A}
+    {#if user && !user.is1A}
         <Stack>
             <AddChallenge />
         </Stack>
