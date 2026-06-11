@@ -5,15 +5,25 @@
     import { slide } from 'svelte/transition';
     
     type Props = {
+        /** Identifiant unique de l'élément. */
         id: number
+        /** Si true, l'élément est approuvé - désactive les boutons d'action et affiche un check.*/
         isApprouved?: boolean
+        /** Si true, l'élément est désactivé - désactive les boutons d'action et affiche une crois.*/
         isDisabled?: boolean
+        /** Nom affiché de l'élément. Horizontal scroll si dépasse.*/
         name: string
-        points: number
+        /** Nombre de points requis pour l'élément.*/
+        points?: number
+        /** Si true, affiche un bouton "Modifier" avec le lien fourni.*/
         isModifiable: boolean
+        /** URL de destination pour le bouton "Modifier" (requis si isModifiable=true).*/
         modifiableURL: string
+        /** Callback déclenché lors de l'acceptation, reçoit l'id de l'élément.*/
         onAccepted: (id: number) => void
+        /** Callback déclenché lors du refus/suppression, reçoit l'id de l'élément.*/
         onDeleted: (id: number) => void
+        /** Contenu optionnel affiché dans la zone pliable lorsqu'on clique sur l'en-tête.*/
         children?: import('svelte').Snippet;
     };
 
@@ -34,7 +44,11 @@
 
 </script>
 
-<div class="custom-frame">
+<!--
+@component
+Carte interactive pour afficher des éléments à valider, refuser ou modifier.
+-->
+<main class="custom-frame">
     <Frame style="overflow: visible">
         <Flex justify="space-between" gap="md" direction="column" style="width: 100%; max-width: 100%; min-width: 0;">
             <button class="no-style" onclick={() => showChildren = !showChildren}>
@@ -49,9 +63,11 @@
                         <p class="scrollable-text">{name}</p>
                     </div>
                     
-                    <Flex style="margin-left: auto; flex-shrink: 0;">
-                        <p style="text-wrap: nowrap;"><b>{points} pts</b></p>
-                    </Flex>
+                    {#if points}
+                        <Flex style="margin-left: auto; flex-shrink: 0;">
+                            <p style="text-wrap: nowrap;"><b>{points} pts</b></p>
+                        </Flex>
+                    {/if}
                 </div>
             </button>
             
@@ -83,7 +99,7 @@
             </div>
         </Flex>
     </Frame>
-</div>
+</main>
 
 <style>
     .custom-frame {
