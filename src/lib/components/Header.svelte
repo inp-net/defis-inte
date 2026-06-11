@@ -46,8 +46,10 @@
             </Flex>
             <Flex wrap={false} gap="xs" align="center">
                 <Button href="/leaderboard">Classement</Button>
-                <ButtonNotification href="/board" icon={Wrench} variant="outline" notifications={notifDefi}></ButtonNotification>
-                <ButtonNotification href="/proof" icon={ImageUp} variant="outline" notifications={notifProof}></ButtonNotification>
+                {#if user.groupBoard || user.isAdmin}
+                    <ButtonNotification href="/board" icon={Wrench} variant="outline" notifications={notifDefi}></ButtonNotification>
+                    <ButtonNotification href="/proof" icon={ImageUp} variant="outline" notifications={notifProof}></ButtonNotification>
+                {/if}
                 <Button href="/settings" icon={Settings} variant="outline"></Button>
             </Flex>
         </Flex>

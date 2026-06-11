@@ -7,7 +7,7 @@ import {UploadType} from '../../../prisma/generated/prisma/enums'
  * Si le challengeId existe, modifie le défie.
  */
 export async function saveChallenge(body: ChallengeInput) {
-    const { challengeId, name, description, groupName, locationName, type, nbPoints } = body;
+    const { userId, challengeId, name, description, groupName, locationName, type, nbPoints } = body;
 
     if (!name || !groupName || !locationName) {
         throw error(400, 'Champs requis manquants : name, groupName ou locationName.');
@@ -41,16 +41,6 @@ export async function saveChallenge(body: ChallengeInput) {
         }
     }
 
-
-    // TODO à chager avec l'ID user
-    const fallbackUserId = "00000000-0000-0000-0000-000000000000"; 
-
-    await prisma.user.upsert({
-        where: { id: fallbackUserId },
-        update: {},
-        create: { id: fallbackUserId, name: "Admin System", is1A: false, isAdmin: true }
-    });
-
     const targetId = challengeId ? parseInt(challengeId.toString(), 10) : 0;
 
     if (targetId > 0) {
@@ -62,7 +52,7 @@ export async function saveChallenge(body: ChallengeInput) {
         return await prisma.challenge.create({
             data: {
                 ...coreData,
-                userId: fallbackUserId, 
+                userId: userId, 
                 defiAccepte: false
             }
         });
