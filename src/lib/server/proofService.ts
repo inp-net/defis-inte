@@ -1,7 +1,7 @@
 import { prisma } from '$lib/server/prisma';
 import { error } from '@sveltejs/kit';
 import { Status, ProofInput } from '$lib/types/types.d';
-import { UploadType } from '@prisma/client' 
+import { UploadType } from '../../../prisma/generated/prisma/client' 
 
 async function canModifyProof(proofId: number, userId: string) {
     const proof = await prisma.proof.findUnique({
@@ -20,7 +20,29 @@ async function canModifyProof(proofId: number, userId: string) {
         throw { status: 409, message: 'Preuve à été refusé, impossible de l\'approuver' };
     }
 
-    // TODO check user peut modifier les preuves
+    // si pas du bureau ou admin il est redirigée
+    const userAutorisation = await prisma.user.findUnique({
+        Where : {id : userId},
+        Select : {
+            isAdmin : true,
+            groupBoard : {groupId : true}
+        }
+    });
+
+    const groupProof = await prisma.proof.findUnique({
+        where : {
+            proofId : proofId
+        },
+        select : {
+            challenge : {
+                groupId : true
+            }
+        }
+    })
+
+    if(!userAutorisation.groupBoard.some(board => board.groupId === groupProof) || !userAutorisation.isAdmin){
+            throw error(402,"tu ne fais pas partit du bureau du club")
+    }
 }
 
 export async function newProof(body: ProofInput) {
@@ -38,7 +60,10 @@ export async function newProof(body: ProofInput) {
         throw error(404, `Type de challenge non trouvé: ${type}`);
     }
 
-    // TODO check si l'user existe
+    // Vérifie si l'utilisateur existe
+    if(await prisma.user.finUnique({where : {id :userId}})){
+        throw error(403, "l'utilisateur n'existe pas")
+    }
 
     const coreData = {
         user: {

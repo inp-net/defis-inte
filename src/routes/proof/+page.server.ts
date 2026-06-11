@@ -3,18 +3,41 @@ import { fail, type Actions } from '@sveltejs/kit';
 import { approveProof, denyProof } from '$lib/server/proofService';
 import { prisma } from "$lib/server/prisma";
 import type { Proof } from '$lib/types/types.d';
+import { error, fail, type Actions } from '@sveltejs/kit';
 
-export const load: PageServerLoad = async () => {
+export const load: PageServerLoad = async ({locals}) => {
 
-    const proofs : Proof[] = await prisma.proof.findMany({
-        where: {
-            status: 'PENDING',
-        },
-        include :{
-            user: true,
-            challenge: true,
+    let proofs : Proof[] = [];
+    // si pas du bureau ou admin il est redirigée
+    if(!locals.user.groupBoard || locals.user.isAdmin){
+        throw error(402,"tu ne fais pas partit du bureau d'un club")
+    }else{
+        if (locals.user.isAdmin){
+            proofs = await prisma.proof.findMany({
+                where: {
+                    status: 'PENDING'
+                },
+                include :{
+                    user: true,
+                    challenge: true,
+                }
+            });
+        }else{
+            proofs = await prisma.proof.findMany({
+                where: {
+                    status: 'PENDING',
+                    challenge:{
+                        groupId: {in : locals.user.groupBoard.groupId } // Que les club ou le user est dans le bureau
+                    }
+                },
+                include :{
+                    user: true,
+                    challenge: true,
+                }
+            });
         }
-    });
+    }
+
 
     return {
         posts: {
@@ -24,7 +47,12 @@ export const load: PageServerLoad = async () => {
 };
 
 export const actions: Actions = {
-    approve: async ({ request }) => {
+    approve: async ({ request , locals}) => {
+        // si pas du bureau ou admin il est redirigée
+        if(!locals.user.groupBoard || locals.user.isAdmin){
+            throw error(402,"tu ne fais pas partit du bureau d'un club")
+        }
+
         const data = await request.formData();
         const proofIdString = data.get('proofId');
 
@@ -33,7 +61,7 @@ export const actions: Actions = {
             : NaN;
 
         try {
-            const fallbackUserId = "00000000-0000-0000-0000-000000000000"; 
+            const fallbackUserId = locals.user.uid; 
             const updatedProof = await approveProof(proofId, fallbackUserId);
             return { 
                 success: true,
@@ -48,11 +76,11 @@ export const actions: Actions = {
             }
             console.error('Action Error:', error);
             return fail(500, { 
-                message: 'Impossible accepter le défi' 
+                message: 'Impossible d\'accepter le défi' 
             });
         }
     },
-    deny: async ({ request }) => {
+    deny: async ({ request, locals }) => {
         const data = await request.formData();
         const proofIdString = data.get('proofId');
 
@@ -61,7 +89,7 @@ export const actions: Actions = {
             : NaN;
 
         try {
-            const fallbackUserId = "00000000-0000-0000-0000-000000000000"; 
+            const fallbackUserId =locals.user.uid; 
             await denyProof(proofId, fallbackUserId);
             return { success: true, };
         } catch (error: any) {
