@@ -1,7 +1,7 @@
 import { prisma } from '$lib/server/prisma';
 import { error } from '@sveltejs/kit';
-import { UploadType, ChallengeInput } from '$lib/types/types.d';
-
+import { ChallengeInput } from '$lib/types/types.d';
+import {UploadType} from '../../../prisma/generated/prisma/enums'
 /** Action pour sauvegarder ou modifier le challenge.
  * Si le challengeId = 0, crée un nouveau défi.
  * Si le challengeId existe, modifie le défie.
@@ -39,7 +39,8 @@ export async function saveChallenge(body: ChallengeInput) {
                 create: { name: locationName.trim() }
             }
         }
-    };
+    }
+
 
     // TODO à chager avec l'ID user
     const fallbackUserId = "00000000-0000-0000-0000-000000000000"; 
