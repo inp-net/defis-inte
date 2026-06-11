@@ -8,17 +8,6 @@ import type {
     UploadType,
 } from '../../../prisma/generated/prisma/client';
 
-export type User = {
-    uid: string;
-    fullName: string;
-    pictureURL: string;
-    groupInteId: string;
-    is1A: boolean;
-    point: Number;
-    isAdmin: boolean;
-    groupBoard:ChurrosGroups[]
-
-};
 
 export type ChurrosGroups = {
     group: ClubInfo;
@@ -36,6 +25,7 @@ export type {
     Challenge,
     Proof,
     UploadType,
+    User
 }
 
 type Category = {
