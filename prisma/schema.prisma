@@ -3,146 +3,126 @@
 // Get a free hosted Postgres database in seconds: `npx create-db`
 
 generator client {
-  provider = "prisma-client"
-  output   = "./generated/prisma"
+    provider = "prisma-client"
+    output   = "./generated/prisma"
 }
 
 datasource db {
-  provider = "postgresql"
+    provider = "postgresql"
 }
 
 enum UploadType {
-  PHOTO
-  VIDEO
-  TEXT
+    PHOTO
+    VIDEO
+    TEXT
 }
 
 enum Status {
-  PENDING
-  VALID
-  DENIED
+    PENDING
+    VALID
+    DENIED
 }
 
 model User {
-    id                 String   @id  @default(uuid())
-    firstName          String        
-    lastName           String        
-    is1A               Boolean       
-    profilePictureURL  String?       
+    id                String          @id  @default(uuid())
+    firstName         String
+    lastName          String
+    is1A              Boolean
+    profilePictureURL String?
 
+    // Groupe de l'utilsateur. GroupBoard sont ceux où il est dans le bureau.
+    group             GroupClub[]     @relation("UserGroups")
+    groupBoard        GroupClub[]     @relation("BoardGroups")
 
-  // Dans quel club / bureau de club fait-il partie ?
-  group      GroupClub[] @relation("UserGroups")
-  groupBoard GroupClub[] @relation("BoardGroups")
+    // Groupe d'intégration utile que pour les 1A
+    groupInte         GroupInte?      @relation("UserGroupInte", fields: [groupInteId], references: [groupId])
+    groupInteId       String?
 
-  // Dans quel groupe d'intégration fait-il partie ?
-  groupInte   GroupInte? @relation("UserGroupInte", fields: [groupInteId], references: [groupId])
-  groupInteId String?
+    points            Int             @default(0)
 
-  // Combien de points a-t-il ?
-  points Int @default(0)
+    // Preuves soumise par l'utilsateur
+    proof             Proof[]         @relation("UserProofs")
 
-  // Quelles preuves a-t-il soumis ?
-  proof Proof[] @relation("UserProofs")
-
-  // Est-il admin ?
-  isAdmin Boolean @default(false)
+    // Si l'utilateur est administrateur
+    isAdmin           Boolean         @default(false)
 }
 
+// Les clubs et associations de l'ENSEEIHT qui proposent des défis.
 model GroupClub {
-  // Données de Churros
-  groupId    String  @id
-  name       String
-  pictureURL String? // image du groupe 
-
-  // Qui fait partie du club ?
-  users User[] @relation("UserGroups")
-
-  // Qui est au bureau du club ?
-  board User[] @relation("BoardGroups")
-
-  // Quels défis sont liés au club ?
-  challenge Challenge[] @relation("GroupChallenges")
+    groupId           String          @id
+    name              String
+    pictureURL        String?
+    users             User[]          @relation("UserGroups")
+    board             User[]          @relation("BoardGroups")
+    challenge         Challenge[]     @relation("GroupChallenges")
 }
 
+// Les groupes d'intégrations.
 model GroupInte {
-  // Données de Churros
-  groupId    String  @id
-  name       String
-  pictureURL String? // image du groupe 
-
-  // Qui fait partie du groupe d'inté ?
-  usersInte User[] @relation("UserGroupInte")
-
-  // Quels défis ont été validés par le groupe ?
-  challengeSucceed Challenge[] @relation("ChallengesSucceed")
-
-  // Combien de points a le groupe ?
-  points Int @default(0)
+    groupId           String          @id
+    name              String
+    pictureURL        String?
+    usersInte         User[]          @relation("UserGroupInte")
+    challengeSucceed  Challenge[]     @relation("ChallengesSucceed")
+    points            Int             @default(0)
 }
 
 model Proof {
-  proofId Int @id @default(autoincrement())
+    proofId           Int             @id @default(autoincrement())
+    
+    // Qui à envoyé la preuve
+    user              User            @relation("UserProofs", fields: [userId], references: [id])
+    userId            String
 
-  // Qui a envoyé la preuve ?
-  user   User   @relation("UserProofs", fields: [userId], references: [id])
-  userId String
+    // Type de contenu (VIDEO / PHOTO / TEXTE)
+    type              UploadType
+    content           String[]
+    date              DateTime
 
-  // Quel est le contenu de la preuve ? 
-  content String[]  // lien si media ou contenu si texte
-  type    UploadType // (photo / video / text)
-  date    DateTime
+    challenge         Challenge?      @relation("ChallengeProofs", fields: [challengeId], references: [challengeId])
+    challengeId       Int?
 
-  // A quel défi est reliée la preuve ?
-  challenge   Challenge? @relation("ChallengeProofs", fields: [challengeId], references: [challengeId])
-  challengeId Int?
-
-  // Qui a validé la preuve ?
-  validatorId String?
-
-  // Dans quel statut est la preuve ?
-  status Status @default(PENDING)// (pending / valid / denied) 
-
-  // Céder droit a l'image à TVn7
-  isOkTVn7 Boolean @default(false) 
+    // Qui à validé la preuve
+    validatorId       String?
+    // Status (PENDING / VALID / DENIED)
+    status            Status          @default(PENDING)
+    // Céder les droits d'images à TVn7
+    isOkTVn7          Boolean         @default(false)
 }
 
 model Challenge {
-  challengeId Int     @id @default(autoincrement())
-  name        String
-  description String?
+    challengeId       Int             @id @default(autoincrement())
+    name              String
+    description       String?
 
-  // Quel club propose le défi ?
-  group   GroupClub @relation("GroupChallenges", fields: [groupId], references: [groupId])
-  groupId String
+    // Quel asso à proposé le défi
+    group             GroupClub       @relation("GroupChallenges", fields: [groupId], references: [groupId])
+    groupId           String
+    
+    // Quel individu à proposé le défi
+    userId            String
 
-  // Qui a proposé le défi ?
-  userId  String
+    // Quel individu à accepté le défi
+    userAcceptId      String?
+    defiAccepte       Boolean         @default(false)
 
-  // Qui a accepté la proposition de défi ?
-  userAcceptId String?
-  defiAccepte  Boolean @default(false)
+    // Quels groupe d'inté ont réussi le défi
+    groupInteSucceed  GroupInte[]     @relation("ChallengesSucceed")
 
-  // Quel groupe d'inté à réussi le defi ?
-  groupInteSucceed GroupInte[] @relation("ChallengesSucceed")
+    // Type de preuve (VIDEO / TEXTE / PHOTO)
+    type              UploadType
+    nbPoints          Int             @default(0)
 
-  type UploadType
+    // Endroit où doit se passe le défi
+    locationName      String          @default("ENSEEIHT")
+    location          Location        @relation("DefiPlace", fields: [locationName], references: [name])
 
-  // Que vaut le défi ?
-  nbPoints   Int        @default(0)
-
-  // Où se situe le défi ?
-  locationName String   @default("ENSEEIHT")
-  location     Location @relation("DefiPlace", fields: [locationName], references: [name])
-
-  // Quelles preuves sont liées à ce défi ?
-  proofs Proof[] @relation("ChallengeProofs")
-
-  // Si un admin décide de delete le challenge, il ne s'affiche pas
-  isDeleted Boolean @default(false)
+    // Preuves relatives au challenge
+    proofs            Proof[]         @relation("ChallengeProofs")
+    isDeleted         Boolean         @default(false)
 }
 
 model Location {
-  name      String      @id
-  challenge Challenge[] @relation("DefiPlace")
+    name              String          @id
+    challenge         Challenge[]     @relation("DefiPlace")
 }
