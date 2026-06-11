@@ -15,7 +15,8 @@ const handlePerms: Handle = async ({ event, resolve }) => {
             const user = await prisma.user.findUnique({
                 where: { id: session.uid },
                 include:{
-                        groupBoard : true
+                        groupBoard : true,
+                        groupInte : true
                     }
             });
             event.locals.user = user;

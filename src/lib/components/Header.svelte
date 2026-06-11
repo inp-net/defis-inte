@@ -6,18 +6,23 @@
     import ButtonNotification from '$lib/components/ButtonNotification.svelte';
 
     const dotSize = "15px";
-    const pointsGroup = "676";
-    const percentCommit = "10%";
 
     type Props = {
+        user: any,
         notificationsDefis?: number,
         notificationsPreuves?: number,
     }
 
     const {
+        user,
         notificationsDefis: notifDefi,
         notificationsPreuves: notifProof
     }: Props = $props();
+
+    const [firstName, ...reste] = (user.name.split(" "))
+    const lastName = $state(reste.join(" "))
+
+    const percentCommit = (user.groupInte.points ? Math.round((user.points/user.groupInte.points)*100) : 0) 
 
 </script>
 
@@ -25,17 +30,19 @@
     <Frame transparent={true} border={true} shadow={true}>
         <Flex justify="space-between" align="center" wrap={false}>
             <Flex align="center" gap="md">
-                <Profile firstName="Bilèle" lastName="El Haddadi" alt="Avatar" hideName={true} /> 
-                <section class="remove-small">
-                    <Dot size={dotSize}/>
-                </section>
-                <section class="remove-small">
-                    <Flex direction="column" gap="xxs">
-                        <p><b>Groupe B</b></p>
-                        <p>Points groupe : {pointsGroup}</p>
-                        <p>Contribution : {percentCommit}</p>
-                    </Flex>
-                </section>
+                <Profile firstName={firstName} lastName={lastName} src={user.profilePictureURL} hideName={true}/> 
+                {#if user.is1A}
+                    <section class="remove-small">
+                        <Dot size={dotSize}/>
+                    </section>
+                    <section class="remove-small">
+                        <Flex direction="column" gap="xxs">
+                            <h4>{user.groupInte.name}</h4>
+                            <p>Points groupe : {user.groupInte.points}</p>
+                            <p>Contribution : {percentCommit}%</p>
+                        </Flex>
+                    </section>
+                {/if}
             </Flex>
             <Flex wrap={false} gap="xs" align="center">
                 <Button href="/leaderboard">Classement</Button>

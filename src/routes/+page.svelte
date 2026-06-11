@@ -12,6 +12,8 @@
 
     let { data }: { data: PageData } = $props();
     let challenges : ChallengeRead[] = $state(data.posts.challenges);
+    
+    // Données liées au profil de l'utilisateur
     const user = data.user;   // explication user  faut let {data} = $pops puis cette ligne qui permet d'avoir l'objet user 
 
     // Recherche de défis
@@ -95,8 +97,10 @@
 
 
 </script>
-<p> {user.name}</p> <!--test-->
-<Header notificationsDefis={data.posts.pendingChallengeCount} notificationsPreuves={data.posts.pendingProofCount}/>
+<Header
+    user={user}
+    notificationsDefis={data.posts.pendingChallengeCount}
+    notificationsPreuves={data.posts.pendingProofCount}/>
 <Flex direction="column" gap="xxl" margin="lg">
     <Stack> 
         <h1>Défis</h1>
