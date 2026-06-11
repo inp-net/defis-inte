@@ -6,41 +6,36 @@ import { redirect } from '@sveltejs/kit';
 import { error } from '@sveltejs/kit';
 
 const handlePerms: Handle = async ({ event, resolve }) => {
-
+    const currentPath = event.url.pathname;
 	const session = await event.locals.auth();
 
+    console.log("uid:", session?.uid);
 	if (session?.uid) {
         try {
             const user = await prisma.user.findUnique({
                 where: { id: session.uid },
-                select:{
-                        groupBoard : true,
-                        isAdmin :true
+                include:{
+                        groupBoard : true
                     }
             });
-            event.locals.user = {...event.locals.user, ...user};
-
-            // Gestion authorisation de connexion
-            const protectedRoutes = ['/admin', '/board'];
-            const currentPath = event.url.pathname;
-
-            // Si pas connecter rediriger vers la page de connection
-            if (!session && !currentPath.endsWith('/connection')){
-                throw redirect(302, '/connection');
-            }
+            event.locals.user = user;
 
             // Empecher l'accés dans les branches interdites aux utilisateurs normales
+            const protectedRoutes = ['/admin', '/board'];
             if (protectedRoutes.some(route => currentPath.startsWith(route)) && (!user.groupBoard || user.isAdmin )) {
                 throw error(403, 'Accès interdit');
             }
 
-
         } catch (e) {
+            console.log("in catch error")
+            if (e instanceof Response) throw e;
             console.error('PRISMA ERROR:', e);
         }
 	}
-
-
+    // Si pas connecter rediriger vers la page de connection
+    if(!session?.uid && !currentPath.endsWith('/connection')){
+        throw redirect(302, '/connection');
+    }
 	return resolve(event);
 };
 

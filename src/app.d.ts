@@ -1,7 +1,6 @@
 import type { Session } from '@auth/core/types';
 import type { User, UserChurros } from '$lib/types/types';
 
-console.log('app LOADED'); //debug
 
 // definie que l'uid est un types string
 declare module '@auth/core/types' {

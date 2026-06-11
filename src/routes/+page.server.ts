@@ -6,8 +6,9 @@ import { fail, type Actions } from '@sveltejs/kit';
 import { uploadUserFile } from '$lib/server/filesManagement';
 
 
-
-export const load: PageServerLoad = async (locals) => {
+// explication user le locals doit etre entre crochet pour la destructuration
+export const load: PageServerLoad = async ({locals}) => {
+console.log("on est sur le /")//debug
 
     const allChallengesUntyped = await prisma.challenge.findMany({
         where: { isDeleted: false },
@@ -46,6 +47,11 @@ export const load: PageServerLoad = async (locals) => {
 
     const pendingProofCount = allPendingProofs.length; 
 
+    //explication user
+    const session = await locals.auth();
+    const user = locals.user;
+    console.log("le user")
+    console.log(user)
     return {
         posts: {
             challenges,

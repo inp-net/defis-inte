@@ -61,7 +61,7 @@ export const { handle, signIn, signOut } = SvelteKitAuth({
 					is1A :true
 				}
 			});
-			session.is1A = droitUser.is1A;
+			 session.is1A = droitUser?.is1A ?? false;
 			return session;
 		}
 	}

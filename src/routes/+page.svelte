@@ -8,12 +8,11 @@
     import AddChallenge from '$lib/components/AddChallenge.svelte';
     import Sort from '$lib/components/Sort.svelte';
     import SearchBar from '$lib/components/SearchBar.svelte';
-    import type { Proof } from '$lib/types/types.d';
 
-    import { signIn, signOut } from "@auth/sveltekit/client";
+
     let { data }: { data: PageData } = $props();
     let challenges : ChallengeRead[] = $state(data.posts.challenges);
-    const user = data.user;
+    const user = data.user;   // explication user  faut let {data} = $pops puis cette ligne qui permet d'avoir l'objet user 
 
     // Recherche de défis
 
@@ -94,8 +93,10 @@
         }
     });
 
-</script>
 
+
+</script>
+<p> {user.name}</p> <!--test-->
 <Header notificationsDefis={data.posts.pendingChallengeCount} notificationsPreuves={data.posts.pendingProofCount}/>
 <Flex direction="column" gap="xxl" margin="lg">
     <Stack> 
