@@ -2,6 +2,7 @@
 
     import { Flex, Frame, Button } from 'azucar-ui';
     import { Check, XIcon } from '@lucide/svelte'
+    import { slide } from 'svelte/transition';
     
     type Props = {
         id: number
@@ -36,7 +37,7 @@
 <div class="custom-frame">
     <Frame style="overflow: visible">
         <Flex justify="space-between" gap="md" direction="column" style="width: 100%; max-width: 100%; min-width: 0;">
-            <div class="no-style" onclick={() => showChildren = !showChildren}>
+            <button class="no-style" onclick={() => showChildren = !showChildren}>
                 <div class="header-row">
                     {#if isApprouved}
                         <Check style="flex-shrink: 0;" />
@@ -52,11 +53,13 @@
                         <p style="text-wrap: nowrap;"><b>{points} pts</b></p>
                     </Flex>
                 </div>
-            </div>
+            </button>
             
             {#if children && showChildren}
-                <hr />
-                {@render children()}
+                <div transition:slide={{ duration: 100 }}>
+                    <hr />
+                    {@render children()}
+                </div>
             {/if}
             
             <div class="actions-row">
@@ -90,6 +93,7 @@
         background-color: var(--color-bg-subtle);
         width: 100%;
         box-sizing: border-box;
+        box-shadow: inset 0 0 0 1px var(--color-border);
     }
 
     hr {

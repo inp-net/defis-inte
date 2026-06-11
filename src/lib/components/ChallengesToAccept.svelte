@@ -57,18 +57,19 @@
 </script>
 
 <Flex gap="xs" direction="column">
-    <Frame transparent={true} border={true}>
+    <button class="no-style" onclick={() => isHide = !isHide}>
+    <Frame transparent={true} border={true} shadow={true}>
         <Flex align="center">
             <Avatar src={groupURL} alt={groupName} />
             <p>{groupName}</p>
             <Button 
                 variant='outline'
                 icon={isHide ? ChevronUp : ChevronDown}
-                onclick={() => isHide = !isHide}
                 style="margin-left: auto"
             />
         </Flex>
     </Frame>
+    </button>
     <Flex gap="xs" direction="column">
         <!-- ne pas afficher les Challenges dones si hideDone est true -->
         {#each visibleChallenges as challenge (challenge.challengeId)}
@@ -98,3 +99,18 @@
         {/each}
     </Flex>
 </Flex>
+
+<style>
+    .no-style {
+        background: none;
+        color: inherit;
+        border: none;
+        padding: 0;
+        font: inherit;
+        cursor: pointer;
+        outline: inherit;
+        width: 100%;
+        min-width: 0;
+        display: block;
+    }
+</style>
