@@ -93,8 +93,8 @@ function validateMagicBytes(buffer: Buffer, ext: string): boolean {
 export async function uploadUserFile(
 	file: File,
 	userId: string,
-	maxSize: number = 20 * 1024 * 1024,
-	maxVideoSize: number = 50 * 1024 * 1024
+	maxSize: number = 200 * 1024 * 1024,
+	maxVideoSize: number = 500 * 1024 * 1024
 ) {
 
 	//Cree un dossier pour l'utilisateur, si existe deja ne fait rien 

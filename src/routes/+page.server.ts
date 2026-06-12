@@ -65,18 +65,23 @@ export const actions: Actions = {
         const files: File[] = data.getAll('file');
         const isOkTVn7 = data.get('isOkTVn7') === "true";
         const userId = locals.user.id;
+        const maxFiles : number = 15;
 
         let content : String[] = [];
-        if (textePreuve){
-            content = [textePreuve]
-        } else {
-            for (const file of files){
-                const url = await uploadUserFile(file, userId);
-                content.push(url)
-            }
-        }
-        const body: ProofInput = { challengeId, userId, type, content, isOkTVn7 } 
+
         try {
+            if (textePreuve){
+                content = [textePreuve]
+            } else {
+                if(files.length > maxFiles){
+                    throw error (402, "Le nombre de fichier et limiter à 10")
+                }
+                for (const file of files){
+                    const url = await uploadUserFile(file, userId);
+                    content.push(url)
+                }
+            }
+            const body: ProofInput = { challengeId, userId, type, content, isOkTVn7 } 
             // Verifie si c'est un 1A 
             if (!locals.user.is1A){
                 throw error (402, "Tu n'es pas un 1A")
