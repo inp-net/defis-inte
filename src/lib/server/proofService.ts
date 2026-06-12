@@ -41,7 +41,7 @@ async function canModifyProof(proofId: number, userId: string) {
     })
 
     if(!userAutorisation.groupBoard.some(board => board.groupId === groupProof) || !userAutorisation.isAdmin){
-            throw error(402,"tu ne fais pas partit du bureau du club")
+            throw error(402,"tu ne fais pas partie du bureau du club")
     }
 }
 

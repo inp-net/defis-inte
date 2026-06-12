@@ -45,7 +45,7 @@ async function canModifyChallenge(challengeId: number, userId: string, deleted :
     });
 
     if(!userAutorisation.groupBoard.some(board => board.groupId === challenge.groupId) || !userAutorisation.isAdmin){
-            throw error(402,"tu ne fais pas partit du bureau du club")
+            throw error(402,"tu ne fais pas partie du bureau du club")
     }
 }
 
