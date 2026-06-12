@@ -28,7 +28,7 @@ export async function syncGroupFromChurros (groupId: string) {
     // on rajoute le groupe dans la db en fonction de si c'est un club ou un group d'inté
     const dataPull = await response.json();
     const groupData = dataPull.data.group;
-    if (groupData.type === 'Club' ||  groupData.type === 'Association') {
+    if (groupData.type === 'Club' ||  groupData.type === 'Association' || groupData.type === 'StudentAssociationSection') {
         await prisma.groupClub.create({
             data: {
                 groupId: groupId,
