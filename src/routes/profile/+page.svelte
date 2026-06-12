@@ -9,8 +9,6 @@
     let categories = $derived(data.posts.returnCategories);
     let user = $derived(data.user);
 
-    const [firstName, ...reste] = (user.name.split(" "))
-    const lastName = $state(reste.join(" "))
 
 </script>
 
@@ -24,7 +22,7 @@
     <Stack>
         <Frame transparent={true} border={true} shadow={true}>
             <Flex direction="column" gap="lg">
-                <Profile size='large' firstName={firstName} lastName={lastName} src={user.profilePictureURL}/>
+                <Profile size='large' firstName={user.firstName} lastName={user.lastName} src={user.profilePictureURL}/>
                 <Flex gap="xl">
                     {#each categories as category}
                         <Flex direction="column" gap="md">
