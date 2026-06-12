@@ -24,7 +24,7 @@ const handlePerms: Handle = async ({ event, resolve }) => {
 
             // Empecher l'accés dans les branches interdites aux utilisateurs normales
             const protectedRoutes = ['/proof', '/board'];
-            if (protectedRoutes.some(route => currentPath.startsWith(route)) && (!user.groupBoard || user.isAdmin )) {
+            if (protectedRoutes.some(route => currentPath.startsWith(route)) && (!user.groupBoard && !user.isAdmin )) {
                 throw error(403, 'Accès interdit');
             }
 
@@ -36,7 +36,7 @@ const handlePerms: Handle = async ({ event, resolve }) => {
 
     //Empecher l'acces au 1A ou non connéctées
     const forbidenRoutes = ['/proof', '/board', '/challenge'];
-    if (forbidenRoutes.some(route => currentPath.startsWith(route)) && ( !session?.uid || session.is1A )) {
+    if (forbidenRoutes.some(route => currentPath.startsWith(route)) && ( !session?.uid )) { // || session.is1A 
         throw error(403, 'Accès interdit');
     }
 

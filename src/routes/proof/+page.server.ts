@@ -1,5 +1,5 @@
 import type { PageServerLoad } from './$types';
-import { approveProof, denyProof } from '$lib/server/proofService';
+import { approveProof, denyProof , pointsUpdate} from '$lib/server/proofService';
 import { prisma } from "$lib/server/prisma";
 import type { Proof } from '$lib/types/types.d';
 import { error, fail, type Actions } from '@sveltejs/kit';
@@ -62,6 +62,7 @@ export const actions: Actions = {
         try {
             const fallbackUserId = locals.user.uid; 
             const updatedProof = await approveProof(proofId, fallbackUserId);
+            const updatePoint = await pointsUpdate(fallbackUserId)
             return { 
                 success: true,
                 proof: updatedProof 
@@ -90,6 +91,7 @@ export const actions: Actions = {
         try {
             const fallbackUserId =locals.user.uid; 
             await denyProof(proofId, fallbackUserId);
+            const updatePoint = await pointsUpdate(fallbackUserId, true)
             return { success: true, };
         } catch (error: any) {
             if (error.status && error.message) {
