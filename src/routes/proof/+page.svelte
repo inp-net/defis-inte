@@ -119,7 +119,7 @@
                         <Flex direction="column" gap="xs" style="max-width: 100%; width: 100%; min-width: 0;">
                             <Flex wrap={false} gap="xs" align="center">
                                 <User size='15px'/> 
-                                <p>{proof.user.name}</p>
+                                <p>{proof.user.firstName} {proof.user.lastName}</p>
                             </Flex>
                             <Flex wrap={false} gap="xs" align="center">
                                 <Clock size='15px'/> 

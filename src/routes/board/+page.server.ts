@@ -23,7 +23,11 @@ export const load: PageServerLoad = async () => {
 
     const users = await prisma.user.findMany({
         where: { id: { in: allUserIds } },
-        select: { id: true, name: true }
+        select: { 
+            id: true,
+            firstName : true,
+            lastName : true,
+        }
     });
 
     const userMap = new Map(users.map(u => [u.id, u.name]));

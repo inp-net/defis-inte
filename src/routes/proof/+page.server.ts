@@ -1,5 +1,4 @@
 import type { PageServerLoad } from './$types';
-import { fail, type Actions } from '@sveltejs/kit';
 import { approveProof, denyProof } from '$lib/server/proofService';
 import { prisma } from "$lib/server/prisma";
 import type { Proof } from '$lib/types/types.d';
@@ -10,7 +9,7 @@ export const load: PageServerLoad = async ({locals}) => {
     let proofs : Proof[] = [];
     // si pas du bureau ou admin il est redirigée
     if(!locals.user.groupBoard || locals.user.isAdmin){
-        throw error(402,"tu ne fais pas partit du bureau d'un club")
+        throw error(402,"tu ne fais pas partie du bureau d'un club")
     }else{
         if (locals.user.isAdmin){
             proofs = await prisma.proof.findMany({
@@ -49,8 +48,8 @@ export const load: PageServerLoad = async ({locals}) => {
 export const actions: Actions = {
     approve: async ({ request , locals}) => {
         // si pas du bureau ou admin il est redirigée
-        if(!locals.user.groupBoard || locals.user.isAdmin){
-            throw error(402,"tu ne fais pas partit du bureau d'un club")
+        if(!locals.user.groupBoard && !locals.user.isAdmin){
+            throw error(402,"tu ne fais pas partie du bureau d'un club")
         }
 
         const data = await request.formData();
