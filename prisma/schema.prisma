@@ -30,7 +30,7 @@ model User {
     is1A              Boolean
     profilePictureURL String?
 
-    // Groupe de l'utilsateur. GroupBoard sont ceux où il est dans le bureau.
+    // Groupe de l'utilisateur. GroupBoard sont ceux où il est dans le bureau.
     group             GroupClub[]     @relation("UserGroups")
     groupBoard        GroupClub[]     @relation("BoardGroups")
 
@@ -40,8 +40,12 @@ model User {
 
     points            Int             @default(0)
 
-    // Preuves soumise par l'utilsateur
+    // Preuves soumise par l'utilisateur
     proof             Proof[]         @relation("UserProofs")
+    
+    // Préférences de l'utilisateur
+    darkMode          Boolean         @default(false)
+    isOkTVn7          Boolean         @default(false)
 
     // Si l'utilateur est administrateur
     isAdmin           Boolean         @default(false)
