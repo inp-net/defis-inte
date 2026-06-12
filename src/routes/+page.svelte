@@ -1,13 +1,15 @@
 <script lang="ts">
 
     import type { PageData } from './$types';
-    import { Flex, Stack } from 'azucar-ui';
+    import { Flex, Stack, Button } from 'azucar-ui';
     import type { ChallengeRead } from '$lib/types/types.d.ts';
     import Header from '$lib/components/Header.svelte';
     import FrameChallenge from '$lib/components/FrameChallenge.svelte';
     import AddChallenge from '$lib/components/AddChallenge.svelte';
     import Sort from '$lib/components/Sort.svelte';
     import SearchBar from '$lib/components/SearchBar.svelte';
+    import { signIn } from "@auth/sveltekit/client";
+
 
 
     let { data }: { data: PageData } = $props();
@@ -93,17 +95,25 @@
                 return items;
         }
     });
+    const afficherUser : boolean = $state(!user.firstName)
 
 </script>
-
-<Header
-    firstName={user?.firstName ?? 'Invité'}
-    lastName={user?.lastName ?? 'Non connecté'}
-    picture={user?.profilePictureURL ?? 'Invité'}
-    accessAdmin={user?.isAdmin || (user?.groupBoard.length > 0)}
-    notificationsDefis={data.posts.pendingChallengeCount}
-    notificationsPreuves={data.posts.pendingProofCount}>
-</Header>
+{#if afficherUser}
+    <Flex gap="xs" margin="xs" justify="right">
+        <Button onclick={() => signIn("authentik", { callbackUrl: "/"})} style = "padding: var(--size-md)" >
+            Se connecter
+        </Button>
+    </Flex>
+{:else}
+    <Header
+        firstName={user?.firstName ?? null}
+        lastName={user?.lastName ?? null}
+        picture={user?.profilePictureURL ?? null}
+        accessAdmin={user?.isAdmin || (user?.groupBoard.length > 0)}
+        notificationsDefis={data.posts.pendingChallengeCount}
+        notificationsPreuves={data.posts.pendingProofCount}>
+    </Header>
+{/if}
 <Flex direction="column" gap="xxl" margin="lg">
     <Stack> 
         <h1>Défis</h1>
