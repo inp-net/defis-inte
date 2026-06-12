@@ -126,6 +126,5 @@ async function formatUserForPrisma(userChurros: UserChurros): Promise<{
     const update: Prisma.UserUpdateInput = {
         ...commonData
     };
-    console.log("finni de formater user ")//debug
     return { create, update };
 }

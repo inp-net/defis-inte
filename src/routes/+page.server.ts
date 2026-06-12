@@ -44,7 +44,7 @@ export const load: PageServerLoad = async ({ locals }) => {
 
     const pendingProofCount = allPendingProofs.length; 
 
-    const session = await locals.auth();
+    //const session = await locals.auth();            sert a rien normalement
     const user = locals.user;
  
     return {

@@ -56,10 +56,6 @@ export const { handle, signIn, signOut } = SvelteKitAuth({
         },
         async session({ session, token }: { session: Session; token: Record<string, unknown> }) {
             session.uid = token.uid as string;
-            if (session.user) {
-                session.user.firstName = token.firstName as string;
-                session.user.lastName = token.lastName as string;
-            }
             const droitUser = await prisma.user.findUnique({
                 where: {
                     id : session.uid

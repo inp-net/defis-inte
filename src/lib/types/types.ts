@@ -10,7 +10,8 @@ export type {
 //#region Churros
 export type UserChurros = {
     uid: string;
-    fullName: string;
+    firstName: string;
+    lastName: string;
     pictureURL: string;
     churrosGroups: ChurrosGroups[];
     yearTier: number;
