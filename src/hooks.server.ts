@@ -28,16 +28,18 @@ const handlePerms: Handle = async ({ event, resolve }) => {
                 throw error(403, 'Accès interdit');
             }
 
-
         } catch (e) {
             if (e instanceof Response) throw e;
             console.error('PRISMA ERROR:', e);
         }
 	}
-    // Si pas connecter rediriger vers la page de connection
-    if(!session?.uid && !currentPath.endsWith('/connection')){
-        throw redirect(302, '/connection');
+
+    //Empecher l'acces au 1A ou non connéctées
+    const forbidenRoutes = ['/proof', '/board', '/challenge'];
+    if (forbidenRoutes.some(route => currentPath.startsWith(route)) && ( !session?.uid || session.is1A )) {
+        throw error(403, 'Accès interdit');
     }
+
 	return resolve(event);
 };
 
