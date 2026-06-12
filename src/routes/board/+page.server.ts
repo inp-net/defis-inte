@@ -63,7 +63,7 @@ export const actions: Actions = {
         const challengeId = data.get('challengeId');
 
         try {
-            const updatedChallenge = await acceptChallenge(challengeId, locals.user.uid);
+            const updatedChallenge = await acceptChallenge(challengeId, locals.user.id);
             return { 
                 success: true, 
                 challenge: updatedChallenge 
@@ -86,7 +86,7 @@ export const actions: Actions = {
         const challengeId = data.get('challengeId');
 
         try {
-            await deleteChallenge(challengeId, locals.user.uid);
+            await deleteChallenge(challengeId, locals.user.id);
             return { success: true, };
         } catch (error: any) {
             if (error.status && error.message) {

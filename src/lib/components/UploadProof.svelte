@@ -7,12 +7,11 @@
         desc: String
         type: string
         onSave: (fichiers: FileList | null, textePreuve: string, type: string, isOkTVn7: boolean, challengeId: number) => void;
+        defaultTVn7: boolean
     }
 
     let fichiers = $state<FileList | null>(null);
     let textePreuve = $state("");
-
-    let isOkTVn7: boolean = $state(false);
 
     function boutonvalider(fichiers: FileList | null, textePreuve: String, isText: Boolean){
         if (isText){
@@ -27,7 +26,10 @@
         desc = '',
         type = "TEXT",
         onSave,
+        defaultTVn7,
     }: Prop = $props();
+
+    let isOkTVn7: boolean = $state(defaultTVn7);
 </script>
 
 <Flex direction="column" gap="md">

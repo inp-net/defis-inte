@@ -14,6 +14,7 @@
         desc?: string | null,
         type: string
         onSave: (fichiers: FileList | null, textePreuve: string, type: string, isOkTVn7: boolean, challengeId: number) => void;
+        defaultTVn7: boolean
     }
 
     const {
@@ -27,6 +28,7 @@
         desc,
         type,
         onSave,
+        defaultTVn7,
     }: Prop = $props();
 
     let isUnfolded = $state(false);
@@ -77,7 +79,7 @@
                         <Flex gap="xs" align="center"><File size="15px"/>{type}</Flex>
                     {/if}
                 </Flex>
-                <UploadProof challengeId={challengeId} desc={desc} type={type} onSave={onSave}></UploadProof>
+                <UploadProof challengeId={challengeId} desc={desc} type={type} onSave={onSave} defaultTVn7={defaultTVn7}></UploadProof>
             </Flex>
         {/if}
 </Frame>

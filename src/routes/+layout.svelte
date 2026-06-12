@@ -3,10 +3,13 @@
     import "azucar-ui/base.css"
     import Footer from '$lib/components/Footer.svelte'
 
-	let { children } = $props();
+	let { children, data } = $props();
+
+    let darkMode = $state(data.user?.darkMode ?? false);
+    let color = darkMode ? 'dark' : 'light'
 
     $effect(() => {
-        document.documentElement.style.setProperty('color-scheme', 'light');
+        document.documentElement.style.setProperty('color-scheme', color);
     });
 
 </script>

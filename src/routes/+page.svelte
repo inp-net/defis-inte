@@ -146,6 +146,7 @@
                     desc={challenge.description}
                     type={challenge.type}
                     onSave={handleSave}
+                    defaultTVn7={user.isOkTVn7}
                 />
             {/each}
         </Flex>
