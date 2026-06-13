@@ -8,8 +8,8 @@ import { error } from '@sveltejs/kit';
 const handlePerms: Handle = async ({ event, resolve }) => {
     const currentPath = event.url.pathname;
 	const session = await event.locals.auth();
-    console.log("entrée dans handle perms. session : ")//debug
-    console.log(session)//debug
+    //console.log("entrée dans handle perms. session : ")//debug
+    //console.log(session)//debug
 	if (session?.uid) {
         try {
             const user = await prisma.user.findUnique({
@@ -21,7 +21,7 @@ const handlePerms: Handle = async ({ event, resolve }) => {
             });
 
             console.log(`[Churros Auth] Utilisateur synchronisé : ${user.id}`);
-            console.log(user)//debug
+            //console.log(user)//debug
             event.locals.user = user;
 
             // Empecher l'accés dans les branches interdites aux utilisateurs normales
