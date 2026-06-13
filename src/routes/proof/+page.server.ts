@@ -26,7 +26,7 @@ export const load: PageServerLoad = async ({locals}) => {
                 where: {
                     status: 'PENDING',
                     challenge:{
-                        groupId: {in : locals.user.groupBoard.groupId } // Que les club ou le user est dans le bureau
+                        groupId: { in: locals.user.groupBoard.map(board => board.groupId) }// Que le user est dans le bureau du club 
                     }
                 },
                 include :{
@@ -60,9 +60,8 @@ export const actions: Actions = {
             : NaN;
 
         try {
-            const fallbackUserId = locals.user.uid; 
-            const updatedProof = await approveProof(proofId, fallbackUserId);
-            const updatePoint = await pointsUpdate(fallbackUserId)
+            const updatedProof = await approveProof(proofId, locals.user.id);
+            const updatePoint = await pointsUpdate(proofId)
             return { 
                 success: true,
                 proof: updatedProof 
@@ -89,9 +88,8 @@ export const actions: Actions = {
             : NaN;
 
         try {
-            const fallbackUserId =locals.user.uid; 
+            const fallbackUserId =locals.user.id; 
             await denyProof(proofId, fallbackUserId);
-            const updatePoint = await pointsUpdate(fallbackUserId, true)
             return { success: true, };
         } catch (error: any) {
             if (error.status && error.message) {
