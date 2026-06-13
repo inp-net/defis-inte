@@ -12,41 +12,52 @@ import { Status, ProofInput } from '$lib/types/types.d';
 
 /** Verifie si l'utilisateur est autorisée à modifier le challenge et si il peut etre modifié
  * @challengeId identifiant du challenge
- * @userId identifiant de l'utilisateur
+ * @userId identifiant de l'utilisateur qui modifie (accepte/refuse) une preuve
  * @deleted pour pouvoir delet meme si le defi à déjà était accepter
  */
-async function canModifyChallenge(challengeId: number, userId: string, deleted : boolean = false) {
-    const challenge = await prisma.challenge.findUnique({
-        where: { challengeId: challengeId },
-        include : {
-            groupId : true
+export async function canModifyChallenge(challengeIdRaw: any , userId: string, deleted : boolean = false) {   
+    console.log("entree dans can modify")//debug
+        const challengeId = parseInt(challengeIdRaw, 10);
+        const challenge = await prisma.challenge.findUnique({
+            where: { challengeId: challengeId },
+            select : {
+                groupId : true,
+                isDeleted: true,  
+                defiAccepte: true
+            }
+        });
+
+        if (!challenge) {
+            throw error(404,'Le challenge est introuvable'); 
         }
-    });
 
-    if (!challenge) {
-        throw { status: 404, message: 'Le challenge est introuvable' }; // tibo : qu'es que ca fait et diff par rapport a throw error?
-    }
-
-    if (challenge.isDeleted) {
-        throw { status: 409, message: 'Le défi a deja été refusée' };
-    }
-
-    if (challenge.defiAccepte || deleted) {
-        throw { status: 409, message: 'Defi déjà accepter' };
-    }
-
-    // si pas du bureau ou admin il est redirigée
-    const userAutorisation = await prisma.user.findUnique({
-        Where : {id : userId},
-        Select : {
-            isAdmin : true,
-            groupBoard : {groupId : true}
+        if (challenge.isDeleted) {
+            throw error(409,'Le défi a deja été refusée' );
         }
-    });
 
-    if(!userAutorisation.groupBoard.some(board => board.groupId === challenge.groupId) || !userAutorisation.isAdmin){
-            throw error(402,"tu ne fais pas partie du bureau du club")
-    }
+        if (challenge.defiAccepte || deleted) {
+            throw error(409,"Defi déjà accepter" );
+        }
+
+        // si pas du bureau ou admin il est redirigée
+        const userAutorisation = await prisma.user.findUnique({
+            where : {id : userId},
+            select: {
+                isAdmin: true,
+                groupBoard: {
+                    select: {
+                        groupId: true
+                    }
+                }
+            }
+        });
+
+        if(!userAutorisation.groupBoard.some(board => board.groupId === challenge.groupId) && !userAutorisation.isAdmin){
+                throw error(402,"tu ne fais pas partie du bureau du club")
+        }
+    return true
+    console.log("fin de can modify sans probleme")//debug
+
 }
 
 
@@ -56,10 +67,10 @@ export async function saveChallenge(body: ChallengeInput) {
     if (!name || !groupName || !locationName) {
         throw error(400, 'Champs requis manquants : name, groupName ou locationName.');
     }
-
-    if (!await prisma.user.findUnique({where : {id : userId}, select : {is1A:true}})){
-        throw error(403, 'Tu n\'es pas un 1A');
-    }
+    // devrai refusée les 1A
+    //if (!await prisma.user.findUnique({where : {id : userId}, select : {is1A:true}})){   
+    //    throw error(403, 'Tu n\'es pas un 1A');
+    //}
 
     const targetGroup = await prisma.groupClub.findFirst({
         where: { name: groupName }
@@ -108,14 +119,12 @@ export async function saveChallenge(body: ChallengeInput) {
 }
 
 /** Accepter un défi. */
-export async function acceptChallenge(challengeIdRaw: any , userId : any) {
+export async function acceptChallenge(challengeIdRaw: any , userId : string) {
     if (!challengeIdRaw || isNaN(Number(challengeIdRaw))) {
         throw { status: 400, message: 'challengeId invalide' };
     }
 
     const idToFind = parseInt(challengeIdRaw, 10);
-
-    canModifyChallenge(idToFind, userId)
 
     const updatedChallenge = await prisma.challenge.update({
         where: { challengeId: idToFind },
@@ -130,14 +139,12 @@ export async function acceptChallenge(challengeIdRaw: any , userId : any) {
 
 
 /** Supprimer un défi. */
-export async function deleteChallenge(challengeIdRaw: any, userId : any) {
+export async function deleteChallenge(challengeIdRaw: any, userId : string) {
     if (!challengeIdRaw || isNaN(Number(challengeIdRaw))) {
         throw { status: 400, message: 'challengeId invalide' };
     }
 
     const idToFind = parseInt(challengeIdRaw, 10);
-
-    canModifyChallenge(idToFind, userId, true)
 
     await prisma.challenge.update({
         where: { challengeId: idToFind },
