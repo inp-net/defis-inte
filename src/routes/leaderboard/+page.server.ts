@@ -21,7 +21,8 @@ export const load: PageServerLoad = async ({ params }) => {
             points: 'desc',
         },
         select: {
-            name: true,
+            firstName: true,
+            lastName: true,
             profilePictureURL: true,
             points: true,
         }
