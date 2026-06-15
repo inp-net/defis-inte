@@ -121,11 +121,11 @@
     </Stack>
 
     <!-- A afficher que pour les membres 2A de groupes et plus -->
-    {#if user && !user.is1A}
+    <!-- {#if user && !user.is1A} -->
         <Stack>
             <AddChallenge />
         </Stack>
-    {/if}
+    <!-- {/if} -->
 
     <!-- Liste des défis -->
     <Stack style="max-width: 100%; min-width: 0; overflow: hidden;">

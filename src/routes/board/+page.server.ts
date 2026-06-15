@@ -4,17 +4,33 @@ import { fail, error, type Actions } from '@sveltejs/kit';
 import { acceptChallenge, deleteChallenge, canModifyChallenge} from '$lib/server/challengeService';
 import { prisma } from "$lib/server/prisma";
 
-export const load: PageServerLoad = async () => {
+export const load: PageServerLoad = async ({ locals }) => {
+
+    const user = locals.user || null;
+
+    if (!user) return error(500, "Utilisateur non connecté")
 
     const clubsWithChallenges = await prisma.groupClub.findMany({
+        where: user?.isAdmin ? {} : {
+            users: {
+                some: {
+                    id: user.id
+                }
+            }
+        },
         include: {
+            users: {
+                select: {
+                    id: true,
+                }
+            },
             challenge: {
                 orderBy: {
                     // Trier dans l'ordre de création
                     challengeId: 'desc',
                 }
             }
-        },
+        }
     });
 
     const allUserIds = [
@@ -46,6 +62,7 @@ export const load: PageServerLoad = async () => {
             isDeleted: ch.isDeleted,
             groupName: club.name,
             groupUrl: club.pictureURL,
+            // Le nom d'utilisateur du créateur du défi
             userName: userMap.get(ch.userId) ?? "Utilisateur inconnu"
         }))
     }));
