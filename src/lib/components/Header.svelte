@@ -1,21 +1,34 @@
 <script lang="ts">
 
     import { Flex, Frame, Button } from 'azucar-ui';
-    import { Dot, Settings, Wrench } from '@lucide/svelte';
+    import { Dot, Settings, Wrench, ImageUp } from '@lucide/svelte';
     import Profile from '$lib/components/Profile.svelte';
     import ButtonNotification from '$lib/components/ButtonNotification.svelte';
+    import type { User } from '$lib/types/types.d';
 
     const dotSize = "15px";
-    const pointsGroup = "676";
-    const percentCommit = "10%";
 
     type Props = {
-        notifications?: number,
+        firstName: string,
+        lastName: string,
+        picture: string,
+        accessAdmin: boolean,
+        notificationsDefis?: number,
+        notificationsPreuves?: number,
     }
 
     const {
-        notifications: notif
+        firstName,
+        lastName,
+        picture,
+        accessAdmin,
+        notificationsDefis,
+        notificationsPreuves
     }: Props = $props();
+
+    // const username = $derived(user?.name ?? 'Invité');
+    // const [firstName, ...reste] = $derived(username.split(" "))
+    // const lastName = $derived(reste.join(" "))
 
 </script>
 
@@ -23,21 +36,14 @@
     <Frame transparent={true} border={true} shadow={true}>
         <Flex justify="space-between" align="center" wrap={false}>
             <Flex align="center" gap="md">
-                <Profile firstName="Bilèle" lastName="El Haddadi" alt="Avatar" hideName={true} /> 
-                <section class="remove-small">
-                    <Dot size={dotSize}/>
-                </section>
-                <section class="remove-small">
-                    <Flex direction="column" gap="xxs">
-                        <p><b>Groupe B</b></p>
-                        <p>Points groupe : {pointsGroup}</p>
-                        <p>Contribution : {percentCommit}</p>
-                    </Flex>
-                </section>
+                <Profile firstName={firstName} lastName={lastName} src={picture} hideName={true}/> 
             </Flex>
             <Flex wrap={false} gap="xs" align="center">
                 <Button href="/leaderboard">Classement</Button>
-                <ButtonNotification href="/board" icon={Wrench} variant="outline" notifications={notif}></ButtonNotification>
+                {#if accessAdmin}
+                    <ButtonNotification href="/board" icon={Wrench} variant="outline" notifications={notificationsDefis}></ButtonNotification>
+                    <ButtonNotification href="/proof" icon={ImageUp} variant="outline" notifications={notificationsPreuves}></ButtonNotification>
+                {/if}
                 <Button href="/settings" icon={Settings} variant="outline"></Button>
             </Flex>
         </Flex>
@@ -52,12 +58,5 @@
         padding: 10px;
         z-index: 100;
     }
-
-    @media (max-width: 600px) {
-        .remove-small {
-            display: none;
-        }
-    }
-
 
 </style>

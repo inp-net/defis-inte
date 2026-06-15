@@ -26,7 +26,7 @@
             </div>
             <p class="scrollable-text">{groupName}</p>
         </Flex>
-        <Flex align="center" wrap={false} gap="xl" style="flex-shrink: 0;">
+        <Flex align="center" wrap={false} gap="sm" style="flex-shrink: 0;">
             <p>{points}</p>
             <p>#{rank}</p>
         </Flex>
@@ -37,7 +37,7 @@
     .scrollable-text {
         white-space: nowrap;
         overflow-x: auto;
-        margin: 0;
+        padding: 1em 0;
         -webkit-overflow-scrolling: touch; 
     }
 

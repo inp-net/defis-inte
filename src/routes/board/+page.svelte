@@ -2,9 +2,10 @@
 
     import type { PageData } from '../$types';
     import type { GroupChallenge } from '$lib/types/types.d';
-    import { Flex, Stack } from 'azucar-ui';
+    import { Flex, Stack, Frame, Switch } from 'azucar-ui';
     import Filters from '$lib/components/Filters.svelte';
     import ChallengesToAccept from '$lib/components/ChallengesToAccept.svelte';
+    import BackButton from '$lib/components/BackButton.svelte';
 
     let { data }: { data: PageData } = $props();
     let groupChallenge : GroupChallenge[] = $state(data.posts.challenges);
@@ -31,6 +32,9 @@
             ? sortedGroupsByChallenge
             : sortedGroupsByChallenge.filter((_, index) => activeIndexes.includes(index))
     );
+
+    /** Masquer les défis déjà validés. */
+    let hideDone : boolean = $state(true);
 
     async function approuveChallenge(id: number): Promise<void> {
         try {
@@ -87,9 +91,20 @@
 </script>
 
 <Flex direction="column" gap="xxl" margin="lg">
-    <Stack>
-        <h2>Défis proposés</h2>
+    <Stack align="baseline">
+        <BackButton />
+        <h2>Board admin</h2>
+        <p>Toutes les fonctionnalités admin.</p>
     </Stack>
+
+    <Stack>
+        <Frame>
+            <Flex direction="column">
+                <Switch bind:checked={hideDone}>Masquer les défis validés</Switch>
+            </Flex>
+        </Frame>
+    </Stack>
+
     <Stack style="max-width: 100%; min-width: 0; overflow: hidden;">
         <Filters
             filters={filterNames} 
@@ -101,6 +116,7 @@
                     groupName={group.name}
                     groupURL={group.groupURL}
                     challenges={group.challenges}
+                    bind:hideDone={hideDone}
                     onChallengeApprouved={approuveChallenge}
                     onChallengeDeleted={deleteChallenge}
                 />
@@ -108,3 +124,4 @@
         </Flex>
     </Stack>
 </Flex>
+

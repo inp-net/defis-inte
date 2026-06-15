@@ -3,25 +3,22 @@
     import Select from '$lib/components/Select.svelte';
     import ButtonGroupFix from '$lib/components/ButtonGroupFix.svelte';
     import BackButton from '$lib/components/BackButton.svelte';
-    import { UploadType } from '@prisma/client';
+    import type { Location, GroupClub } from '$lib/types/types.d';
+    import { UploadType } from '../../../../prisma/generated/prisma/enums';
     import type { PageData } from './$types';
-
+    import { Toaster, toast } from 'svelte-sonner';
     import { Button, Flex, Stack, Frame, TextInput } from 'azucar-ui';
+    import { SearchIcon, Check } from '@lucide/svelte';
 
-    import {
-        SearchIcon,
-        Check
-    } from '@lucide/svelte';
-
-    let { data }: { data: PageData } = $props();
+    let { data, redirect = "/" }: { data: PageData, redirect: string } = $props();
 
     // Valeurs initiales du form. Réupéré de la db.
     const getInitialState = (ec: typeof data.existingChallenge) => ({
-        challengeId: ec?.challengeId ?? null,
+        challengeId: ec?.challengeId ?? -1,
         name: ec?.name ?? "",
         description: ec?.description ?? "",
         groupName: ec?.groupName ?? "",
-        locationName: ec?.locationName ?? "",
+        locationName: ec?.locationName ?? "ENSEEIHT",
         nbPoints: ec?.nbPoints ?? 10,
         type: ec?.type ?? "PHOTO"
     });
@@ -35,27 +32,46 @@
 
 
     // Options du Select
-    let clubOptions: string[] = $derived(data.clubs.map(c => c.name));
-    let locationOptions: string[] = $derived(data.locations.map(l => l.name));
+    let locations : Location[] = $derived(data.locations);
+    let clubs : GroupClub[] = $derived(data.clubs);
+    let clubOptions: string[] = $derived(clubs.map(c => c.name));
+    let locationOptions: string[] = $derived(locations.map(l => l.name));
     let uploadTypes: string[] = Object.values(UploadType).map(l => l.toUpperCase());
-    let presetPoints = [10, 20, 50, 80, 100];
+    let presetPoints = $derived(data.presetPoints);
+
+    let isNew : boolean = $derived(data.existingChallenge == null);
 
     /** Fonction envoie du formulaire à l'api api/challenge. */
     async function sendChallenge() {
+        // Prétests clients
         if (!formState.name || !formState.groupName || !formState.locationName) {
-            console.error("Formulaire incomplet");
+            toast.error("Formulaire incomplet.");
             return;
         }
         try {
-            isSubmitting = true;
+            toast.info('Requête envoyé.')
 
+            isSubmitting = true;
             const response = await fetch('?/upsert', {
                 method: 'POST',
                 headers: { 'x-sveltekit-action': 'true' },
                 body: JSON.stringify(formState)
             });
+            const result = await response.json();
 
+            if (result.type === "success") {
+                let mot : string = isNew ? 'créé' : 'modifié';
+                toast.success('Défi ' + mot + ' avec succès');
+                if (formState.challengeId < 0) {
+                    formState.name = "";
+                    formState.description = "";
+                }
+            } else {
+                let action : string = isNew ? 'la création' : 'la modification';
+                toast.error("Une erreur est survenue lors de " + action + " du défi.");
+            }
         } catch (err) {
+            toast.error('Erreur dans l\'envoie du défi.');
             console.error("Erreur lors de l'envoi du form : ", err);
         } finally {
             isSubmitting = false;
@@ -69,7 +85,11 @@
     <Stack>
         <Stack align="baseline"> 
             <BackButton backCount={2} />
-            <h2>Ajouter un Défi</h2>
+            {#if isNew}
+                <h2>Ajouter un Défi</h2>
+            {:else}
+                <h2>Modifier un Défi</h2>
+            {/if}
             <p>Remplissez les informations ci-dessous pour proposer un défi.</p>
         </Stack>
     </Stack>
@@ -117,7 +137,7 @@
                         options={locationOptions}
                         bind:value={formState.locationName}
                         icon={SearchIcon}
-                        placeholder="Lieu du défi"
+                        placeholder="Lieu du défi";
                         required
                     >Lieu</Select>
 
@@ -150,8 +170,16 @@
                 <Flex gap="xs" style="flex-grow: 1; margin-top: var(--size-lg);" justify='right'>
                     <!-- TODO faire retour depuis le navigateur pour meilleur UI -->
                     <Button variant="outline" href="/">Annuler</Button>
-                    <Button icon={Check} class="success" name="Success" onclick={sendChallenge} disabled={isSubmitting}>Créer le défi</Button>
+                    <Button icon={Check} class="success" name="Success" onclick={sendChallenge} disabled={isSubmitting}>
+                        {#if isNew}
+                            Créer le défi
+                        {:else}
+                            Modifier le défi
+                        {/if}
+                    </Button>
                 </Flex>
+
+                <Toaster />
                 
             </Flex>
         </Frame>

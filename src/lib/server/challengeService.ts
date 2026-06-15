@@ -1,27 +1,76 @@
-import prisma from '$lib/prisma';
+import { prisma } from '$lib/server/prisma';
 import { error } from '@sveltejs/kit';
-import { UploadType } from '@prisma/client';
-
-export interface ChallengeInput {
-    challengeId?: string | number | null;
-    name: string;
-    description?: string | null;
-    groupName: string;
-    locationName: string;
-    type?: string | null;
-    nbPoints?: string | number | null;
-}
+import { ChallengeInput } from '$lib/types/types.d';
+import {UploadType} from '../../../prisma/generated/prisma/enums'
+import { Status, ProofInput } from '$lib/types/types.d';
 
 /** Action pour sauvegarder ou modifier le challenge.
  * Si le challengeId = 0, crée un nouveau défi.
  * Si le challengeId existe, modifie le défie.
  */
+
+
+/** Verifie si l'utilisateur est autorisée à modifier le challenge et si il peut etre modifié
+ * @challengeId identifiant du challenge
+ * @userId identifiant de l'utilisateur qui modifie (accepte/refuse) une preuve
+ * @deleted pour pouvoir delet meme si le defi à déjà était accepter
+ */
+export async function canModifyChallenge(challengeIdRaw: any , userId: string, deleted : boolean = false) {   
+    console.log("entree dans can modify")//debug
+        const challengeId = parseInt(challengeIdRaw, 10);
+        const challenge = await prisma.challenge.findUnique({
+            where: { challengeId: challengeId },
+            select : {
+                groupId : true,
+                isDeleted: true,  
+                defiAccepte: true
+            }
+        });
+
+        if (!challenge) {
+            throw error(404,'Le challenge est introuvable'); 
+        }
+
+        if (challenge.isDeleted) {
+            throw error(409,'Le défi a deja été refusée' );
+        }
+
+        if (challenge.defiAccepte || deleted) {
+            throw error(409,"Defi déjà accepter" );
+        }
+
+        // si pas du bureau ou admin il est redirigée
+        const userAutorisation = await prisma.user.findUnique({
+            where : {id : userId},
+            select: {
+                isAdmin: true,
+                groupBoard: {
+                    select: {
+                        groupId: true
+                    }
+                }
+            }
+        });
+
+        if(!userAutorisation.groupBoard.some(board => board.groupId === challenge.groupId) && !userAutorisation.isAdmin){
+                throw error(402,"tu ne fais pas partie du bureau du club")
+        }
+    return true
+    console.log("fin de can modify sans probleme")//debug
+
+}
+
+
 export async function saveChallenge(body: ChallengeInput) {
-    const { challengeId, name, description, groupName, locationName, type, nbPoints } = body;
+    const { userId, challengeId, name, description, groupName, locationName, type, nbPoints } = body;
 
     if (!name || !groupName || !locationName) {
         throw error(400, 'Champs requis manquants : name, groupName ou locationName.');
     }
+    // devrai refusée les 1A
+    //if (!await prisma.user.findUnique({where : {id : userId}, select : {is1A:true}})){   
+    //    throw error(403, 'Tu n\'es pas un 1A');
+    //}
 
     const targetGroup = await prisma.groupClub.findFirst({
         where: { name: groupName }
@@ -49,16 +98,7 @@ export async function saveChallenge(body: ChallengeInput) {
                 create: { name: locationName.trim() }
             }
         }
-    };
-
-    // TODO à chager avec l'ID user
-    const fallbackUserId = "00000000-0000-0000-0000-000000000000"; 
-
-    await prisma.user.upsert({
-        where: { id: fallbackUserId },
-        update: {},
-        create: { id: fallbackUserId, name: "Admin System", is1A: false, isAdmin: true }
-    });
+    }
 
     const targetId = challengeId ? parseInt(challengeId.toString(), 10) : 0;
 
@@ -71,7 +111,7 @@ export async function saveChallenge(body: ChallengeInput) {
         return await prisma.challenge.create({
             data: {
                 ...coreData,
-                userId: fallbackUserId, 
+                userId: userId, 
                 defiAccepte: false
             }
         });
@@ -79,43 +119,18 @@ export async function saveChallenge(body: ChallengeInput) {
 }
 
 /** Accepter un défi. */
-export async function acceptChallenge(challengeIdRaw: any) {
+export async function acceptChallenge(challengeIdRaw: any , userId : string) {
     if (!challengeIdRaw || isNaN(Number(challengeIdRaw))) {
         throw { status: 400, message: 'challengeId invalide' };
     }
 
     const idToFind = parseInt(challengeIdRaw, 10);
 
-    const challengeExist = await prisma.challenge.findUnique({
-        where: { challengeId: idToFind }
-    });
-
-    if (!challengeExist) {
-        throw { status: 404, message: 'challengeId introuvable' };
-    }
-
-    if (challengeExist.defiAccepte) {
-        throw { status: 409, message: 'challenge déjà accepté' };
-    }
-
-    if (challengeExist.isDeleted) {
-        throw { status: 409, message: 'challenge supprimé' };
-    }
-
-    // TODO utiliser un vrai UUID
-    const fallbackUserId = "00000000-0000-0000-0000-000000000000"; 
-
-    await prisma.user.upsert({
-        where: { id: fallbackUserId },
-        update: {},
-        create: { id: fallbackUserId, name: "Admin System", is1A: false, isAdmin: true }
-    });
-
     const updatedChallenge = await prisma.challenge.update({
         where: { challengeId: idToFind },
         data: {
             defiAccepte: true,
-            userAcceptId: fallbackUserId
+            userAcceptId: userId
         }
     });
 
@@ -124,20 +139,12 @@ export async function acceptChallenge(challengeIdRaw: any) {
 
 
 /** Supprimer un défi. */
-export async function deleteChallenge(challengeIdRaw: any) {
+export async function deleteChallenge(challengeIdRaw: any, userId : string) {
     if (!challengeIdRaw || isNaN(Number(challengeIdRaw))) {
         throw { status: 400, message: 'challengeId invalide' };
     }
 
     const idToFind = parseInt(challengeIdRaw, 10);
-
-    const challengeExist = await prisma.challenge.findUnique({
-        where: { challengeId: idToFind }
-    });
-
-    if (!challengeExist) {
-        throw { status: 404, message: 'challengeId introuvable' };
-    }
 
     await prisma.challenge.update({
         where: { challengeId: idToFind },

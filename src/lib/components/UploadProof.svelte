@@ -1,18 +1,17 @@
 <script lang="ts">
 
-    import { Flex, Button, TextInput } from 'azucar-ui'
+    import { Flex, Button, TextInput, Switch } from 'azucar-ui'
 
     type Prop = {
+        challengeId: number
         desc: String
-        isText: Boolean
+        type: string
+        onSave: (fichiers: FileList | null, textePreuve: string, type: string, isOkTVn7: boolean, challengeId: number) => void;
+        defaultTVn7: boolean
     }
 
     let fichiers = $state<FileList | null>(null);
     let textePreuve = $state("");
-
-    function handleValidation() {
-        // TODO
-    }
 
     function boutonvalider(fichiers: FileList | null, textePreuve: String, isText: Boolean){
         if (isText){
@@ -23,14 +22,19 @@
     }
 
     const {
+        challengeId = 0,
         desc = '',
-        isText = false,
+        type = "TEXT",
+        onSave,
+        defaultTVn7,
     }: Prop = $props();
+
+    let isOkTVn7: boolean = $state(defaultTVn7);
 </script>
 
 <Flex direction="column" gap="md">
     <p><b>Description :</b> {desc}</p>
-    {#if isText}
+    {#if type === "TEXT"}
         <TextInput 
             type="text"
             placeholder="Saisissez votre réponse ici"
@@ -45,16 +49,19 @@
             <input 
                 type="file" 
                 bind:files={fichiers} 
-                accept=".png, .jpeg, .jpg, .mp3, .mp4" 
+                accept=".png, .jpeg, .jpg, .mp4, .tif, .tiff, .avif, .heif, .heic, .webm, .mov, .webp, .gif" 
                 style="width: 100%; cursor: pointer;"
             />
         </Flex>
     {/if}
 
-    <Flex justify="flex-end">
+    <Flex justify="flex-end" align="center">
+        {#if type != "TEXT"}
+            <Switch bind:checked = {isOkTVn7}>J'accepte que TVN7 utilise ces fichiers (+ d'infos dans Paramètres)</Switch>
+        {/if}
         <Button 
-            onclick={handleValidation} 
-            disabled={boutonvalider(fichiers, textePreuve, isText)}
+            onclick={() => onSave(fichiers, textePreuve, type, isOkTVn7, challengeId)} 
+            disabled={boutonvalider(fichiers, textePreuve, type === "TEXT")}
         >
             Envoyer la preuve
         </Button>

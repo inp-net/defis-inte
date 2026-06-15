@@ -1,3 +1,5 @@
+<!---------HEU C'EST VRAIMENT UTILE CE TRUC ? -------------->
+
 <script lang="ts">
 
     import type { ChallengeRead } from '$lib/types/types.d';

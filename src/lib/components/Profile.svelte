@@ -22,15 +22,17 @@
 
 </script>
 
-<Flex align="center" gap="md">
-    <Avatar src={src} alt={alt} size={size} />
-    <div class:hidden-mobile={hideName}>
-        <Flex direction="column" gap="xxs">
-            <h4 class={`title-${size}`}>{firstName}</h4>
-            <h4 class={`title-${size}`}>{lastName}</h4>
-        </Flex>
-    </div>
-</Flex>
+<a href="/profile">
+    <Flex align="center" gap="md">
+            <Avatar src={src} alt={alt} size={size} />
+            <div class:hidden-mobile={hideName}>
+                <Flex direction="column" gap="xxs">
+                    <h4 class={`title-${size}`}>{firstName}</h4>
+                    <h4 class={`title-${size}`}>{lastName}</h4>
+                </Flex>
+            </div>
+    </Flex>
+</a>
 
 <style>
     .title-large{
@@ -45,5 +47,9 @@
         .hidden-mobile {
             display: none;
         }
+    }
+
+    a {
+        text-decoration:none;
     }
 </style>
