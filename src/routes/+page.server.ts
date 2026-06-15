@@ -28,6 +28,11 @@ export const load: PageServerLoad = async ({ locals }) => {
                     name: true,
                     pictureURL: true
                 }
+            },
+            groupInteSucceed: {
+                select: {
+                    name: true,
+                }
             }
         }
     })

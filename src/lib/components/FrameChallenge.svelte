@@ -7,7 +7,6 @@
         challengeId: number,
         name: string,
         nbPoints: number,
-        isText: boolean,
         location: string,
         clubName: string,
         clubUrl: string,
@@ -16,13 +15,13 @@
         onSave: (fichiers: FileList | null, textePreuve: string, type: string, isOkTVn7: boolean, challengeId: number) => void,
         defaultTVn7: boolean,
         isConnected: boolean
+        children?: import('svelte').Snippet;
     }
 
     const {
         challengeId = 0,
         name = "",
         nbPoints = 0,
-        isText = true,
         location,
         clubName,
         clubUrl,
@@ -30,7 +29,8 @@
         type,
         onSave,
         defaultTVn7 = false,
-        isConnected
+        isConnected,
+        children
     }: Prop = $props();
 
     let isUnfolded = $state(false);
@@ -75,8 +75,9 @@
                 border-top: 1px solid #eaeaea;
             ">
                 <Flex gap="xs" direction="column">
-                    <Flex gap="xs" align="center"><Building size="15px"/> {clubName}</Flex>
-                    <Flex gap="xs" align="center"><MapPin size="15px"/> {location}</Flex>
+                    {#if children }
+                        {@render children()}
+                    {/if}
                     {#if (type != "TEXT")}
                         <Flex gap="xs" align="center"><File size="15px"/>{type}</Flex>
                     {/if}
