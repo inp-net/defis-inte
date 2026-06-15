@@ -16,7 +16,7 @@ export const load: PageServerLoad = async ({ params }) => {
         }
     });
 
-    const users : Leaderboard[] = await prisma.user.findMany({
+    const users = await prisma.user.findMany({
         orderBy: {
             points: 'desc',
         },
