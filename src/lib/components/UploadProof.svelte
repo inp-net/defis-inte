@@ -33,7 +33,6 @@
 </script>
 
 <Flex direction="column" gap="md">
-    <p><b>Description :</b> {desc}</p>
     {#if type === "TEXT"}
         <TextInput 
             type="text"
