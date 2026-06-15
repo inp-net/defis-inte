@@ -2,6 +2,8 @@ import { prisma } from '$lib/server/prisma';
 import { error } from '@sveltejs/kit';
 import { Status, ProofInput } from '$lib/types/types.d';
 import { UploadType } from '../../../prisma/generated/prisma/client' 
+import { Churros1ATo2A } from '$lib/env';
+
 
 async function canModifyProof(proofId: number, userId: string) {
     const proof = await prisma.proof.findUnique({
@@ -71,7 +73,10 @@ export async function newProof(body: ProofInput) {
         throw error(403, "l'utilisateur n'existe pas")
     }
 
-    //verifier que c'est bien un is1A    TODO
+    //verifier que c'est bien un is1A    
+    if ((await prisma.user.findUnique({where : {id : userId}, select : {is1A:true}})) && Churros1ATo2A){   
+        throw error(403, 'Tu n\'es pas un 1A');
+    }
 
     //on ne peut pas envoyé plusieur preuve par groupe d'inté TODO
     //if(! await prisma.groutInte.findUnique({where : {groupId : in challenge.groupInteSucceed }})){

@@ -1,8 +1,9 @@
 <script lang="ts">
-    import { ChevronDown, ChevronUp, Upload, MapPin, Building, File } from '@lucide/svelte';
+    import { ChevronDown, ChevronUp, Upload, MapPin, Building, File , TextAlignStart} from '@lucide/svelte';
     import { Frame, Flex, Button, Avatar } from 'azucar-ui';
     import UploadProof from './UploadProof.svelte';
-    
+    import { Churros1ATo2A } from '$lib/env';
+
     type Prop = {
         challengeId: number,
         name: string,
@@ -15,7 +16,8 @@
         type: string,
         onSave: (fichiers: FileList | null, textePreuve: string, type: string, isOkTVn7: boolean, challengeId: number) => void,
         defaultTVn7: boolean,
-        isConnected: boolean
+        isConnected: boolean,
+        is1A: boolean
     }
 
     const {
@@ -30,7 +32,8 @@
         type,
         onSave,
         defaultTVn7 = false,
-        isConnected
+        isConnected,
+        is1A
     }: Prop = $props();
 
     let isUnfolded = $state(false);
@@ -80,8 +83,9 @@
                     {#if (type != "TEXT")}
                         <Flex gap="xs" align="center"><File size="15px"/>{type}</Flex>
                     {/if}
+                    <Flex gap="xs" align="center"><TextAlignStart size="15px"/><b>Description :</b> {desc}</Flex>
                 </Flex>
-                {#if isConnected }  <!-- TODO is1A-->
+                {#if isConnected && (Churros1ATo2A && is1A) }  
                     <UploadProof challengeId={challengeId} desc={desc} type={type} onSave={onSave} defaultTVn7={defaultTVn7}></UploadProof>
                 {/if}
             </Flex>

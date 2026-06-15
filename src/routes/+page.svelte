@@ -9,6 +9,8 @@
     import Sort from '$lib/components/Sort.svelte';
     import SearchBar from '$lib/components/SearchBar.svelte';
     import { signIn } from "@auth/sveltekit/client";
+    import { Churros1ATo2A } from '$lib/env';
+
 
 
 
@@ -95,7 +97,9 @@
                 return items;
         }
     });
-    const isConnected : boolean = $state(user)
+    let isConnected: boolean = $state(!!user);
+
+    
 
 </script>
 {#if !isConnected}
@@ -121,7 +125,7 @@
     </Stack>
 
     <!-- A afficher que pour les membres 2A de groupes et plus -->
-    {#if user && !user.is1A}
+    {#if user && !(user.is1A && Churros1ATo2A)}
         <Stack>
             <AddChallenge />
         </Stack>
@@ -148,6 +152,7 @@
                     onSave={handleSave}
                     defaultTVn7={user?.isOkTVn7}
                     isConnected={isConnected}
+                    is1A={user?.is1A}
                 />
             {/each}
         </Flex>

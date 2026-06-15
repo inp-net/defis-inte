@@ -4,6 +4,8 @@ import { newProof } from '$lib/server/proofService';
 import { prisma } from "$lib/server/prisma";
 import { error, fail, type Actions } from '@sveltejs/kit';
 import { uploadUserFile } from '$lib/server/filesManagement';
+import { Churros1ATo2A } from '$lib/env';
+
 
 export const load: PageServerLoad = async ({ locals }) => {
 
@@ -83,7 +85,7 @@ export const actions: Actions = {
             }
             const body: ProofInput = { challengeId, userId, type, content, isOkTVn7 } 
             // Verifie si c'est un 1A 
-            if (!locals.user.is1A){
+            if (!(locals.user.is1A && Churros1ATo2A)){
                 throw error (402, "Tu n'es pas un 1A")
             }
             const proof = await newProof(body);
