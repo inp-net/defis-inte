@@ -7,10 +7,12 @@ import { uploadUserFile } from '$lib/server/filesManagement';
 
 export const load: PageServerLoad = async ({ locals }) => {
 
+    const user = locals.user || null;
+
     const allChallengesUntyped = await prisma.challenge.findMany({
         where: { isDeleted: false },
         select: {
-            // D'après internet c'est plus rapide
+            // Prend que les informations utiles
             challengeId: true,
             name: true,
             description: true,
@@ -34,18 +36,37 @@ export const load: PageServerLoad = async ({ locals }) => {
         groupUrl: group.pictureURL ?? "",
     }));
 
+    // Challenges sont les challenges acceptés par un admin
     const challenges : ChallengeRead[] = allChallenges.filter((a) => a.defiAccepte);
-    const pendingChallengeCount = allChallenges.length - challenges.length;
 
-    const allPendingProofs = await prisma.proof.findMany({
-        where: {status: "PENDING"}
+    // TODO peut êter à optimiser car requête est déjà fait en haut.
+    const pendingChallengeCount = await prisma.challenge.count({
+        where: {
+            defiAccepte: false,
+            group: {
+                board: {
+                    some: {
+                        id: user.id
+                    }
+                }
+            }
+        }
     })
 
-
-    const pendingProofCount = allPendingProofs.length; 
-
-    //const session = await locals.auth();            sert a rien normalement
-    const user = locals.user || null;
+    const pendingProofCount = await prisma.proof.count({
+        where: {
+            status: "PENDING",
+            challenge: {
+                group: {
+                    board: {
+                        some: {
+                            id: user.id
+                        }
+                    }
+                }
+            }
+        }
+    })
  
     return {
         posts: {
