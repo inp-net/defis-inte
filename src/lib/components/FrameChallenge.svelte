@@ -81,6 +81,7 @@
                         <Flex gap="xs" align="center"><File size="15px"/>{type}</Flex>
                     {/if}
                 </Flex>
+                <p><b>Description :</b> {desc}</p>
                 {#if isConnected }  <!-- TODO is1A-->
                     <UploadProof challengeId={challengeId} desc={desc} type={type} onSave={onSave} defaultTVn7={defaultTVn7}></UploadProof>
                 {/if}
