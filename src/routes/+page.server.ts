@@ -10,7 +10,9 @@ export const load: PageServerLoad = async ({ locals }) => {
     const user = locals.user || null;
 
     const allChallengesUntyped = await prisma.challenge.findMany({
-        where: { isDeleted: false },
+        where: {
+            isDeleted: false
+        },
         select: {
             // Prend que les informations utiles
             challengeId: true,
@@ -24,10 +26,10 @@ export const load: PageServerLoad = async ({ locals }) => {
             group: {
                 select: {
                     name: true,
-                    pictureURL: true,
-                },
-            },
-        },
+                    pictureURL: true
+                }
+            }
+        }
     })
 
     const allChallenges = allChallengesUntyped.map(({ group, ...challenge }) => ({
@@ -43,7 +45,7 @@ export const load: PageServerLoad = async ({ locals }) => {
     const pendingChallengeCount = await prisma.challenge.count({
         where: {
             defiAccepte: false,
-            group: {
+            group: user.isAdmin ? {} : {
                 board: {
                     some: {
                         id: user.id
@@ -56,7 +58,7 @@ export const load: PageServerLoad = async ({ locals }) => {
     const pendingProofCount = await prisma.proof.count({
         where: {
             status: "PENDING",
-            challenge: {
+            challenge: user.isAdmin ? {} : {
                 group: {
                     board: {
                         some: {

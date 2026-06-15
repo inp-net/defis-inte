@@ -11,7 +11,7 @@ export const load: PageServerLoad = async ({ locals }) => {
     if (!user) return error(500, "Utilisateur non connecté")
 
     const clubsWithChallenges = await prisma.groupClub.findMany({
-        where: {
+        where: user.isAdmin ? {} : {
             users: {
                 some: {
                     id: user.id

@@ -4,38 +4,34 @@ import { prisma } from "$lib/server/prisma";
 import type { Proof } from '$lib/types/types.d';
 import { error, fail, type Actions } from '@sveltejs/kit';
 
-export const load: PageServerLoad = async ({locals}) => {
+export const load: PageServerLoad = async ({ locals }) => {
 
-    let proofs : Proof[] = [];
-    // si pas du bureau ou admin il est redirigée
-    if(!locals.user.groupBoard || locals.user.isAdmin){
-        throw error(402,"tu ne fais pas partie du bureau d'un club")
-    }else{
-        if (locals.user.isAdmin){
-            proofs = await prisma.proof.findMany({
-                where: {
-                    status: 'PENDING'
-                },
-                include :{
-                    user: true,
-                    challenge: true,
-                }
-            });
-        }else{
-            proofs = await prisma.proof.findMany({
-                where: {
-                    status: 'PENDING',
-                    challenge:{
-                        groupId: { in: locals.user.groupBoard.map(board => board.groupId) }// Que le user est dans le bureau du club 
+    const user = locals.user || null;
+
+    const notAdminFiltre = user.isAdmin
+        ? {}
+        : {
+            challenge: {
+                group: {
+                    board: {
+                        some: {
+                            id: user.id
+                        }
                     }
-                },
-                include :{
-                    user: true,
-                    challenge: true,
                 }
-            });
+            }
         }
-    }
+
+    const proofs : Proof[] = await prisma.proof.findMany({
+        where: {
+            status: 'PENDING',
+            notAdminFiltre
+        },
+        include: {
+            user: true,
+            challenge: true,
+        }
+    })
 
 
     return {
