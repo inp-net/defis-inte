@@ -11,10 +11,11 @@
         location: string,
         clubName: string,
         clubUrl: string,
-        desc?: string | null,
-        type: string
-        onSave: (fichiers: FileList | null, textePreuve: string, type: string, isOkTVn7: boolean, challengeId: number) => void;
-        defaultTVn7: boolean
+        desc: string ,
+        type: string,
+        onSave: (fichiers: FileList | null, textePreuve: string, type: string, isOkTVn7: boolean, challengeId: number) => void,
+        defaultTVn7: boolean,
+        isConnected: boolean
     }
 
     const {
@@ -25,10 +26,11 @@
         location,
         clubName,
         clubUrl,
-        desc,
+        desc = '',
         type,
         onSave,
-        defaultTVn7,
+        defaultTVn7 = false,
+        isConnected
     }: Prop = $props();
 
     let isUnfolded = $state(false);
@@ -79,7 +81,9 @@
                         <Flex gap="xs" align="center"><File size="15px"/>{type}</Flex>
                     {/if}
                 </Flex>
-                <UploadProof challengeId={challengeId} desc={desc} type={type} onSave={onSave} defaultTVn7={defaultTVn7}></UploadProof>
+                {#if isConnected }  <!-- TODO is1A-->
+                    <UploadProof challengeId={challengeId} desc={desc} type={type} onSave={onSave} defaultTVn7={defaultTVn7}></UploadProof>
+                {/if}
             </Flex>
         {/if}
 </Frame>

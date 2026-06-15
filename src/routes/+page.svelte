@@ -16,7 +16,7 @@
     let challenges : ChallengeRead[] = $state(data.posts.challenges);
     
     // Données liées au profil de l'utilisateur
-    const user = $derived(data.user);
+    const user = $derived(data?.user);
 
     // Recherche de défis
 
@@ -35,7 +35,7 @@
         )
     );
 
-    async function handleSave(fichiers: FileList | null, textePreuve: string, type: string, isOkTVn7: boolean, challengeId: number){
+    async function handleSave(fichiers: FileList | null, textePreuve: string, type: string, isOkTVn7: boolean = false, challengeId: number){
         console.log("Tentative de création de la preuve");
         try {
             const formData = new FormData();
@@ -95,10 +95,10 @@
                 return items;
         }
     });
-    const afficherUser : boolean = $state(!user.firstName)
+    const isConnected : boolean = $state(user)
 
 </script>
-{#if afficherUser}
+{#if !isConnected}
     <Flex gap="xs" margin="xs" justify="right">
         <Button onclick={() => signIn("authentik", { callbackUrl: "/"})} style = "padding: var(--size-md)" >
             Se connecter
@@ -146,7 +146,8 @@
                     desc={challenge.description}
                     type={challenge.type}
                     onSave={handleSave}
-                    defaultTVn7={user.isOkTVn7}
+                    defaultTVn7={user?.isOkTVn7}
+                    isConnected={isConnected}
                 />
             {/each}
         </Flex>
