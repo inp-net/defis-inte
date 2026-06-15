@@ -2,6 +2,7 @@
     import { ChevronDown, ChevronUp, Upload, MapPin, Building, File } from '@lucide/svelte';
     import { Frame, Flex, Button, Avatar } from 'azucar-ui';
     import UploadProof from './UploadProof.svelte';
+    import { slide } from 'svelte/transition';
     
     type Prop = {
         challengeId: number,
@@ -65,6 +66,7 @@
     </button>
 
     {#if isUnfolded}
+        <div transition:slide={{ duration: 200 }}>
             <Flex 
             direction="column" 
             gap="md"
@@ -87,6 +89,7 @@
                     <UploadProof challengeId={challengeId} desc={desc} type={type} onSave={onSave} defaultTVn7={defaultTVn7}></UploadProof>
                 {/if}
             </Flex>
+        </div>
         {/if}
 </Frame>
 
