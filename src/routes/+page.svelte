@@ -78,7 +78,7 @@
     // Trier les défis
 
     const sortList : string[] = ["points", "clubs", "lieux", "date", "réussite"];
-    let sortBind : string = $state(sortList[0]);
+    let sortBind : string = $state(sortList[1]);
     let isSortDesc = $state(true);
     let sortedSearchedChallenges = $derived.by(() => {
         const items = [...searchedItems]; 
