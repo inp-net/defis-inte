@@ -10,10 +10,10 @@ export const load: PageServerLoad = async ({ locals }) => {
 
     if (!user) return error(500, "Utilisateur non connecté.");
 
-    const notAdminFiltre = user?.isAdmin
-        ? {}
-        : {
-            challenge: {
+    const proofs : Proof[] = await prisma.proof.findMany({
+        where: {
+            status: "PENDING",
+            challenge: user?.isAdmin ? {} : {
                 group: {
                     board: {
                         some: {
@@ -22,12 +22,6 @@ export const load: PageServerLoad = async ({ locals }) => {
                     }
                 }
             }
-        }
-
-    const proofs : Proof[] = await prisma.proof.findMany({
-        where: {
-            status: 'PENDING',
-            notAdminFiltre
         },
         include: {
             user: true,
