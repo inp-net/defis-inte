@@ -8,7 +8,9 @@ export const load: PageServerLoad = async ({ locals }) => {
 
     const user = locals.user || null;
 
-    const notAdminFiltre = user.isAdmin
+    if (!user) return error(500, "Utilisateur non connecté.");
+
+    const notAdminFiltre = user?.isAdmin
         ? {}
         : {
             challenge: {

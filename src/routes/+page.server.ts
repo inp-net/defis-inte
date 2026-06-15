@@ -45,7 +45,7 @@ export const load: PageServerLoad = async ({ locals }) => {
     const pendingChallengeCount = await prisma.challenge.count({
         where: {
             defiAccepte: false,
-            group: user.isAdmin ? {} : {
+            group: user?.isAdmin ? {} : {
                 board: {
                     some: {
                         id: user.id
@@ -58,7 +58,7 @@ export const load: PageServerLoad = async ({ locals }) => {
     const pendingProofCount = await prisma.proof.count({
         where: {
             status: "PENDING",
-            challenge: user.isAdmin ? {} : {
+            challenge: user?.isAdmin ? {} : {
                 group: {
                     board: {
                         some: {
