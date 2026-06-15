@@ -2,7 +2,7 @@
 
     import type { PageData } from '../$types';
     import { Flex, Stack, Button, Frame } from 'azucar-ui';
-    import { User, Clock, File } from '@lucide/svelte';
+    import { User, Clock, TextAlignStart } from '@lucide/svelte';
     import BackButton from '$lib/components/BackButton.svelte';
     import type { Proof } from '$lib/types/types.d';
     import { Status } from '$lib/types/types.d';
@@ -126,8 +126,8 @@
                                 <p>{formatDateTime(proof.date)}</p>
                             </Flex>
                             <Flex wrap={false} gap="xs" align="center">
-                                <File size='15px'/> 
-                                <p>{proof.type.toLowerCase()}</p>
+                                <TextAlignStart size='15px'/> 
+                                <p>{proof.challenge.description}</p>
                             </Flex>
                         </Flex>
                         <div class="proof-media-list">
