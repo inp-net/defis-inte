@@ -12,7 +12,7 @@ export const load: PageServerLoad = async ({ locals }) => {
 
     const clubsWithChallenges = await prisma.groupClub.findMany({
         where: user?.isAdmin ? {} : {
-            users: {
+            board: {
                 some: {
                     id: user.id
                 }
