@@ -7,8 +7,20 @@ import { prisma } from "$lib/server/prisma";
 
 const presetPoints = [10, 20, 50, 80, 100];
 
-export const load: PageServerLoad = async ({ params }) => {
-    const clubs : GroupClub[] = await prisma.groupClub.findMany({});
+export const load: PageServerLoad = async ({ params, locals }) => {
+
+    const user = locals.user || null;
+
+    const clubs : GroupClub[] = await prisma.groupClub.findMany({
+        // Bypass si c'est un admin
+        where: user.isAdmin ? {} : {
+            users: {
+                some: {
+                    id: user.id
+                }
+            }
+        }
+    });
     const locations : Location[] = await prisma.location.findMany({});
 
     let existingChallenge = null;
