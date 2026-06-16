@@ -85,9 +85,6 @@
                     {#if children }
                         {@render children()}
                     {/if}
-                    {#if children }
-                        {@render children()}
-                    {/if}
                     {#if (type != "TEXT")}
                         <Flex gap="xs" align="center"><File size="15px"/>{type}</Flex>
                     {/if}
