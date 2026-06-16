@@ -41,7 +41,7 @@
     let isUnfolded = $state(false);
 </script>
 
-<Frame border={true}>
+<Frame border={true} style="padding: 6px 10px; display: flex; align-content: center; flex-direction: column;">
     <button class="no-style" style="width: 100%;" onclick={() => isUnfolded = !isUnfolded}>
         <!-- Forcer max-width et min-width permet de ne pas dépasser de l'écran et de laisser le nom avoir un scroll -->
         <Flex justify="space-between" align="center" gap="sm" wrap={false} style="max-width: 100%; min-width: 0; overflow: hidden; flex-grow: 1;">
@@ -62,7 +62,7 @@
 
     {#if isUnfolded}
         <div transition:slide={{ duration: 200 }} class="animated-panel">
-            <div style="padding-top: 12px; margin-top: 8px; border-top: 1px solid #eaeaea; width: 95%;">
+            <div style="border-top: 1px solid #eaeaea; width: 95%;">
                 <Flex direction="column" gap="md">
                     <Flex gap="xs" direction="column">
                         {#if children }
@@ -86,16 +86,18 @@
     .animated-panel {
         will-change: height;
         contain: content; 
+        padding: 10px 0 10px 10px;
     }
 
     img {
-        width: var(--size-lg);
-        height: var(--size-lg);
+        width: var(--size-xl);
+        height: var(--size-xl);
+        border-radius: var(--size-xl);
         object-fit: cover;
     }
 
     .scrollable {
-        padding: var(--size-xxs) 0px; 
+        /* padding: var(--size-xxs) 0px;  */
         width: 100%; 
         overflow-x: auto; 
         -webkit-overflow-scrolling: touch;
