@@ -56,7 +56,7 @@ export async function canModifyChallenge(challengeIdRaw: any , userId: string, d
                 throw error(402,"tu ne fais pas partie du bureau du club")
         }
     return true
-    console.log("fin de can modify sans probleme")//debug
+    //console.log("fin de can modify sans probleme")//debug
 
 }
 
