@@ -1,5 +1,5 @@
 import type { PageServerLoad } from './$types';
-import type { Leaderboard } from '$lib/types/types.d.ts';
+import type { Leaderboard, User } from '$lib/types/types.d';
 import { prisma } from "$lib/server/prisma";
 
 
@@ -16,7 +16,8 @@ export const load: PageServerLoad = async ({ params }) => {
         }
     });
 
-    const users = await prisma.user.findMany({
+    // Pas encore type Leaderboard car manque propriété name
+    const users : User[] = await prisma.user.findMany({
         orderBy: {
             points: 'desc',
         },

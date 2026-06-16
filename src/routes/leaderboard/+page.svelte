@@ -1,6 +1,6 @@
 <script lang="ts">
 
-    import type { Leaderboard } from '$lib/types/types.d.ts';
+    import type { Leaderboard, User } from '$lib/types/types.d';
     import type { PageData } from './$types';
     import { Flex, Stack, ButtonGroup, Button } from 'azucar-ui';
     import BackButton from '$lib/components/BackButton.svelte';
@@ -9,8 +9,11 @@
     let { data }: { data: PageData } = $props();
 
     let groups : Leaderboard[] = $derived(data.posts.groups);
-    let usersDB = $derived(data.posts.users);
-    let users : Leaderboard[] = usersDB.map(user => ({ ...usersDB, name: `${user.firstName} ${user.lastName}` }));
+    let usersDB : User[] = $derived(data.posts.users);
+    let users : Leaderboard[] = usersDB.map(user => ({ 
+        ...user, 
+        name: `${user.firstName} ${user.lastName}` 
+    }));
 
     let isGroupSelected : boolean = $state(true);
     let leaderboard : Leaderboard[] = $derived(isGroupSelected ? groups : users);
