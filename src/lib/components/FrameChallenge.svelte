@@ -39,13 +39,6 @@
     }: Prop = $props();
 
     let isUnfolded = $state(false);
-
-    const initials = (str: string) =>
-        str
-            .split(' ')
-            .map((word) => word.charAt(0).toUpperCase())
-            .join('');
-
 </script>
 
 <Frame border={true}>
@@ -54,8 +47,6 @@
         <Flex justify="space-between" align="center" gap="sm" wrap={false} style="max-width: 100%; min-width: 0; overflow: hidden; flex-grow: 1;">
             {#if clubUrl}
                 <img src={clubUrl} alt={clubName} />
-            {:else}
-                <span class="initials">{initials(clubName)}</span>
             {/if}
             <!-- Le nom peut être scroll horizontalement si il y a pas de places -->
             <div class="scrollable" style="min-width: 0;">
@@ -70,47 +61,31 @@
     </button>
 
     {#if isUnfolded}
-        <div transition:slide={{ duration: 200 }}>
-            <Flex 
-            direction="column" 
-            gap="md"
-            style="
-                margin-top: 8px; 
-                width: 95%; 
-                padding-top: 12px; 
-                border-top: 1px solid #eaeaea;
-            ">
-                <Flex gap="xs" direction="column">
-                    {#if children }
-                        {@render children()}
+        <div transition:slide={{ duration: 200 }} class="animated-panel">
+            <div style="padding-top: 12px; margin-top: 8px; border-top: 1px solid #eaeaea; width: 95%;">
+                <Flex direction="column" gap="md">
+                    <Flex gap="xs" direction="column">
+                        {#if children }
+                            {@render children()}
+                        {/if}
+                        {#if (type != "TEXT")}
+                            <Flex gap="xs" align="center"><File size="15px"/>{type}</Flex>
+                        {/if}
+                        <Flex gap="xs" align="center"><TextAlignStart size="15px"/><b>Description :</b> {desc}</Flex>
+                    </Flex>
+                    {#if isEnabled && (Churros1ATo2A && is1A) }  
+                        <UploadProof challengeId={challengeId} desc={desc} type={type} onSave={onSave} defaultTVn7={defaultTVn7}></UploadProof>
                     {/if}
-                    {#if (type != "TEXT")}
-                        <Flex gap="xs" align="center"><File size="15px"/>{type}</Flex>
-                    {/if}
-                    <Flex gap="xs" align="center"><TextAlignStart size="15px"/><b>Description :</b> {desc}</Flex>
                 </Flex>
-                {#if isEnabled && (Churros1ATo2A && is1A) }  
-                    <UploadProof challengeId={challengeId} desc={desc} type={type} onSave={onSave} defaultTVn7={defaultTVn7}></UploadProof>
-                {/if}
-            </Flex>
+            </div>
         </div>
         {/if}
 </Frame>
 
 <style>
-    .initials {
-        display: flex;
-        flex-shrink: 0;
-        align-items: center;
-        justify-content: center;
-        color: var(--color-fg-solid);
-        font-weight: bold;
-        height: 100%;
-        font-size: var(--size-sm);
-        width: var(--size-lg);
-        height: var(--size-lg);
-        background-color: var(--color-bg-solid);
-        border-radius: 100%;
+    .animated-panel {
+        will-change: height;
+        contain: content; 
     }
 
     img {
@@ -118,7 +93,6 @@
         height: var(--size-lg);
         object-fit: cover;
     }
-
 
     .scrollable {
         padding: var(--size-xxs) 0px; 
