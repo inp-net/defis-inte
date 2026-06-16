@@ -161,6 +161,7 @@
                     type={challenge.type}
                     onSave={handleSave}
                     defaultTVn7={user?.isOkTVn7}
+                    is1A = {user.is1A}
                     isConnected={isConnected}
                 >
                     <Flex gap="xs" direction="column">
