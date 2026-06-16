@@ -74,25 +74,47 @@ export async function newProof(body: ProofInput) {
     }
 
     //verifier que c'est bien un is1A    
-    if ((await prisma.user.findUnique({where : {id : userId}, select : {is1A:true}})) && Churros1ATo2A){   
+    if ((!await prisma.user.findUnique({where : {id : userId}, select : {is1A:true}})) && Churros1ATo2A){   
         throw error(403, 'Tu n\'es pas un 1A');
     }
 
     //on ne peut pas envoyé plusieur preuve par groupe d'inté TODO
-    if (
-        await prisma.challenge.findFirst({
-            where: {
-                challengeId: challengeId,
-                groupInteSucceed: {
-                    users: { some: { id: userId } }
+    const challengeCheck = await prisma.challenge.findUnique({
+        where: {
+            challengeId: challengeId,
+        },
+        select: {
+            groupInteSucceed: {
+                where: {
+                    usersInte: {
+                        some: { id: userId }
+                    }
+                },
+                select: {
+                    groupId: true
                 }
-            },
-            select: { challengeId: true }
-        })
-    )
-    {
-        throw error(403, "Challenge déjà fait par un membre de ton groupe d'intégration.")
+            }
+        }
+    });
+
+    if (challengeCheck && challengeCheck.groupInteSucceed.length > 0) {
+        throw error(403, "Challenge déjà fait par un membre de ton groupe d'intégration.");
     }
+
+    // On ne peut pas envoyer si un défi est PENDING
+    const existingGroupPendingProof = await prisma.proof.findFirst({
+        where: {
+            challengeId: challengeId,
+            status: Status.PENDING,
+            user: {
+                groupInteId: user.groupInteId
+            }
+        }
+    });
+    if (existingGroupPendingProof) {
+        throw error(403, "Challenge déjà fait par un membre de ton groupe d'intégration.");
+    }
+
 
     const coreData = {
         user: {
