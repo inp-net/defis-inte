@@ -152,7 +152,7 @@
             {#each sortedSearchedChallenges as challenge}
                 <FrameChallenge
                     challengeId={challenge.challengeId}
-                    name={challenge.name}
+                    name={challenge.isDone ? "✔ " : "" + challenge.name}
                     nbPoints={challenge.nbPoints}
                     isText={challenge.type === "TEXT"}
                     location={challenge.locationName}
