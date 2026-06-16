@@ -80,24 +80,32 @@
     const sortList : string[] = ["points", "clubs", "lieux", "date", "réussite"];
     let sortBind : string = $state(sortList[1]);
     let isSortDesc = $state(true);
+
     let sortedSearchedChallenges = $derived.by(() => {
         const items = [...searchedItems]; 
         const flip = isSortDesc ? 1 : -1;
+
+        const sortByClub = (a: any, b: any) => flip * (b.groupName || "").localeCompare(a.groupName || "");
+        const sortByPoints = (a: any, b: any) => flip * (Number(b.nbPoints) - Number(a.nbPoints));
+        // Le trie secondaire trie par clubs puis par points
+        const secondarySort = (a: any, b: any) => sortByClub(a, b) || sortByPoints(a, b);
+
         switch(sortBind) {
             case "points":
-                return items.sort((a, b) => flip * (Number(b.nbPoints) - Number(a.nbPoints)));
+                return items.sort((a, b) => sortByPoints(a, b) || sortByClub(a, b));
             case "clubs":
-                return items.sort((a, b) => flip * b.groupName.localeCompare(a.groupName));
+                return items.sort((a, b) => sortByClub(a, b) || sortByPoints(a, b));
             case "lieux":
-                return items.sort((a, b) => flip * (b.locationName || "").localeCompare(a.locationName || ""));
+                return items.sort((a, b) => (flip * (b.locationName || "").localeCompare(a.locationName || "")) || secondarySort(a, b));
             case "date":
-                return items.sort((a, b) => flip * (b.challengeId - a.challengeId));
+                return items.sort((a, b) => (flip * (b.challengeId - a.challengeId)) || secondarySort(a, b));
             case "réussite":
-                return items.sort((a, b) => flip * (b.groupInteSucceed.length - a.groupInteSucceed.length));
+                return items.sort((a, b) => (flip * (b.groupInteSucceed.length - a.groupInteSucceed.length)) || secondarySort(a, b));
             default:
-                return items;
+                return items.sort(secondarySort);
         }
     });
+
     const isConnected : boolean = $state(user)
 
 </script>
