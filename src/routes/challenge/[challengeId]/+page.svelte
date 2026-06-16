@@ -2,15 +2,14 @@
 
     import Select from '$lib/components/Select.svelte';
     import ButtonGroupFix from '$lib/components/ButtonGroupFix.svelte';
-    import BackButton from '$lib/components/BackButton.svelte';
     import type { Location, GroupClub } from '$lib/types/types.d';
     import { UploadType } from '../../../../prisma/generated/prisma/enums';
     import type { PageData } from './$types';
     import { Toaster, toast } from 'svelte-sonner';
     import { Button, Flex, Stack, Frame, TextInput } from 'azucar-ui';
-    import { SearchIcon, Check } from '@lucide/svelte';
+    import { SearchIcon, Check, ArrowLeft } from '@lucide/svelte';
 
-    let { data, redirect = "/" }: { data: PageData, redirect: string } = $props();
+    let { data }: { data: PageData } = $props();
 
     // Valeurs initiales du form. Réupéré de la db.
     const getInitialState = (ec: typeof data.existingChallenge) => ({
@@ -78,13 +77,15 @@
         }
     }
 
+    let navigateBack = data.referer?.includes('board') ? '/board' : '/'
+
 </script>
 
 <Flex direction="column" gap="xxl" margin="lg">
 
     <Stack>
         <Stack align="baseline"> 
-            <BackButton backCount={2} />
+            <Button icon={ArrowLeft} href={navigateBack}>Retour</Button> 
             {#if isNew}
                 <h2>Ajouter un Défi</h2>
             {:else}
