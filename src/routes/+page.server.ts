@@ -49,7 +49,7 @@ export const load: PageServerLoad = async ({ locals }) => {
     const challenges : ChallengeRead[] = allChallenges.filter((a) => a.defiAccepte);
 
     // TODO peut êter à optimiser car requête est déjà fait en haut.
-    const pendingChallengeCount = await prisma.challenge.count({
+    const pendingChallengeCount = user ? 0 : await prisma.challenge.count({
         where: {
             defiAccepte: false,
             group: user?.isAdmin ? {} : {
@@ -62,7 +62,7 @@ export const load: PageServerLoad = async ({ locals }) => {
         }
     })
 
-    const pendingProofCount = await prisma.proof.count({
+    const pendingProofCount = user ? 0 : await prisma.proof.count({
         where: {
             status: "PENDING",
             challenge: user?.isAdmin ? {} : {
