@@ -60,6 +60,10 @@ export async function newProof(body: ProofInput) {
         where: { challengeId: challengeId }
     });
 
+    const user = await prisma.user.findUnique({
+        where: { id: userId }
+    })
+
     if (!challenge) {
         throw error(404, `Challenge non trouvé: ${challengeId}`);
     }
