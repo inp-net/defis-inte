@@ -4,11 +4,12 @@
     import UploadProof from './UploadProof.svelte';
     import { Churros1ATo2A } from '$lib/env';
 
+    import { slide } from 'svelte/transition';
+    
     type Prop = {
         challengeId: number,
         name: string,
         nbPoints: number,
-        isText: boolean,
         location: string,
         clubName: string,
         clubUrl: string,
@@ -18,13 +19,13 @@
         defaultTVn7: boolean,
         isConnected: boolean,
         is1A: boolean
+        children?: import('svelte').Snippet;
     }
 
     const {
         challengeId = 0,
         name = "",
         nbPoints = 0,
-        isText = true,
         location,
         clubName,
         clubUrl,
@@ -34,6 +35,8 @@
         defaultTVn7 = false,
         isConnected,
         is1A
+        isConnected,
+        children
     }: Prop = $props();
 
     let isUnfolded = $state(false);
@@ -68,6 +71,7 @@
     </button>
 
     {#if isUnfolded}
+        <div transition:slide={{ duration: 200 }}>
             <Flex 
             direction="column" 
             gap="md"
@@ -78,8 +82,9 @@
                 border-top: 1px solid #eaeaea;
             ">
                 <Flex gap="xs" direction="column">
-                    <Flex gap="xs" align="center"><Building size="15px"/> {clubName}</Flex>
-                    <Flex gap="xs" align="center"><MapPin size="15px"/> {location}</Flex>
+                    {#if children }
+                        {@render children()}
+                    {/if}
                     {#if (type != "TEXT")}
                         <Flex gap="xs" align="center"><File size="15px"/>{type}</Flex>
                     {/if}
@@ -89,6 +94,7 @@
                     <UploadProof challengeId={challengeId} desc={desc} type={type} onSave={onSave} defaultTVn7={defaultTVn7}></UploadProof>
                 {/if}
             </Flex>
+        </div>
         {/if}
 </Frame>
 

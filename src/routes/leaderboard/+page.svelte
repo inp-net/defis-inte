@@ -9,7 +9,8 @@
     let { data }: { data: PageData } = $props();
 
     let groups : Leaderboard[] = $derived(data.posts.groups);
-    let users : Leaderboard[] = $derived(data.posts.users);
+    let usersDB = $derived(data.posts.users);
+    let users : Leaderboard[] = usersDB.map(user => ({ ...usersDB, name: `${user.firstName} ${user.lastName}` }));
 
     let isGroupSelected : boolean = $state(true);
     let leaderboard : Leaderboard[] = $derived(isGroupSelected ? groups : users);

@@ -2,6 +2,7 @@
 
     import type { PageData } from './$types';
     import { Flex, Stack, Button } from 'azucar-ui';
+    import { MapPin, Building, File, Trophy } from '@lucide/svelte';
     import type { ChallengeRead } from '$lib/types/types.d.ts';
     import Header from '$lib/components/Header.svelte';
     import FrameChallenge from '$lib/components/FrameChallenge.svelte';
@@ -78,8 +79,8 @@
 
     // Trier les défis
 
-    const sortList : string[] = ["points", "clubs", "lieux", "date"];
-    let sortBind : string = $state(sortList[0]);
+    const sortList : string[] = ["points", "clubs", "lieux", "date", "réussite"];
+    let sortBind : string = $state(sortList[1]);
     let isSortDesc = $state(true);
     let sortedSearchedChallenges = $derived.by(() => {
         const items = [...searchedItems]; 
@@ -93,6 +94,8 @@
                 return items.sort((a, b) => flip * (b.locationName || "").localeCompare(a.locationName || ""));
             case "date":
                 return items.sort((a, b) => flip * (b.challengeId - a.challengeId));
+            case "réussite":
+                return items.sort((a, b) => flip * (b.groupInteSucceed.length - a.groupInteSucceed.length));
             default:
                 return items;
         }
@@ -154,6 +157,20 @@
                     isConnected={isConnected}
                     is1A={user?.is1A}
                 />
+                    <Flex gap="xs" direction="column">
+                        <Flex gap="xs" align="center">
+                            <Trophy size="15px"/>
+                            <p>Défi réussi par :</p>
+                        </Flex>
+                        <Flex direction="column" gap="xxs" wrap={false} style="max-height: 100px; overflow: scroll; margin-left: 10px;">
+                            {#each challenge.groupInteSucceed as inte }
+                                <p>- {inte.name}</p>
+                            {/each}
+                        </Flex>
+                    </Flex>
+                    <Flex gap="xs" align="center"><Building size="15px"/> {challenge.groupName} </Flex>
+                    <Flex gap="xs" align="center"><MapPin size="15px"/> {challenge.locationName} </Flex>
+                </FrameChallenge>
             {/each}
         </Flex>
     </Stack>

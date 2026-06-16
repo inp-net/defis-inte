@@ -78,7 +78,7 @@
                 name={challenge.name}
                 points={challenge.nbPoints}
                 isModifiable={true}
-                modifiableURL={"challenge/{challenge.challengeId}"}
+                modifiableURL={`challenge/${challenge.challengeId}`}
                 isApprouved={(challenge.defiAccepte || successChallengeIds.includes(challenge.challengeId)) && !challenge.isDeleted}
                 isDisabled={challenge.isDeleted || deletedChallengeIds.includes(challenge.challengeId)}
                 onAccepted={() => handleAccept(challenge.challengeId)}
