@@ -57,11 +57,17 @@ export const actions : Actions = {
     upsert: async ({ request, locals }) => {
         try {
             const body = await request.json();
-            body.userId = locals.user.id
+            body.userId = locals.user.id;
+            const user = locals.user;
 
             // Vérifie que le nombre de points entré est valide
             if (!presetPoints.includes(body.nbPoints))
                 throw error(500, { message: 'Le nombre de points est invalide'});
+
+            // Vérifie que l'utilisateur est bien dans le club
+            if (clubs.find((club) => club.name === body.groupName)) {
+                throw error(403, { message: "L'utilisateur n'appartient pas au club séléctionné" });
+            }
 
             const savedChallenge = await saveChallenge(body);
             return { success: true, data: savedChallenge };
