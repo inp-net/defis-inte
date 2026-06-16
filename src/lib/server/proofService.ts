@@ -48,7 +48,7 @@ async function canModifyProof(proofId: number, userId: string) {
     //console.log("deuxieme partie if" , userAutorisation.isAdmin)//debug
     if(!userAutorisation.groupBoard.some(board => board.groupId === groupIdProof) && !userAutorisation.isAdmin){
         console.log("ici")//debug
-            throw error(402,"tu ne fais pas partie du bureau du club")
+        throw error(402,"tu ne fais pas partie du bureau du club")
     }
 }
 
@@ -79,9 +79,20 @@ export async function newProof(body: ProofInput) {
     }
 
     //on ne peut pas envoyé plusieur preuve par groupe d'inté TODO
-    //if(! await prisma.groutInte.findUnique({where : {groupId : in challenge.groupInteSucceed }})){
-    //    throw error(403, "preuve déja envoyer")
-    //}
+    if (
+        await prisma.challenge.findFirst({
+            where: {
+                challengeId: challengeId,
+                groupInteSucceed: {
+                    users: { some: { id: userId } }
+                }
+            },
+            select: { challengeId: true }
+        })
+    )
+    {
+        throw error(403, "Challenge déjà fait par un membre de ton groupe d'intégration.")
+    }
 
     const coreData = {
         user: {
@@ -105,8 +116,8 @@ export async function newProof(body: ProofInput) {
 }
 
 /** Accepter une preuve. 
- * @param proofId identifiant de la preuve
- * @param userId identifiant de l'utilisateur ayant valider la preuve
+    * @param proofId identifiant de la preuve
+* @param userId identifiant de l'utilisateur ayant valider la preuve
 */
 export async function approveProof(proofId: number, userId: string) {
     console.log("entre accepte preuve") // debug
@@ -125,8 +136,8 @@ export async function approveProof(proofId: number, userId: string) {
 
 
 /** refuser une preuve. 
- * @param proofId identifiant de la preuve
- * @param userId identifiant de l'utilisateur ayant valider la preuve
+    * @param proofId identifiant de la preuve
+* @param userId identifiant de l'utilisateur ayant valider la preuve
 */
 export async function denyProof(proofId: number, userId: string) {
 
@@ -144,8 +155,8 @@ export async function denyProof(proofId: number, userId: string) {
 }
 
 /** Mise a jour des points de l'utilisateur
- * et des groupe reussisant le challenge 
- * @param proofId identifiant de la preuve qui à été modifier
+* et des groupe reussisant le challenge 
+* @param proofId identifiant de la preuve qui à été modifier
 */
 export async function pointsUpdate(proofId: number ){
     const data = await prisma.proof.findUnique({
@@ -165,18 +176,18 @@ export async function pointsUpdate(proofId: number ){
 
     let newPointUser : number ;
 
-    
-        newPointUser = data.challenge.nbPoints + data.user.points ;
-        console.log("mise a jour des points");//debug
-        console.log(newPointUser);//debug
-        const newPointGroup : number = data.challenge.nbPoints + data.user.groupInte.points ;
 
-        const groupInteUpdate = await prisma.groupInte.update({
-            data : { points : newPointGroup,
-                challengeSucceed : {connect : {challengeId : data.challengeId}}
-            },
-            where : {groupId : data.user.groupInteId}
-        })
+    newPointUser = data.challenge.nbPoints + data.user.points ;
+    console.log("mise a jour des points");//debug
+    console.log(newPointUser);//debug
+    const newPointGroup : number = data.challenge.nbPoints + data.user.groupInte.points ;
+
+    const groupInteUpdate = await prisma.groupInte.update({
+        data : { points : newPointGroup,
+            challengeSucceed : {connect : {challengeId : data.challengeId}}
+        },
+        where : {groupId : data.user.groupInteId}
+    })
 
     const userUpdate = await prisma.user.update({
         data : { points : newPointUser},
