@@ -31,12 +31,10 @@ export async function canModifyChallenge(challengeIdRaw: any , userId: string, d
             throw error(404,'Le challenge est introuvable'); 
         }
 
+        // Il est impossible de faire des actions sur un défi refusé
+        // Il doit impérativement être recrée
         if (challenge.isDeleted) {
             throw error(409,'Le défi a deja été refusée' );
-        }
-
-        if (challenge.defiAccepte || deleted) {
-            throw error(409,"Defi déjà accepter" );
         }
 
         // si pas du bureau ou admin il est redirigée
@@ -129,6 +127,7 @@ export async function acceptChallenge(challengeIdRaw: any , userId : string) {
     const updatedChallenge = await prisma.challenge.update({
         where: { challengeId: idToFind },
         data: {
+            // Il est impossible d'accepter un défi refusé
             defiAccepte: true,
             userAcceptId: userId
         }
@@ -149,7 +148,9 @@ export async function deleteChallenge(challengeIdRaw: any, userId : string) {
     await prisma.challenge.update({
         where: { challengeId: idToFind },
         data: {
+            // Il est possible de delete un défi même si déjà accepté
             isDeleted: true,
+            defiAccepte: false
         }
     });
 }

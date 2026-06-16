@@ -86,7 +86,7 @@ Carte interactive pour afficher des éléments à valider, refuser ou modifier.
                     icon={XIcon}
                     class="danger"
                     name="Delete"
-                    disabled={isApprouved || isDisabled}
+                    disabled={isDisabled}
                     onclick={() => onDeleted(id)}
                 />
                 <Button
