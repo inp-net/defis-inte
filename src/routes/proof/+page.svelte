@@ -139,7 +139,12 @@
                                 {:else if proof.type == "VIDEO"}
                                     <div class="media-container video-container">
                                         <video controls preload="metadata">
-                                            <source src={content}>
+                                            <!-- Le navigateur tente d'abord le mov (Apple de mrd) -->
+                                            <source src={content} type="video/mov">
+                                            <!-- Le navigateur tente d'abord le WebM (optimisé web) -->
+                                            <source src={content} type="video/webm">
+                                            <!-- S'il échoue, il se rabat sur le MP4 (universel) -->
+                                            <source src={content} type="video/mp4">
                                             <p>Votre navigateur ne supporte pas la vidéo</p>
                                         </video>
                                     </div>

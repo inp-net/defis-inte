@@ -26,6 +26,7 @@
                     console.error("Erreur de validation :", result.data?.message);
                     return;
                 }
+                window.location.reload();
             }
         } catch(err) {
             console.error("Erreur lors de l'envoi du form : ", err);
