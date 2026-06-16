@@ -72,6 +72,7 @@
 
     {#if isUnfolded}
         <div transition:slide={{ duration: 200 }}>
+        <div transition:slide={{ duration: 200 }}>
             <Flex 
             direction="column" 
             gap="md"
@@ -85,6 +86,9 @@
                     {#if children }
                         {@render children()}
                     {/if}
+                    {#if children }
+                        {@render children()}
+                    {/if}
                     {#if (type != "TEXT")}
                         <Flex gap="xs" align="center"><File size="15px"/>{type}</Flex>
                     {/if}
@@ -94,6 +98,7 @@
                     <UploadProof challengeId={challengeId} desc={desc} type={type} onSave={onSave} defaultTVn7={defaultTVn7}></UploadProof>
                 {/if}
             </Flex>
+        </div>
         </div>
         {/if}
 </Frame>

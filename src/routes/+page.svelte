@@ -128,11 +128,11 @@
     </Stack>
 
     <!-- A afficher que pour les membres 2A de groupes et plus -->
-    {#if user && !(user.is1A && Churros1ATo2A)}
+    <!-- {#if user && !user.is1A} -->
         <Stack>
             <AddChallenge />
         </Stack>
-    {/if}
+    <!-- {/if} -->
 
     <!-- Liste des défis -->
     <Stack style="max-width: 100%; min-width: 0; overflow: hidden;">
@@ -155,8 +155,7 @@
                     onSave={handleSave}
                     defaultTVn7={user?.isOkTVn7}
                     isConnected={isConnected}
-                    is1A={user?.is1A}
-                />
+                >
                     <Flex gap="xs" direction="column">
                         <Flex gap="xs" align="center">
                             <Trophy size="15px"/>

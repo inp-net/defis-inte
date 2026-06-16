@@ -11,5 +11,11 @@ export default defineConfig({
     alias: {
       '~generated': path.resolve('./prisma/generated')
     }
-  }
+  },
+  server: {
+		fs: {
+			// Autorise Vite à servir les fichiers depuis le dossier 'uploads'
+			allow: ['uploads'] 
+		}
+	}
 });

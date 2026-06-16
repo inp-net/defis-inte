@@ -11,15 +11,11 @@ export const load: PageServerLoad = async ({ locals }) => {
 
     const user = locals.user || null;
 
-    const user = locals.user || null;
-
-
     const allChallengesUntyped = await prisma.challenge.findMany({
         where: {
             isDeleted: false
         },
         select: {
-            // Prend que les informations utiles
             // Prend que les informations utiles
             challengeId: true,
             name: true,
@@ -49,7 +45,6 @@ export const load: PageServerLoad = async ({ locals }) => {
         groupUrl: group.pictureURL ?? "",
     }));
 
-    // Challenges sont les challenges acceptés par un admin
     // Challenges sont les challenges acceptés par un admin
     const challenges : ChallengeRead[] = allChallenges.filter((a) => a.defiAccepte);
 
