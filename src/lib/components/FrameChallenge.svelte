@@ -18,7 +18,7 @@
         onSave: (fichiers: FileList | null, textePreuve: string, type: string, isOkTVn7: boolean, challengeId: number) => void,
         defaultTVn7: boolean,
         isConnected: boolean,
-        is1A: boolean
+        is1A: boolean,
         children?: import('svelte').Snippet;
     }
 
@@ -33,8 +33,7 @@
         type,
         onSave,
         defaultTVn7 = false,
-        isConnected,
-        is1A
+        is1A,
         isConnected,
         children
     }: Prop = $props();
