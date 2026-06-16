@@ -165,8 +165,8 @@ export async function pointsUpdate(proofId: number ){
 
     let newPointUser : number = data.challenge.nbPoints + data.user.points ;
         
-    console.log("mise a jour des points");//debug
-    console.log(newPointUser);//debug
+    //console.log("mise a jour des points");//debug
+    //console.log(newPointUser);//debug
 
     const newPointGroup : number = data.challenge.nbPoints + data.user.groupInte.points ;
     

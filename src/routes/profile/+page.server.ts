@@ -25,7 +25,7 @@ export const load: PageServerLoad = async ({locals}) => {
 export const actions : Actions = {
     // Action pour crée ou modifier : upsert
     reCalculPoints: async ({ locals }) => {
-        console.log('in actions')//debug
+        //console.log('in actions')//debug
         const userId = locals.user.id
         canUseAdmin(userId);
         try {

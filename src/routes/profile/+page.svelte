@@ -16,7 +16,7 @@
 
     // Sert a recalculer les points 
     async function reCalculPoints() {
-        console.log('in reCalculPoints')//debug
+        //console.log('in reCalculPoints')//debug
         
         try {
             const response = await fetch('?/reCalculPoints', {
