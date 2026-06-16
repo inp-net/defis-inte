@@ -88,18 +88,14 @@ export const actions: Actions = {
                 challenge: updatedChallenge 
             };
             } catch (e: any) {
-                console.error('Action Error:', e);
                 if (e.status && e.message) {
-                    console.log("in le if ")
                     error(e.status, e.message)
                     };
-                
-                console.error('Action Error:', e);
                 return fail(500, { 
                     message: 'Impossible accepter le défi' 
                 });
             }
-        }else{
+        } else{
             return { 
                 success: false, 
                 challenge: {} 

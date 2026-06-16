@@ -32,7 +32,7 @@
 
     const visibleChallenges = $derived(
         challenges.filter(challenge => {
-            if (isHide) return false;
+            if (!hideDone) return true;
 
             const isApproved = challenge.defiAccepte || successChallengeIds.includes(challenge.challengeId);
             const isDeleted = challenge.isDeleted || deletedChallengeIds.includes(challenge.challengeId);
@@ -77,7 +77,7 @@
                 id={challenge.challengeId}
                 name={challenge.name}
                 points={challenge.nbPoints}
-                isModifiable={true}
+                isModifiable={!(challenge.isDeleted || deletedChallengeIds.includes(challenge.challengeId))}
                 modifiableURL={`challenge/${challenge.challengeId}`}
                 isApprouved={(challenge.defiAccepte || successChallengeIds.includes(challenge.challengeId)) && !challenge.isDeleted}
                 isDisabled={challenge.isDeleted || deletedChallengeIds.includes(challenge.challengeId)}
