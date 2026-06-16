@@ -3,6 +3,8 @@ import { error } from '@sveltejs/kit';
 import { ChallengeInput } from '$lib/types/types.d';
 import {UploadType} from '../../../prisma/generated/prisma/enums'
 import { Status, ProofInput } from '$lib/types/types.d';
+import { Churros1ATo2A } from '$lib/env';
+
 
 /** Action pour sauvegarder ou modifier le challenge.
  * Si le challengeId = 0, crée un nouveau défi.
@@ -67,10 +69,10 @@ export async function saveChallenge(body: ChallengeInput) {
     if (!name || !groupName || !locationName) {
         throw error(400, 'Champs requis manquants : name, groupName ou locationName.');
     }
-    // devrai refusée les 1A
-    //if (!await prisma.user.findUnique({where : {id : userId}, select : {is1A:true}})){   
-    //    throw error(403, 'Tu n\'es pas un 1A');
-    //}
+    // refusée les 1A
+    if (!(await prisma.user.findUnique({where : {id : userId}, select : {is1A:true}})) && Churros1ATo2A){   
+        throw error(403, 'Tu es un 1A');
+    }
 
     const targetGroup = await prisma.groupClub.findFirst({
         where: { name: groupName }

@@ -10,6 +10,8 @@
     import Sort from '$lib/components/Sort.svelte';
     import SearchBar from '$lib/components/SearchBar.svelte';
     import { signIn } from "@auth/sveltekit/client";
+    import { Churros1ATo2A } from '$lib/env';
+
 
 
 
@@ -105,8 +107,9 @@
                 return items.sort(secondarySort);
         }
     });
+    let isConnected: boolean = $state(!!user);
 
-    const isConnected : boolean = $state(user)
+    
 
 </script>
 {#if !isConnected}

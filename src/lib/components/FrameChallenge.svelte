@@ -1,7 +1,9 @@
 <script lang="ts">
-    import { ChevronDown, ChevronUp, Upload, MapPin, Building, File } from '@lucide/svelte';
+    import { ChevronDown, ChevronUp, Upload, MapPin, Building, File , TextAlignStart} from '@lucide/svelte';
     import { Frame, Flex, Button, Avatar } from 'azucar-ui';
     import UploadProof from './UploadProof.svelte';
+    import { Churros1ATo2A } from '$lib/env';
+
     import { slide } from 'svelte/transition';
     
     type Prop = {
@@ -15,7 +17,8 @@
         type: string,
         onSave: (fichiers: FileList | null, textePreuve: string, type: string, isOkTVn7: boolean, challengeId: number) => void,
         defaultTVn7: boolean,
-        isConnected: boolean
+        isConnected: boolean,
+        is1A: boolean
         children?: import('svelte').Snippet;
     }
 
@@ -30,6 +33,8 @@
         type,
         onSave,
         defaultTVn7 = false,
+        isConnected,
+        is1A
         isConnected,
         children
     }: Prop = $props();
@@ -67,6 +72,7 @@
 
     {#if isUnfolded}
         <div transition:slide={{ duration: 200 }}>
+        <div transition:slide={{ duration: 200 }}>
             <Flex 
             direction="column" 
             gap="md"
@@ -80,15 +86,19 @@
                     {#if children }
                         {@render children()}
                     {/if}
+                    {#if children }
+                        {@render children()}
+                    {/if}
                     {#if (type != "TEXT")}
                         <Flex gap="xs" align="center"><File size="15px"/>{type}</Flex>
                     {/if}
+                    <Flex gap="xs" align="center"><TextAlignStart size="15px"/><b>Description :</b> {desc}</Flex>
                 </Flex>
-                <p><b>Description :</b> {desc}</p>
-                {#if isConnected }  <!-- TODO is1A-->
+                {#if isConnected && (Churros1ATo2A && is1A) }  
                     <UploadProof challengeId={challengeId} desc={desc} type={type} onSave={onSave} defaultTVn7={defaultTVn7}></UploadProof>
                 {/if}
             </Flex>
+        </div>
         </div>
         {/if}
 </Frame>

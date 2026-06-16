@@ -4,6 +4,7 @@ import { sequence } from '@sveltejs/kit/hooks';
 import { prisma } from '$lib/server/prisma';
 import { redirect } from '@sveltejs/kit';
 import { error } from '@sveltejs/kit';
+import { Churros1ATo2A } from '$lib/env';
 
 const handlePerms: Handle = async ({ event, resolve }) => {
     const currentPath = event.url.pathname;
@@ -38,7 +39,7 @@ const handlePerms: Handle = async ({ event, resolve }) => {
 
     //Empecher l'acces au 1A ou non connéctées
     const forbidenRoutes = ['/proof', '/board', '/challenge'];
-    if (forbidenRoutes.some(route => currentPath.startsWith(route)) && ( !session?.uid )) { // || session.is1A 
+    if (forbidenRoutes.some(route => currentPath.startsWith(route)) && ( !session?.uid || (session.is1A && Churros1ATo2A))) { // 
         throw error(403, 'Accès interdit');
     }
 
