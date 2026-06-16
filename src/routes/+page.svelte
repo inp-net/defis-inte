@@ -162,8 +162,9 @@
                     onSave={handleSave}
                     defaultTVn7={user?.isOkTVn7}
                     is1A = {user.is1A}
-                    isConnected={isConnected}
+                    isEnabled={isConnected && !challenge.isDone}
                 >
+                    <!-- Toutes les métadonnées affichés pour éviter de surcharger le composant -->
                     <Flex gap="xs" direction="column">
                         <Flex gap="xs" align="center">
                             <Trophy size="15px"/>

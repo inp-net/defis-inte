@@ -17,7 +17,7 @@
         type: string,
         onSave: (fichiers: FileList | null, textePreuve: string, type: string, isOkTVn7: boolean, challengeId: number) => void,
         defaultTVn7: boolean,
-        isConnected: boolean,
+        isEnabled: boolean,
         is1A: boolean,
         children?: import('svelte').Snippet;
     }
@@ -34,7 +34,7 @@
         onSave,
         defaultTVn7 = false,
         is1A,
-        isConnected,
+        isEnabled,
         children
     }: Prop = $props();
 
@@ -89,7 +89,7 @@
                     {/if}
                     <Flex gap="xs" align="center"><TextAlignStart size="15px"/><b>Description :</b> {desc}</Flex>
                 </Flex>
-                {#if isConnected && (Churros1ATo2A && is1A) }  
+                {#if isEnabled && (Churros1ATo2A && is1A) }  
                     <UploadProof challengeId={challengeId} desc={desc} type={type} onSave={onSave} defaultTVn7={defaultTVn7}></UploadProof>
                 {/if}
             </Flex>
