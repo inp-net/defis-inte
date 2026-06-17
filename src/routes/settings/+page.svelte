@@ -4,6 +4,7 @@
     import BackButton from '$lib/components/BackButton.svelte';
     import { Power } from '@lucide/svelte'
     import { signOut } from '@auth/sveltekit/client';
+    import { goto } from "$app/navigation";
 
     let { data } = $props();
 
@@ -72,7 +73,7 @@
                 <p>Autoriser automatiquement TVN7 à utiliser les médias transmis* </p>
             </Flex>
             <Flex>
-                <Button icon={Power} onclick={() => signOut()}>Se déconnecter</Button>
+                <Button icon={Power} onclick={() => signOut({ redirectTo: '/' })}>Se déconnecter</Button>
             </Flex>
         </Flex>
         <!-- TODO remplir les explications TVN7-->
