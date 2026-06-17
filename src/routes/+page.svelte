@@ -39,7 +39,6 @@
     );
 
     async function handleSave(fichiers: FileList | null, textePreuve: string, type: string, isOkTVn7: boolean = false, challengeId: number){
-        console.log("Tentative de création de la preuve");
         try {
             const formData = new FormData();
             formData.append('challengeId', challengeId.toString());
@@ -70,7 +69,7 @@
                 if (proof) {
                     proof.status = 'VALID'
                 }
-                console.log("OK preuve validé");*/
+                */
             }
         } catch(err) {
             console.error("Erreur lors de l'envoi du form : ", err);

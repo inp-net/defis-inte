@@ -141,7 +141,6 @@ export async function newProof(body: ProofInput) {
 * @param userId identifiant de l'utilisateur ayant valider la preuve
 */
 export async function approveProof(proofId: number, userId: string) {
-    console.log("entre accepte preuve") // debug
     await canModifyProof(proofId, userId);
 
     const updatedProof = await prisma.proof.update({

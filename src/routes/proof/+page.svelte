@@ -16,7 +16,6 @@
     })
 
     async function approveProof(id: number): Promise<void> {
-        console.log("Tentative d'accepter la preuve");
         try {
             const formData = new FormData();
             formData.append('proofId', id.toString());
@@ -38,7 +37,6 @@
                     proof.status = 'VALID'
                 }
 
-                console.log("OK preuve validé");
             }
         } catch(err) {
             console.error("Erreur lors de l'envoi du form : ", err);
