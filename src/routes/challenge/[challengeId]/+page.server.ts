@@ -7,7 +7,11 @@ import { prisma } from "$lib/server/prisma";
 
 const presetPoints = [10, 20, 50, 80, 100];
 
-export const load: PageServerLoad = async ({ params }) => {
+export const load: PageServerLoad = async ({ params, request }) => {
+
+    let referer = request.headers.get("referer") 
+    console.log(referer)
+
     const clubs : GroupClub[] = await prisma.groupClub.findMany({});
     const locations : Location[] = await prisma.location.findMany({});
 
@@ -35,7 +39,8 @@ export const load: PageServerLoad = async ({ params }) => {
         clubs,
         locations,
         existingChallenge,
-        presetPoints
+        presetPoints,
+        referer
     };
 };
 
