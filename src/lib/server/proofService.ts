@@ -200,14 +200,13 @@ export async function pointsUpdate(proofId: number ){
         }
     })
 
-    let newPointUser : number ;
+    let newPointUser : number = data.challenge.nbPoints + data.user.points ;
+        
+    //console.log("mise a jour des points");//debug
+    //console.log(newPointUser);//debug
 
-
-    newPointUser = data.challenge.nbPoints + data.user.points ;
-    console.log("mise a jour des points");//debug
-    console.log(newPointUser);//debug
     const newPointGroup : number = data.challenge.nbPoints + data.user.groupInte.points ;
-
+    
     const groupInteUpdate = await prisma.groupInte.update({
         data : { points : newPointGroup,
             challengeSucceed : {connect : {challengeId : data.challengeId}}

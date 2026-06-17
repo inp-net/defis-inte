@@ -1,5 +1,7 @@
 import type { PageServerLoad } from './$types';
 import type { Category } from '$lib/types/types.d';
+import type { Actions } from './$types';
+import {canUseAdmin, reCalculPoint} from '../../lib/server/adminCommand';
 
 export const load: PageServerLoad = async ({locals}) => {
 
@@ -19,3 +21,16 @@ export const load: PageServerLoad = async ({locals}) => {
         }, user 
     };
 };
+
+export const actions : Actions = {
+    // Action pour crée ou modifier : upsert
+    reCalculPoints: async ({ locals }) => {
+        //console.log('in actions')//debug
+        const userId = locals.user.id
+        canUseAdmin(userId);
+        try {
+            reCalculPoint();
+        } catch (err: any) {
+           }
+    }
+} satisfies Actions;
