@@ -71,7 +71,7 @@ export type Leaderboard = {
 // Type Challenge Read utilisé uniquement pour l'affichage UI du challenge
 export type ChallengeRead = Pick<
     Challenge, "challengeId" | "name" | "description" | "type" | "nbPoints" | "locationName" | "defiAccepte" | "isDeleted"
-> & { groupName: string; groupUrl: string | null; } & { userName: string } & { groupInteSuccedName: string[] }
+> & { groupName: string; groupUrl: string | null; } & { userName: string } & { groupInteSuccedName: string[] } & { isDone?: boolean }
 
 export type ProofRead = Pick<Proof, "proofId" | "userId" | "challengeId" | "status" | "type" | "content" | "date" >;
 

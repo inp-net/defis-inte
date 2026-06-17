@@ -89,20 +89,21 @@
 
         const sortByClub = (a: any, b: any) => flip * (b.groupName || "").localeCompare(a.groupName || "");
         const sortByPoints = (a: any, b: any) => flip * (Number(b.nbPoints) - Number(a.nbPoints));
+        const sortByDone = (a: any, b: any) => (a.isDone === b.isDone ? 0 : a.isDone ? 1 : -1);
         // Le trie secondaire trie par clubs puis par points
         const secondarySort = (a: any, b: any) => sortByClub(a, b) || sortByPoints(a, b);
 
         switch(sortBind) {
             case "points":
-                return items.sort((a, b) => sortByPoints(a, b) || sortByClub(a, b));
+                return items.sort((a, b) => sortByDone(a, b) || sortByPoints(a, b) || sortByClub(a, b));
             case "clubs":
-                return items.sort((a, b) => sortByClub(a, b) || sortByPoints(a, b));
+                return items.sort((a, b) => sortByDone(a, b) || sortByClub(a, b) || sortByPoints(a, b));
             case "lieux":
-                return items.sort((a, b) => (flip * (b.locationName || "").localeCompare(a.locationName || "")) || secondarySort(a, b));
+                return items.sort((a, b) => sortByDone(a, b) || (flip * (b.locationName || "").localeCompare(a.locationName || "")) || secondarySort(a, b));
             case "date":
-                return items.sort((a, b) => (flip * (b.challengeId - a.challengeId)) || secondarySort(a, b));
+                return items.sort((a, b) => sortByDone(a, b) || (flip * (b.challengeId - a.challengeId)) || secondarySort(a, b));
             case "réussite":
-                return items.sort((a, b) => (flip * (b.groupInteSucceed.length - a.groupInteSucceed.length)) || secondarySort(a, b));
+                return items.sort((a, b) => sortByDone(a, b) || (flip * (b.groupInteSucceed.length - a.groupInteSucceed.length)) || secondarySort(a, b));
             default:
                 return items.sort(secondarySort);
         }
@@ -151,7 +152,7 @@
             {#each sortedSearchedChallenges as challenge}
                 <FrameChallenge
                     challengeId={challenge.challengeId}
-                    name={challenge.name}
+                    name={challenge.isDone ? "✔ " : "" + challenge.name}
                     nbPoints={challenge.nbPoints}
                     isText={challenge.type === "TEXT"}
                     location={challenge.locationName}
@@ -161,8 +162,10 @@
                     type={challenge.type}
                     onSave={handleSave}
                     defaultTVn7={user?.isOkTVn7}
-                    isConnected={isConnected}
+                    is1A = {user.is1A}
+                    isEnabled={isConnected && !challenge.isDone}
                 >
+                    <!-- Toutes les métadonnées affichés pour éviter de surcharger le composant -->
                     <Flex gap="xs" direction="column">
                         <Flex gap="xs" align="center">
                             <Trophy size="15px"/>

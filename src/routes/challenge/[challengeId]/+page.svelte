@@ -139,6 +139,8 @@
                         icon={SearchIcon}
                         placeholder="Lieu du défi";
                         required
+                        type='datalist'
+                        id='2'
                     >Lieu</Select>
 
                     <Select

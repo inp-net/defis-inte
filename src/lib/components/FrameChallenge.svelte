@@ -17,7 +17,7 @@
         type: string,
         onSave: (fichiers: FileList | null, textePreuve: string, type: string, isOkTVn7: boolean, challengeId: number) => void,
         defaultTVn7: boolean,
-        isConnected: boolean,
+        isEnabled: boolean,
         is1A: boolean,
         children?: import('svelte').Snippet;
     }
@@ -34,28 +34,19 @@
         onSave,
         defaultTVn7 = false,
         is1A,
-        isConnected,
+        isEnabled,
         children
     }: Prop = $props();
 
     let isUnfolded = $state(false);
-
-    const initials = (str: string) =>
-        str
-            .split(' ')
-            .map((word) => word.charAt(0).toUpperCase())
-            .join('');
-
 </script>
 
-<Frame border={true}>
+<Frame border={true} style="padding: 6px 10px; display: flex; align-content: center; flex-direction: column;">
     <button class="no-style" style="width: 100%;" onclick={() => isUnfolded = !isUnfolded}>
         <!-- Forcer max-width et min-width permet de ne pas dépasser de l'écran et de laisser le nom avoir un scroll -->
         <Flex justify="space-between" align="center" gap="sm" wrap={false} style="max-width: 100%; min-width: 0; overflow: hidden; flex-grow: 1;">
             {#if clubUrl}
                 <img src={clubUrl} alt={clubName} />
-            {:else}
-                <span class="initials">{initials(clubName)}</span>
             {/if}
             <!-- Le nom peut être scroll horizontalement si il y a pas de places -->
             <div class="scrollable" style="min-width: 0;">
@@ -70,60 +61,43 @@
     </button>
 
     {#if isUnfolded}
-        <div transition:slide={{ duration: 200 }}>
-        <div transition:slide={{ duration: 200 }}>
-            <Flex 
-            direction="column" 
-            gap="md"
-            style="
-                margin-top: 8px; 
-                width: 95%; 
-                padding-top: 12px; 
-                border-top: 1px solid #eaeaea;
-            ">
-                <Flex gap="xs" direction="column">
-                    {#if children }
-                        {@render children()}
+        <div transition:slide={{ duration: 200 }} class="animated-panel">
+            <div style="border-top: 1px solid #eaeaea; width: 95%;">
+                <Flex direction="column" gap="md">
+                    <Flex gap="xs" direction="column">
+                        {#if children }
+                            {@render children()}
+                        {/if}
+                        {#if (type != "TEXT")}
+                            <Flex gap="xs" align="center"><File size="15px"/>{type}</Flex>
+                        {/if}
+                        <Flex gap="xs" align="center"><TextAlignStart size="15px"/><b>Description :</b> {desc}</Flex>
+                    </Flex>
+                    {#if isEnabled && (Churros1ATo2A && is1A) }  
+                        <UploadProof challengeId={challengeId} desc={desc} type={type} onSave={onSave} defaultTVn7={defaultTVn7}></UploadProof>
                     {/if}
-                    {#if (type != "TEXT")}
-                        <Flex gap="xs" align="center"><File size="15px"/>{type}</Flex>
-                    {/if}
-                    <Flex gap="xs" align="center"><TextAlignStart size="15px"/><b>Description :</b> {desc}</Flex>
                 </Flex>
-                {#if isConnected && (Churros1ATo2A && is1A) }  
-                    <UploadProof challengeId={challengeId} desc={desc} type={type} onSave={onSave} defaultTVn7={defaultTVn7}></UploadProof>
-                {/if}
-            </Flex>
-        </div>
+            </div>
         </div>
         {/if}
 </Frame>
 
 <style>
-    .initials {
-        display: flex;
-        flex-shrink: 0;
-        align-items: center;
-        justify-content: center;
-        color: var(--color-fg-solid);
-        font-weight: bold;
-        height: 100%;
-        font-size: var(--size-sm);
-        width: var(--size-lg);
-        height: var(--size-lg);
-        background-color: var(--color-bg-solid);
-        border-radius: 100%;
+    .animated-panel {
+        will-change: height;
+        contain: content; 
+        padding: 10px 0 10px 10px;
     }
 
     img {
-        width: var(--size-lg);
-        height: var(--size-lg);
+        width: var(--size-xl);
+        height: var(--size-xl);
+        border-radius: var(--size-xl);
         object-fit: cover;
     }
 
-
     .scrollable {
-        padding: var(--size-xxs) 0px; 
+        /* padding: var(--size-xxs) 0px;  */
         width: 100%; 
         overflow-x: auto; 
         -webkit-overflow-scrolling: touch;

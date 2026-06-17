@@ -33,23 +33,33 @@ export const load: PageServerLoad = async ({ locals }) => {
             },
             groupInteSucceed: {
                 select: {
+                    groupId: true,
                     name: true,
                 }
             }
         }
     })
 
-    const allChallenges = allChallengesUntyped.map(({ group, ...challenge }) => ({
-        ...challenge,
-        groupName: group.name ?? "",
-        groupUrl: group.pictureURL ?? "",
-    }));
+    const allChallenges = allChallengesUntyped.map(({ group, groupInteSucceed, ...challenge }) => {
+        const isDone = Boolean(
+            user?.groupInteId && 
+            groupInteSucceed.some(g => g.groupId === user.groupInteId)
+        );
+
+        return {
+            ...challenge,
+            groupName: group.name ?? "",
+            groupUrl: group.pictureURL ?? "",
+            groupInteSuccedName: groupInteSucceed.map(g => g.name), // Aligné avec votre type ChallengeRead
+            isDone, 
+        };
+    });
 
     // Challenges sont les challenges acceptés par un admin
     const challenges : ChallengeRead[] = allChallenges.filter((a) => a.defiAccepte);
 
     // TODO peut êter à optimiser car requête est déjà fait en haut.
-    const pendingChallengeCount = await prisma.challenge.count({
+    const pendingChallengeCount = !user ? 0 : await prisma.challenge.count({
         where: {
             defiAccepte: false,
             group: user?.isAdmin ? {} : {
@@ -62,7 +72,7 @@ export const load: PageServerLoad = async ({ locals }) => {
         }
     })
 
-    const pendingProofCount = await prisma.proof.count({
+    const pendingProofCount = !user ? 0 : await prisma.proof.count({
         where: {
             status: "PENDING",
             challenge: user?.isAdmin ? {} : {
