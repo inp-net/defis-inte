@@ -59,11 +59,11 @@
 
     let renderStatus = (status: Status): string => {
         if (status === Status.PENDING) {
-            return "[STATUS] En attente de validation ...";
+            return "En attente de validation ...";
         } else if (status === Status.DENIED) {
-            return "[STATUS] Preuve rejetée.";
+            return "Preuve rejetée.";
         } else if (status === Status.VALID) {
-            return "[STATUS] Preuve acceptée.";
+            return "Preuve acceptée.";
         } else {
             return "Statut inconnu, voir avec l'admin";
         }
