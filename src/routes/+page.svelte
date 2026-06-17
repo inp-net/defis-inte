@@ -136,11 +136,11 @@
     </Stack>
 
     <!-- A afficher que pour les membres 2A de groupes et plus -->
-    <!-- {#if user && !user.is1A} -->
+    {#if user && !user.is1A}
         <Stack>
             <AddChallenge />
         </Stack>
-    <!-- {/if} -->
+    {/if}
 
     <!-- Liste des défis -->
     <Stack style="max-width: 100%; min-width: 0; overflow: hidden;">
@@ -162,7 +162,7 @@
                     type={challenge.type}
                     onSave={handleSave}
                     defaultTVn7={user?.isOkTVn7}
-                    is1A = {user.is1A}
+                    is1A = {user?.is1A}
                     isEnabled={isConnected && !challenge.isDone}
                 >
                     <!-- Toutes les métadonnées affichés pour éviter de surcharger le composant -->

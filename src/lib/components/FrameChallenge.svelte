@@ -33,7 +33,7 @@
         type,
         onSave,
         defaultTVn7 = false,
-        is1A,
+        is1A = false,
         isEnabled,
         children
     }: Prop = $props();
