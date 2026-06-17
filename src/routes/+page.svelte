@@ -136,7 +136,7 @@
     </Stack>
 
     <!-- A afficher que pour les membres 2A de groupes et plus -->
-    {#if user && !user.is1A}
+    {#if user && !(user.is1A === Churros1ATo2A)}
         <Stack>
             <AddChallenge />
         </Stack>
