@@ -1,16 +1,15 @@
 <script lang="ts">
+    import { Flex, Frame, Button } from "azucar-ui";
+    import { Check, XIcon } from "@lucide/svelte";
 
-    import { Flex, Frame, Button } from 'azucar-ui';
-    import { Check, XIcon } from '@lucide/svelte'
-    
     type Props = {
-        challengeId: number
-        isApprouved?: boolean
-        isDisabled?: boolean
-        name: string
-        points: number
-        onAccepted: (id: number) => void
-        onDeleted: (id: number) => void
+        challengeId: number;
+        isApprouved?: boolean;
+        isDisabled?: boolean;
+        name: string;
+        points: number;
+        onAccepted: (id: number) => void;
+        onDeleted: (id: number) => void;
     };
 
     let {
@@ -20,9 +19,8 @@
         name,
         points,
         onAccepted,
-        onDeleted
+        onDeleted,
     }: Props = $props();
-
 </script>
 
 <Frame>
@@ -40,8 +38,10 @@
             </Flex>
         </Flex>
         <Flex style="flex-shrink: 0; margin-left: auto;" gap="xs">
-        <!-- Section Bouton du défis, valider et refuser -->
-            <Button href="/challenge/{challengeId}" variant="outline"> Modifier </Button>
+            <!-- Section Bouton du défis, valider et refuser -->
+            <Button href="/challenge/{challengeId}" variant="outline">
+                Modifier
+            </Button>
             <Button
                 icon={XIcon}
                 class="danger"
@@ -53,7 +53,7 @@
                 icon={Check}
                 class="success"
                 name="Success"
-                disabled={isApprouved || isDisabled} 
+                disabled={isApprouved || isDisabled}
                 onclick={() => onAccepted(challengeId)}
             />
         </Flex>

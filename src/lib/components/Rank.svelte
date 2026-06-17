@@ -1,6 +1,5 @@
 <script lang="ts">
-
-    import { Avatar, Frame, Flex } from 'azucar-ui';
+    import { Avatar, Frame, Flex } from "azucar-ui";
 
     type RankGroup = {
         groupName: string;
@@ -14,13 +13,20 @@
         groupUrl = undefined,
         points = "0",
         rank = "0",
-    }: RankGroup = $props()
-
+    }: RankGroup = $props();
 </script>
 
 <Frame style="border-radius: 50pt; max-width: 100%;">
-    <Flex justify="space-between" wrap={false} style="width: 100%; max-width: 100%">
-        <Flex align="center" wrap={false} style="min-width: 0; width: 100%; flex: 1; max-width: 100%;">
+    <Flex
+        justify="space-between"
+        wrap={false}
+        style="width: 100%; max-width: 100%"
+    >
+        <Flex
+            align="center"
+            wrap={false}
+            style="min-width: 0; width: 100%; flex: 1; max-width: 100%;"
+        >
             <div class="no-shrink">
                 <Avatar src={groupUrl} alt={groupName} />
             </div>
@@ -38,7 +44,7 @@
         white-space: nowrap;
         overflow-x: auto;
         padding: 1em 0;
-        -webkit-overflow-scrolling: touch; 
+        -webkit-overflow-scrolling: touch;
     }
 
     .scrollable-text::-webkit-scrollbar {

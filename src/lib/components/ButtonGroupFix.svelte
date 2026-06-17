@@ -1,12 +1,12 @@
 <script lang="ts">
-    import type { Snippet } from 'svelte';
+    import type { Snippet } from "svelte";
 
     type Props = {
         children: Snippet;
-        gap?: 'xs' | 'sm' | 'md';
+        gap?: "xs" | "sm" | "md";
     };
 
-    let { children, gap = 'xs' }: Props = $props();
+    let { children, gap = "xs" }: Props = $props();
 </script>
 
 <div class="button-group {gap}">
@@ -17,9 +17,11 @@
     .button-group {
         display: flex;
     }
-    
+
     /* gap variants */
-    .xs { gap: 4px; }
+    .xs {
+        gap: 4px;
+    }
 
     /* first (= */
     .button-group > :global(*:first-of-type) {

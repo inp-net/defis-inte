@@ -1,23 +1,22 @@
 <script lang="ts">
-
-    import { ArrowDownUp, ArrowUp, ArrowDown } from '@lucide/svelte';
-    import { Button, Flex } from 'azucar-ui';
+    import { ArrowDownUp, ArrowUp, ArrowDown } from "@lucide/svelte";
+    import { Button, Flex } from "azucar-ui";
 
     type Props = {
-        bind: string,
-        options: string[],
-        isDesc: boolean,
+        bind: string;
+        options: string[];
+        isDesc: boolean;
         onSorted?: (option: string, desc: boolean) => void;
-    }
+    };
 
     let {
         bind = $bindable(),
         options = [],
         isDesc = $bindable(true),
-        onSorted
+        onSorted,
     }: Props = $props();
 
-    function capitalizeFirstLetter(val : string) {
+    function capitalizeFirstLetter(val: string) {
         return String(val).charAt(0).toUpperCase() + String(val).slice(1);
     }
 
@@ -34,42 +33,43 @@
         isDesc = !isDesc;
         onSorted?.(bind, isDesc);
     }
-
 </script>
 
 <Flex>
-<!-- <Button variant="outline" icon={ArrowDownUp}> -->
-<!--     <select> -->
-<!--     <h4>Trier</h4> -->
-<!--     </select> -->
-<!-- </Button> -->
+    <!-- <Button variant="outline" icon={ArrowDownUp}> -->
+    <!--     <select> -->
+    <!--     <h4>Trier</h4> -->
+    <!--     </select> -->
+    <!-- </Button> -->
 
     <Button variant="outline">
-        
         {#if isDesc}
             <ArrowUp size="20px" onclick={() => flipSortType()} />
         {:else}
-            <ArrowDown size="20px" onclick={() => flipSortType()}/>
+            <ArrowDown size="20px" onclick={() => flipSortType()} />
         {/if}
 
-        <select bind:value={bind} class="select-invisible" onclick={() => handleInternalClick(bind)}>
+        <select
+            bind:value={bind}
+            class="select-invisible"
+            onclick={() => handleInternalClick(bind)}
+        >
             {#each options as option}
                 <option value={option}>{capitalizeFirstLetter(option)}</option>
             {/each}
         </select>
     </Button>
-
 </Flex>
 
 <style>
-  select.select-invisible {
-    background: transparent;
-    border: none;
-    color: inherit;
-    font-family: inherit;
-    font-size: inherit;
-    cursor: pointer;
-    outline: none;
-    padding-left: 5px;
-  }
+    select.select-invisible {
+        background: transparent;
+        border: none;
+        color: inherit;
+        font-family: inherit;
+        font-size: inherit;
+        cursor: pointer;
+        outline: none;
+        padding-left: 5px;
+    }
 </style>

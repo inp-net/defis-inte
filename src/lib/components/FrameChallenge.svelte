@@ -1,26 +1,40 @@
 <script lang="ts">
-    import { ChevronDown, ChevronUp, Upload, MapPin, Building, File , TextAlignStart} from '@lucide/svelte';
-    import { Frame, Flex, Button, Avatar } from 'azucar-ui';
-    import UploadProof from './UploadProof.svelte';
-    import { Churros1ATo2A } from '$lib/env';
+    import {
+        ChevronDown,
+        ChevronUp,
+        Upload,
+        MapPin,
+        Building,
+        File,
+        TextAlignStart,
+    } from "@lucide/svelte";
+    import { Frame, Flex, Button, Avatar } from "azucar-ui";
+    import UploadProof from "./UploadProof.svelte";
+    import { Churros1ATo2A } from "$lib/env";
 
-    import { slide } from 'svelte/transition';
-    
+    import { slide } from "svelte/transition";
+
     type Prop = {
-        challengeId: number,
-        name: string,
-        nbPoints: number,
-        location: string,
-        clubName: string,
-        clubUrl: string,
-        desc: string ,
-        type: string,
-        onSave: (fichiers: FileList | null, textePreuve: string, type: string, isOkTVn7: boolean, challengeId: number) => void,
-        defaultTVn7: boolean,
-        isEnabled: boolean,
-        is1A: boolean,
-        children?: import('svelte').Snippet;
-    }
+        challengeId: number;
+        name: string;
+        nbPoints: number;
+        location: string;
+        clubName: string;
+        clubUrl: string;
+        desc: string;
+        type: string;
+        onSave: (
+            fichiers: FileList | null,
+            textePreuve: string,
+            type: string,
+            isOkTVn7: boolean,
+            challengeId: number,
+        ) => void;
+        defaultTVn7: boolean;
+        isEnabled: boolean;
+        is1A: boolean;
+        children?: import("svelte").Snippet;
+    };
 
     const {
         challengeId = 0,
@@ -29,22 +43,35 @@
         location,
         clubName,
         clubUrl,
-        desc = '',
+        desc = "",
         type,
         onSave,
         defaultTVn7 = false,
         is1A = false,
         isEnabled,
-        children
+        children,
     }: Prop = $props();
 
     let isUnfolded = $state(false);
 </script>
 
-<Frame border={true} style="padding: 6px 10px; display: flex; align-content: center; flex-direction: column;">
-    <button class="no-style" style="width: 100%;" onclick={() => isUnfolded = !isUnfolded}>
+<Frame
+    border={true}
+    style="padding: 6px 10px; display: flex; align-content: center; flex-direction: column;"
+>
+    <button
+        class="no-style"
+        style="width: 100%;"
+        onclick={() => (isUnfolded = !isUnfolded)}
+    >
         <!-- Forcer max-width et min-width permet de ne pas dépasser de l'écran et de laisser le nom avoir un scroll -->
-        <Flex justify="space-between" align="center" gap="sm" wrap={false} style="max-width: 100%; min-width: 0; overflow: hidden; flex-grow: 1;">
+        <Flex
+            justify="space-between"
+            align="center"
+            gap="sm"
+            wrap={false}
+            style="max-width: 100%; min-width: 0; overflow: hidden; flex-grow: 1;"
+        >
             {#if clubUrl}
                 <img src={clubUrl} alt={clubName} />
             {/if}
@@ -54,7 +81,10 @@
             </div>
             <!-- Le margin left permet de mettre à droite le nombre de points -->
             <!-- Le flex-shrink à 0 permet d'empêcher le nombre de points de diminuer de taille pour forcer le horizontal scroll du nom -->
-            <Flex style="flex-shrink: 0; margin-between: auto; margin-left: auto;" align="baseline">
+            <Flex
+                style="flex-shrink: 0; margin-between: auto; margin-left: auto;"
+                align="baseline"
+            >
                 <p><b>{nbPoints} pts</b></p>
             </Flex>
         </Flex>
@@ -65,26 +95,40 @@
             <div style="border-top: 1px solid #eaeaea; width: 95%;">
                 <Flex direction="column" gap="md">
                     <Flex gap="xs" direction="column">
-                        {#if children }
-                            <Flex direction="column" wrap={false} gap="xxs" style="padding: 10px 0;">
+                        {#if children}
+                            <Flex
+                                direction="column"
+                                wrap={false}
+                                gap="xxs"
+                                style="padding: 10px 0;"
+                            >
                                 {@render children()}
                             </Flex>
                         {/if}
-                        <Flex gap="xs" align="center"><TextAlignStart size="15px"/><b>Description :</b> {desc}</Flex>
+                        <Flex gap="xs" align="center"
+                            ><TextAlignStart size="15px" /><b>Description :</b>
+                            {desc}</Flex
+                        >
                     </Flex>
-                    {#if isEnabled && (Churros1ATo2A && is1A) }  
-                        <UploadProof challengeId={challengeId} desc={desc} type={type} onSave={onSave} defaultTVn7={defaultTVn7}></UploadProof>
+                    {#if isEnabled && Churros1ATo2A && is1A}
+                        <UploadProof
+                            {challengeId}
+                            {desc}
+                            {type}
+                            {onSave}
+                            {defaultTVn7}
+                        ></UploadProof>
                     {/if}
                 </Flex>
             </div>
         </div>
-        {/if}
+    {/if}
 </Frame>
 
 <style>
     .animated-panel {
         will-change: height;
-        contain: content; 
+        contain: content;
         padding: 10px 0 10px 10px;
     }
 
@@ -97,8 +141,8 @@
 
     .scrollable {
         /* padding: var(--size-xxs) 0px;  */
-        width: 100%; 
-        overflow-x: auto; 
+        width: 100%;
+        overflow-x: auto;
         -webkit-overflow-scrolling: touch;
         scrollbar-width: none;
     }
@@ -108,8 +152,8 @@
         margin: 0;
     }
 
-    .scrollable::-webkit-scrollbar { 
-        display: none; 
+    .scrollable::-webkit-scrollbar {
+        display: none;
     }
 
     .no-style {

@@ -1,8 +1,6 @@
 <script lang="ts">
-
-    import { Button, Flex } from 'azucar-ui';
-    import { Heart } from '@lucide/svelte';
-
+    import { Button, Flex } from "azucar-ui";
+    import { Heart } from "@lucide/svelte";
 </script>
 
 <footer class="footer-container">
@@ -14,12 +12,10 @@
 </footer>
 
 <style>
-
     .footer-container {
         padding: 5em 0em 1em 0em;
         left: 0;
         width: 100%;
         z-index: 10;
     }
-
 </style>

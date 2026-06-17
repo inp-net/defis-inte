@@ -1,7 +1,10 @@
 <script lang="ts">
-    import type { Icon } from '@lucide/svelte';
-    import type { HTMLSelectAttributes, HTMLInputAttributes } from 'svelte/elements';
-    import { ChevronDown } from '@lucide/svelte';
+    import type { Icon } from "@lucide/svelte";
+    import type {
+        HTMLSelectAttributes,
+        HTMLInputAttributes,
+    } from "svelte/elements";
+    import { ChevronDown } from "@lucide/svelte";
 
     // Combine attributes to accommodate either a select or an input element safely
     type Props = (HTMLSelectAttributes & HTMLInputAttributes) & {
@@ -11,26 +14,28 @@
         placeholder?: string;
         disabled?: boolean;
         id?: string;
-        type?: 'select' | 'datalist';
+        type?: "select" | "datalist";
     };
 
-    let { 
-        options = [], 
-        value = $bindable(), 
-        icon, 
-        children, 
+    let {
+        options = [],
+        value = $bindable(),
+        icon,
+        children,
         placeholder,
         disabled = false,
-        type = 'select',
+        type = "select",
         id,
-        class: className, 
-        ...rest 
+        class: className,
+        ...rest
     }: Props = $props();
 
     const datalistId = $derived(id);
 
     const classes = $derived(
-        ['text-input', icon && 'text-input-has-icon', className].filter(Boolean).join(' ')
+        ["text-input", icon && "text-input-has-icon", className]
+            .filter(Boolean)
+            .join(" "),
     );
 </script>
 
@@ -52,12 +57,12 @@
             </span>
         {/if}
 
-        {#if type === 'datalist'}
-            <input 
+        {#if type === "datalist"}
+            <input
                 type="text"
-                bind:value 
-                {disabled} 
-                placeholder={placeholder}
+                bind:value
+                {disabled}
+                {placeholder}
                 list={datalistId}
                 {...rest}
             />
@@ -75,7 +80,7 @@
                     <option value={option}>{option}</option>
                 {/each}
             </select>
-            
+
             <ChevronDown size="1em" class="select-chevron" />
         {/if}
     </div>
@@ -86,17 +91,17 @@
         display: inline-flex;
         flex-direction: column;
         gap: var(--size-xxs);
-        width: 100%
+        width: 100%;
     }
 
     .label {
         font: inherit;
-        width: 100%
+        width: 100%;
     }
 
     @media (min-width: 768px) {
         .text-input {
-            width: 25% 
+            width: 25%;
         }
     }
 
@@ -112,20 +117,22 @@
         background-color: var(--color-bg-subtle);
         box-shadow: inset 0 0 0 1px var(--color-border);
         border-radius: var(--corner-radius);
-        transition: opacity 0.2s ease, box-shadow 0.2s ease;
+        transition:
+            opacity 0.2s ease,
+            box-shadow 0.2s ease;
     }
 
     .text-input-icon {
         display: inline-flex;
         align-items: center;
-        pointer-events: none; 
+        pointer-events: none;
         color: var(--color-border-subtle);
     }
 
     :global(.input-wrapper .select-chevron) {
         position: absolute;
         right: 1em;
-        pointer-events: none; 
+        pointer-events: none;
     }
 
     .input-wrapper select,
@@ -149,7 +156,9 @@
         padding-left: var(--padding-x-icon);
     }
 
-    .input-wrapper:has(select:focus-visible, input:focus-visible):not([data-disabled="true"]) {
+    .input-wrapper:has(select:focus-visible, input:focus-visible):not(
+            [data-disabled="true"]
+        ) {
         box-shadow: inset 0 0 0 1px var(--color-border-focus);
     }
 

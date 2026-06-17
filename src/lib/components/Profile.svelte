@@ -1,11 +1,10 @@
 <script lang="ts">
-
-    import { Flex, Stack, Avatar, Frame } from 'azucar-ui';
+    import { Flex, Stack, Avatar, Frame } from "azucar-ui";
 
     type Props = {
         src?: string;
         alt: string;
-        size?: 'small' | 'large';
+        size?: "small" | "large";
         firstName: string;
         lastName: string;
         hideName?: boolean; // Will hide the name on small screens
@@ -13,29 +12,28 @@
 
     const {
         src,
-        alt = 'Avatar',
-        size = 'small',
+        alt = "Avatar",
+        size = "small",
         firstName,
         lastName,
-        hideName = false
+        hideName = false,
     }: Props = $props();
-
 </script>
 
 <a href="/profile">
     <Flex align="center" gap="md">
-            <Avatar src={src} alt={alt} size={size} />
-            <div class:hidden-mobile={hideName}>
-                <Flex direction="column" gap="xxs">
-                    <h4 class={`title-${size}`}>{firstName}</h4>
-                    <h4 class={`title-${size}`}>{lastName}</h4>
-                </Flex>
-            </div>
+        <Avatar {src} {alt} {size} />
+        <div class:hidden-mobile={hideName}>
+            <Flex direction="column" gap="xxs">
+                <h4 class={`title-${size}`}>{firstName}</h4>
+                <h4 class={`title-${size}`}>{lastName}</h4>
+            </Flex>
+        </div>
     </Flex>
 </a>
 
 <style>
-    .title-large{
+    .title-large {
         font-size: var(--size-lg);
     }
 
@@ -50,7 +48,7 @@
     }
 
     a {
-        text-decoration:none;
+        text-decoration: none;
         color: inherit;
     }
 </style>
