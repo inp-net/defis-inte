@@ -9,17 +9,16 @@ const presetPoints = [10, 20, 50, 80, 100];
 
 export const load: PageServerLoad = async ({ params, request }) => {
 
-    let referer = request.headers.get("referer") 
-    console.log(referer)
+    let referer = request.headers.get("referer")
 
-    const clubs : GroupClub[] = await prisma.groupClub.findMany({});
-    const locations : Location[] = await prisma.location.findMany({});
+    const clubs: GroupClub[] = await prisma.groupClub.findMany({});
+    const locations: Location[] = await prisma.location.findMany({});
 
     let existingChallenge = null;
 
     if (params.challengeId) {
         const idInt = parseInt(params.challengeId, 10);
-        
+
         if (!isNaN(idInt) && idInt > 0) {
             const challengeWithGroup = await prisma.challenge.findUnique({
                 where: { challengeId: idInt },
@@ -45,7 +44,7 @@ export const load: PageServerLoad = async ({ params, request }) => {
 };
 
 
-export const actions : Actions = {
+export const actions: Actions = {
     // Action pour crée ou modifier : upsert
     upsert: async ({ request, locals }) => {
         try {
@@ -54,7 +53,7 @@ export const actions : Actions = {
 
             // Vérifie que le nombre de points entré est valide
             if (!presetPoints.includes(body.nbPoints))
-                throw error(500, { message: 'Le nombre de points est invalide'});
+                throw error(500, { message: 'Le nombre de points est invalide' });
 
             const savedChallenge = await saveChallenge(body);
             return { success: true, data: savedChallenge };
