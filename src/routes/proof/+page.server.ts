@@ -29,10 +29,20 @@ export const load: PageServerLoad = async ({ locals }) => {
         }
     })
 
+    //
+    // STATISTIQUES
+    //
+
+    const proofCount = await prisma.proof.count({
+        where: {
+            userId: user.id
+        }
+    });
 
     return {
         posts: {
-            proofs
+            proofs,
+            proofCount
         }
     };
 };
