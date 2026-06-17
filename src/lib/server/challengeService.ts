@@ -58,13 +58,18 @@ export async function canModifyChallenge(challengeIdRaw: any , userId: string, d
 
 }
 
-
+/** Enregistrer ou modifier un challenge en DB
+ * @param body information sur le challenge (aller voir le type)
+ * @returns 
+ */
 export async function saveChallenge(body: ChallengeInput) {
     const { userId, challengeId, name, description, groupName, locationName, type, nbPoints } = body;
 
+    // Champs minimal à remplire
     if (!name || !groupName || !locationName) {
         throw error(400, 'Champs requis manquants : name, groupName ou locationName.');
     }
+
     // refusée les 1A
     if (!(await prisma.user.findUnique({where : {id : userId}, select : {is1A:true}})) && Churros1ATo2A){   
         throw error(403, 'Tu es un 1A');
@@ -116,7 +121,11 @@ export async function saveChallenge(body: ChallengeInput) {
     }
 }
 
-/** Accepter un défi. */
+/** Gestion acceptation d'un challenge 
+ * @param challengeIdRaw challenge id mais stocké en bizzar tkt
+ * @param userId uid de l'utilisateur
+ * @returns challenge mise à jour
+ */
 export async function acceptChallenge(challengeIdRaw: any , userId : string) {
     if (!challengeIdRaw || isNaN(Number(challengeIdRaw))) {
         throw { status: 400, message: 'challengeId invalide' };
@@ -137,7 +146,12 @@ export async function acceptChallenge(challengeIdRaw: any , userId : string) {
 }
 
 
-/** Supprimer un défi. */
+/** Gestion refus d'un challenge 
+ * garde en db pour avoir l'historique mais le mets en refusée on ne peux plus y toucher 
+ * @param challengeIdRaw challenge id mais stocké en bizzar tkt
+ * @param userId uid de l'utilisateur
+ * @returns challenge mise à jour
+ */
 export async function deleteChallenge(challengeIdRaw: any, userId : string) {
     if (!challengeIdRaw || isNaN(Number(challengeIdRaw))) {
         throw { status: 400, message: 'challengeId invalide' };
@@ -145,7 +159,7 @@ export async function deleteChallenge(challengeIdRaw: any, userId : string) {
 
     const idToFind = parseInt(challengeIdRaw, 10);
 
-    await prisma.challenge.update({
+    const updatedChallenge = await prisma.challenge.update({
         where: { challengeId: idToFind },
         data: {
             // Il est possible de delete un défi même si déjà accepté
@@ -153,4 +167,6 @@ export async function deleteChallenge(challengeIdRaw: any, userId : string) {
             defiAccepte: false
         }
     });
+
+    return updatedChallenge;
 }

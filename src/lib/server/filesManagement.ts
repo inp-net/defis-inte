@@ -8,6 +8,8 @@ import { fileURLToPath } from 'node:url';
 import type { GroupClub } from '~generated//client';
 import { BETTER_AUTH_SECRET } from '$env/static/private';
 
+// ENREGISTREMENT DE FICHIER
+
 const SECRET = BETTER_AUTH_SECRET!;
 
 export function avatarFromName(name: string): string {

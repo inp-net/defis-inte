@@ -1,5 +1,6 @@
-// Récupèrer des données de churros 
 import {prisma} from '$lib/server/prisma'
+
+// RECUPERER DES DONNEES DE CHUROOS
 
 
 /** Recupere un groupe de churros pour le rajoutée dans notre DB

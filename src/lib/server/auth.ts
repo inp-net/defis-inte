@@ -9,9 +9,11 @@ import { PUBLIC_AUTH_AUTHENTIK_ISSUER } from '$env/static/public';
 import type { CredentialInput, CredentialsConfig, OAuthConfig } from '@auth/core/providers';
 import { prisma } from '$lib/server/prisma';
 
+// GESTION DE L'AUTHENTIFICATION
+
 type Provider = OAuthConfig<AuthentikProfile> | CredentialsConfig<Record<string, CredentialInput>>;
 
-const providers : Provider[] = [
+const providers: Provider[] = [
     Authentik({
         clientId: AUTH_AUTHENTIK_ID,
         issuer: PUBLIC_AUTH_AUTHENTIK_ISSUER,
@@ -40,7 +42,7 @@ export const { handle, signIn, signOut } = SvelteKitAuth({
                 const { iss, sub, aud, exp, iat, auth_time, jti, acr, amr, sid, ...user } = profile;
                 if (!await userChurrosToPrisma(user as UserChurros)) {
                     //Si la conversion marche pas on refuse la connexion
-                    return false; 
+                    return false;
                 }
             }
             return true;
@@ -59,10 +61,10 @@ export const { handle, signIn, signOut } = SvelteKitAuth({
             session.uid = token.uid as string;
             const droitUser = await prisma.user.findUnique({
                 where: {
-                    id : session.uid
+                    id: session.uid
                 },
-                select:{
-                    is1A :true
+                select: {
+                    is1A: true
                 }
             });
             session.is1A = droitUser?.is1A ?? false;
