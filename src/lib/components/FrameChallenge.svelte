@@ -70,9 +70,6 @@
                                 {@render children()}
                             </Flex>
                         {/if}
-                        {#if (type != "TEXT")}
-                            <Flex gap="xs" align="center"><File size="15px"/>{type}</Flex>
-                        {/if}
                         <Flex gap="xs" align="center"><TextAlignStart size="15px"/><b>Description :</b> {desc}</Flex>
                     </Flex>
                     {#if isEnabled && (Churros1ATo2A && is1A) }  
