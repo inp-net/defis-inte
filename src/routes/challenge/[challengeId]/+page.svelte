@@ -10,7 +10,7 @@
     import { Button, Flex, Stack, Frame, TextInput } from 'azucar-ui';
     import { SearchIcon, Check } from '@lucide/svelte';
 
-    let { data, redirect = "/" }: { data: PageData, redirect: string } = $props();
+    let { data } = $props();
 
     // Valeurs initiales du form. Réupéré de la db.
     const getInitialState = (ec: typeof data.existingChallenge) => ({
@@ -84,7 +84,7 @@
 
     <Stack>
         <Stack align="baseline"> 
-            <BackButton backCount={2} specialBack = {!isNew ? '/board' : null}/>
+            <BackButton backCount={2} specialBack ={data.referer}/>
             {#if isNew}
                 <h2>Ajouter un Défi</h2>
             {:else}
