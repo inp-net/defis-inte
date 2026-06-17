@@ -18,7 +18,6 @@ import { Churros1ATo2A } from '$lib/env';
  * @deleted pour pouvoir delet meme si le defi à déjà était accepter
  */
 export async function canModifyChallenge(challengeIdRaw: any , userId: string, deleted : boolean = false) {   
-    console.log("entree dans can modify")//debug
         const challengeId = parseInt(challengeIdRaw, 10);
         const challenge = await prisma.challenge.findUnique({
             where: { challengeId: challengeId },
@@ -56,7 +55,6 @@ export async function canModifyChallenge(challengeIdRaw: any , userId: string, d
                 throw error(402,"tu ne fais pas partie du bureau du club")
         }
     return true
-    //console.log("fin de can modify sans probleme")//debug
 
 }
 

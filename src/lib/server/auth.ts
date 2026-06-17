@@ -35,8 +35,7 @@ export const { handle, signIn, signOut } = SvelteKitAuth({
     },
     callbacks: {
         async signIn({ profile, user, account }) {
-            //console.log("user in signIn") //debug
-            //console.log(user)//debug
+
             if (profile) {
                 const { iss, sub, aud, exp, iat, auth_time, jti, acr, amr, sid, ...user } = profile;
                 if (!await userChurrosToPrisma(user as UserChurros)) {

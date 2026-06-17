@@ -13,7 +13,6 @@ export async function canUseAdmin(userId : string){
     if (!userAdmin.isAdmin){
         return error(403, 'Tu n\'es pas admin'  )
     }
-    //console.log('Est Admin')//debug
     return true
 }
 
@@ -33,15 +32,9 @@ export async function reCalculPoint() {
             
         ]);
 
-        //console.log("Réinitialisation de la base de données réussie !");// debug
-         //console.log(await prisma.groupInte.findMany({include : {challengeSucceed : true}}))// debug
-        //console.log([resetUsers, resetGroups, disconnectAll])// debug
     } catch (error) {
         console.error("Échec de la réinitialisation :", error);
     }
-
-    //console.log('Point remis a 0')//debug
-    //console.log('Est Admin')//debug
 
     // recupération des preuves réussites
     const proofs = await prisma.proof.findMany({
@@ -56,7 +49,5 @@ export async function reCalculPoint() {
             pointsUpdate(proof.proofId);
         }
     }
-
-    //console.log('Fin re calcul points')//debug
     
 }

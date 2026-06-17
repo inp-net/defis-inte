@@ -22,7 +22,6 @@ async function canModifyProof(proofId: number, userId: string) {
         throw { status: 409, message: 'Preuve à été refusé, impossible de l\'approuver' };
     }
 
-    //console.log("user : " , userId)//debug
     // si pas du bureau ou admin il est redirigée
     const userAutorisation = await prisma.user.findUnique({
         where : {id : userId},
@@ -44,16 +43,12 @@ async function canModifyProof(proofId: number, userId: string) {
     })
     const groupIdProof = groupProof.challenge.groupId;
 
-    //console.log("premiere partie if" , userAutorisation.groupBoard.some(board => board.groupId === groupIdProof))//debug
-    //console.log("deuxieme partie if" , userAutorisation.isAdmin)//debug
     if(!userAutorisation.groupBoard.some(board => board.groupId === groupIdProof) && !userAutorisation.isAdmin){
-        console.log("ici")//debug
         throw error(402,"tu ne fais pas partie du bureau du club")
     }
 }
 
 export async function newProof(body: ProofInput) {
-    //console.log("upload new proof")//debug
     const { challengeId, userId, type, content, isOkTVn7 } = body;
 
     const challenge = await prisma.challenge.findFirst({
@@ -202,8 +197,6 @@ export async function pointsUpdate(proofId: number ){
 
     let newPointUser : number = data.challenge.nbPoints + data.user.points ;
         
-    //console.log("mise a jour des points");//debug
-    //console.log(newPointUser);//debug
 
     const newPointGroup : number = data.challenge.nbPoints + data.user.groupInte.points ;
     
