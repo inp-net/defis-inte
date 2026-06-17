@@ -4,6 +4,7 @@
     import type { ChallengeRead } from "$lib/types/types.d.ts";
     import { signIn } from "@auth/sveltekit/client";
     import { Churros1ATo2A } from "$lib/env";
+    import { Toaster, toast } from "svelte-sonner";
 
     // composants
     import { Flex, Stack, Button } from "azucar-ui";
@@ -44,6 +45,8 @@
         challengeId: number,
     ) {
         try {
+            toast.info("Preuve envoyée.");
+
             const formData = new FormData();
             formData.append("challengeId", challengeId.toString());
             formData.append("type", type);
@@ -64,21 +67,15 @@
             if (response.ok) {
                 // Changement local des modifications serveur
                 const result = await response.json();
-                if (result.type === "failure") {
-                    console.error(
-                        "Erreur de validation :",
-                        result.data?.message,
-                    );
-                    return;
-                }
-                /*
-                const proof : Proof = proofs.find(c => c.proofId === id);
-                if (proof) {
-                    proof.status = 'VALID'
-                }
-                */
+
+                if (result.type === "success")
+                    toast.success("Preuve ajouté avec succès");
+
+                if (result.type === "failure")
+                    toast.error("Impossible d'envoyer la preuve. Vérifier sa présence dans la page profil.")
             }
         } catch (err) {
+            toast.error("Erreur dans l'envoie du défi : " + err);
             console.error("Erreur lors de l'envoi du form : ", err);
         }
     }
@@ -270,4 +267,6 @@
             {/each}
         </Flex>
     </Stack>
+
+    <Toaster />
 </Flex>
