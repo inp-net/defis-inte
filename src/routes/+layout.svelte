@@ -1,17 +1,16 @@
 <script lang="ts">
-    import "azucar-ui/tokens.css"
-    import "azucar-ui/base.css"
-    import Footer from '$lib/components/Footer.svelte'
+    import "azucar-ui/tokens.css";
+    import "azucar-ui/base.css";
+    import Footer from "$lib/components/Footer.svelte";
 
-	let { children, data } = $props();
+    let { children, data } = $props();
 
     let darkMode = $state(data.user?.darkMode ?? false);
-    let color = darkMode ? 'dark' : 'light'
+    let color = darkMode ? "dark" : "light";
 
     $effect(() => {
-        document.documentElement.style.setProperty('color-scheme', color);
+        document.documentElement.style.setProperty("color-scheme", color);
     });
-
 </script>
 
 <!-- <svelte:head> -->
@@ -32,5 +31,4 @@
         max-width: min(1000px, 100%);
         margin: 0 auto;
     }
-
 </style>

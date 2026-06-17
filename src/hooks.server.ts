@@ -8,15 +8,15 @@ import { Churros1ATo2A } from '$lib/env';
 
 const handlePerms: Handle = async ({ event, resolve }) => {
     const currentPath = event.url.pathname;
-	const session = await event.locals.auth();
+    const session = await event.locals.auth();
 
-	if (session?.uid) {
+    if (session?.uid) {
         try {
             const user = await prisma.user.findUnique({
                 where: { id: session.uid },
                 include: {
-                    groupBoard : true,
-                    groupInte : true
+                    groupBoard: true,
+                    groupInte: true
                 },
             });
 
@@ -26,7 +26,7 @@ const handlePerms: Handle = async ({ event, resolve }) => {
 
             // Empecher l'accés dans les branches interdites aux utilisateurs normales
             const protectedRoutes = ['/proof', '/board'];
-            if (protectedRoutes.some(route => currentPath.startsWith(route)) && (!user.groupBoard && !user.isAdmin )) {
+            if (protectedRoutes.some(route => currentPath.startsWith(route)) && (!user.groupBoard && !user.isAdmin)) {
                 throw error(403, 'Accès interdit');
             }
 
@@ -34,15 +34,15 @@ const handlePerms: Handle = async ({ event, resolve }) => {
             if (e instanceof Response) throw e;
             console.error('PRISMA ERROR:', e);
         }
-	}
+    }
 
     //Empecher l'acces au 1A ou non connéctées
     const forbidenRoutes = ['/proof', '/board', '/challenge'];
-    if (forbidenRoutes.some(route => currentPath.startsWith(route)) && ( !session?.uid || (session.is1A && Churros1ATo2A))) { // 
+    if (forbidenRoutes.some(route => currentPath.startsWith(route)) && (!session?.uid || (session.is1A && Churros1ATo2A))) { // 
         throw error(403, 'Accès interdit');
     }
 
-	return resolve(event);
+    return resolve(event);
 };
 
 export const handle: Handle = sequence(handleAuth, handlePerms);

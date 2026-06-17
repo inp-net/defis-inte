@@ -3,7 +3,7 @@ import { PrismaClient, Prisma } from '../../../prisma/generated/prisma/client';
 import { PrismaPg } from '@prisma/adapter-pg';
 import { DATABASE_URL } from '$env/static/private';
 import { syncGroupFromChurros } from './pullChurrosData';
-import {FormatGroupInte, FormatGroupPostulant} from './formaCheck'
+import { FormatGroupInte, FormatGroupPostulant } from './formaCheck'
 
 
 /**
@@ -14,7 +14,7 @@ const adapter = new PrismaPg({ connectionString: DATABASE_URL });
 /**
  * Instance de Prisma à utiliser
  */
-export const prisma = new PrismaClient({adapter});
+export const prisma = new PrismaClient({ adapter });
 
 /**
  * Insère ou met à jour un utilisateur dans la base de données à partir des infos d'authentik
@@ -32,7 +32,7 @@ export async function userChurrosToPrisma(userChurros: UserChurros): Promise<boo
         const { create, update } = await formatUserForPrisma(userChurros);
 
         //met à jour ou crée l'utilisateur
-        await prisma.user.upsert({   
+        await prisma.user.upsert({
             where: { id },
             update,
             create
@@ -57,7 +57,7 @@ export async function userChurrosToPrisma(userChurros: UserChurros): Promise<boo
 async function formatUserForPrisma(userChurros: UserChurros): Promise<{
     create: Prisma.UserCreateInput;
     update: Prisma.UserUpdateInput;
-}> { 
+}> {
     let groupInteId = null;
     let groupBoard = [];
     let group = [];
@@ -65,7 +65,7 @@ async function formatUserForPrisma(userChurros: UserChurros): Promise<{
     // On cherche a récuperer que les club et assos actives ainsi que les groupes d'inté 
 
     // Parcours les groupes reçu de Authentik de l'utilisateurs
-    for (const dataGroup of userChurros.churrosGroups ) {
+    for (const dataGroup of userChurros.churrosGroups) {
         // Teste si le groupe est dans la db
         try {
             // Groupe d'inté
@@ -73,16 +73,16 @@ async function formatUserForPrisma(userChurros: UserChurros): Promise<{
                 groupInteId = dataGroup.group.uid;
                 const groupFind = await prisma.groupInte.findUnique({ where: { groupId: dataGroup.group.uid } });
                 //si le groupe n'est pas dans la db on synchronise le groupes de churros avec la db
-                if (groupFind == null){
+                if (groupFind == null) {
                     const groupAdded = await syncGroupFromChurros(dataGroup.group.uid);
                 }
-            
-            // Club ou Assos
-            }else if (!FormatGroupPostulant(dataGroup.group.uid)) {
+
+                // Club ou Assos
+            } else if (!FormatGroupPostulant(dataGroup.group.uid)) {
                 const groupFind = await prisma.groupClub.findUnique({ where: { groupId: dataGroup.group.uid } });
                 //Si le groupe n'est pas dans la db on synchronise le groupes de churros avec la db
                 // Fait pour éviter d'avoir ce que l'ont veut pas dans la db  
-                if (groupFind == null){
+                if (groupFind == null) {
                     const groupAdded = await syncGroupFromChurros(dataGroup.group.uid);
                     if (groupAdded) {
                         group.push(dataGroup.group);
@@ -91,16 +91,16 @@ async function formatUserForPrisma(userChurros: UserChurros): Promise<{
                             groupBoard.push(dataGroup.group);
                         }
                     }
-                }else{
+                } else {
                     group.push(dataGroup.group);
                     // On vérifie si l'utilisateur est dans un bureau du groupe et si oui on le connecte au groupe en base de données
                     if (dataGroup.secretary || dataGroup.president || dataGroup.vicePresident || dataGroup.treasurer) {
                         groupBoard.push(dataGroup.group);
                     }
                 }
-            } 
+            }
         } catch (error) {
-            console.log("Erreur : ",  error)
+            console.log("Erreur : ", error)
         }
     }
 
@@ -108,13 +108,13 @@ async function formatUserForPrisma(userChurros: UserChurros): Promise<{
     const lastName = userChurros.lastName || "Étudiant";
 
     const commonData = {
-        firstName: firstName, 
+        firstName: firstName,
         lastName: lastName,
-        profilePictureURL: userChurros.pictureURL ,
+        profilePictureURL: userChurros.pictureURL,
         is1A: userChurros.yearTier === 1 ? true : false,
-        group: {connect: (group || []).map(g => ({groupId: g.uid}))}, 
-        groupBoard :{connect: (groupBoard || []).map(g => ({groupId: g.uid}))},
-        groupInteId : groupInteId,
+        group: { connect: (group || []).map(g => ({ groupId: g.uid })) },
+        groupBoard: { connect: (groupBoard || []).map(g => ({ groupId: g.uid })) },
+        groupInteId: groupInteId,
         isAdmin: false
     };
 

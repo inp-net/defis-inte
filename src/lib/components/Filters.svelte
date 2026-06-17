@@ -8,10 +8,10 @@
         onFilterClick?: (index: number) => void;
     }
 
-    let { 
-        filters, 
-        activeIndexes = $bindable([]), 
-        onFilterClick 
+    let {
+        filters,
+        activeIndexes = $bindable([]),
+        onFilterClick,
     }: Props = $props();
 
     let isTousActive = $derived(activeIndexes.length === 0);
@@ -20,15 +20,19 @@
     let sortedFilters = $derived(
         [
             { id: "all", name: "Tous", originalIndex: -1, isTous: true },
-            ...filters.map((name, originalIndex) => ({ 
-                id: `filter-${originalIndex}`, 
-                name, 
-                originalIndex, 
-                isTous: false 
-            }))
+            ...filters.map((name, originalIndex) => ({
+                id: `filter-${originalIndex}`,
+                name,
+                originalIndex,
+                isTous: false,
+            })),
         ].sort((a, b) => {
-            const aActive = a.isTous ? isTousActive : activeIndexes.includes(a.originalIndex);
-            const bActive = b.isTous ? isTousActive : activeIndexes.includes(b.originalIndex);
+            const aActive = a.isTous
+                ? isTousActive
+                : activeIndexes.includes(a.originalIndex);
+            const bActive = b.isTous
+                ? isTousActive
+                : activeIndexes.includes(b.originalIndex);
 
             if (aActive !== bActive) {
                 return aActive ? -1 : 1;
@@ -38,7 +42,7 @@
             if (b.isTous) return -1;
 
             return a.originalIndex - b.originalIndex;
-        })
+        }),
     );
 
     function handleInternalClick(index: number) {
@@ -46,7 +50,7 @@
             activeIndexes = [];
         } else {
             if (activeIndexes.includes(index)) {
-                activeIndexes = activeIndexes.filter(i => i !== index);
+                activeIndexes = activeIndexes.filter((i) => i !== index);
             } else {
                 activeIndexes = [...activeIndexes, index];
             }
@@ -57,7 +61,9 @@
 
 <div class="scrollable flex-container">
     {#each sortedFilters as { id, name, originalIndex, isTous } (id)}
-        {@const isActive = isTous ? isTousActive : activeIndexes.includes(originalIndex)}
+        {@const isActive = isTous
+            ? isTousActive
+            : activeIndexes.includes(originalIndex)}
 
         <button
             type="button"
@@ -85,15 +91,15 @@
     }
 
     .scrollable {
-        padding: var(--size-xxs) 0px; 
-        width: 100%; 
-        overflow-x: auto; 
+        padding: var(--size-xxs) 0px;
+        width: 100%;
+        overflow-x: auto;
         -webkit-overflow-scrolling: touch;
         scrollbar-width: none;
     }
 
-    .scrollable::-webkit-scrollbar { 
-        display: none; 
+    .scrollable::-webkit-scrollbar {
+        display: none;
     }
 
     .flex-container {

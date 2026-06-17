@@ -1,7 +1,7 @@
 import { existsSync, mkdirSync, unlinkSync, writeFileSync } from 'fs';
 import path, { extname } from 'path';
 import type { Status } from '../../../prisma/generated/prisma/enums';
-import {prisma} from './prisma'
+import { prisma } from './prisma'
 import * as crypto from 'node:crypto';
 import { dirname, join } from 'path';
 import { fileURLToPath } from 'node:url';
@@ -49,20 +49,20 @@ export const uploadsPath = join(baseUploadPath, 'uploads');
 //Table avec les magicByte
 //On comparer les bytes pour vérifier que c'est la bonne extension
 const ALLOWED_TYPES: Record<string, { offset: number; magic: number[] }[]> = {
-	'.jpg':  [{ offset: 0, magic: [0xff, 0xd8, 0xff] }],
+	'.jpg': [{ offset: 0, magic: [0xff, 0xd8, 0xff] }],
 	'.jpeg': [{ offset: 0, magic: [0xff, 0xd8, 0xff] }],
-	'.png':  [{ offset: 0, magic: [0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a] }],
-	'.gif':  [{ offset: 0, magic: [0x47, 0x49, 0x46, 0x38] }],     
-	'.webp': [{ offset: 0, magic: [0x52, 0x49, 0x46, 0x46] }],     
-	'.mp4':  [{ offset: 4, magic: [0x66, 0x74, 0x79, 0x70] }],     
-	'.mov':  [{ offset: 4, magic: [0x66, 0x74, 0x79, 0x70] }],     
-	'.webm': [{ offset: 0, magic: [0x1a, 0x45, 0xdf, 0xa3] }],     
-	'.heic': [{ offset: 4, magic: [0x66, 0x74, 0x79, 0x70] }],     
-	'.heif': [{ offset: 4, magic: [0x66, 0x74, 0x79, 0x70] }],     
-	'.avif': [{ offset: 4, magic: [0x66, 0x74, 0x79, 0x70] }],     
+	'.png': [{ offset: 0, magic: [0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a] }],
+	'.gif': [{ offset: 0, magic: [0x47, 0x49, 0x46, 0x38] }],
+	'.webp': [{ offset: 0, magic: [0x52, 0x49, 0x46, 0x46] }],
+	'.mp4': [{ offset: 4, magic: [0x66, 0x74, 0x79, 0x70] }],
+	'.mov': [{ offset: 4, magic: [0x66, 0x74, 0x79, 0x70] }],
+	'.webm': [{ offset: 0, magic: [0x1a, 0x45, 0xdf, 0xa3] }],
+	'.heic': [{ offset: 4, magic: [0x66, 0x74, 0x79, 0x70] }],
+	'.heif': [{ offset: 4, magic: [0x66, 0x74, 0x79, 0x70] }],
+	'.avif': [{ offset: 4, magic: [0x66, 0x74, 0x79, 0x70] }],
 	'.tiff': [
-		{ offset: 0, magic: [0x49, 0x49, 0x2a, 0x00] },       
-		{ offset: 0, magic: [0x4d, 0x4d, 0x00, 0x2a] },            
+		{ offset: 0, magic: [0x49, 0x49, 0x2a, 0x00] },
+		{ offset: 0, magic: [0x4d, 0x4d, 0x00, 0x2a] },
 	],
 	'.tif': [
 		{ offset: 0, magic: [0x49, 0x49, 0x2a, 0x00] },
@@ -110,7 +110,7 @@ export async function uploadUserFile(
 
 	const extension = extname(file.name).toLowerCase();
 
-    // Verifie si l'extension est prise en compte
+	// Verifie si l'extension est prise en compte
 	if (!(extension in ALLOWED_TYPES)) {
 		throw new Error('EXTENSION_NOT_ALLOWED');
 	}
@@ -127,6 +127,6 @@ export async function uploadUserFile(
 
 	writeFileSync(targetPath, buffer);
 
-    return targetPath.slice(baseUploadPath.length);
+	return targetPath.slice(baseUploadPath.length);
 }
 

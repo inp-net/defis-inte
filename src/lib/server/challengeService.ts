@@ -1,7 +1,7 @@
 import { prisma } from '$lib/server/prisma';
 import { error } from '@sveltejs/kit';
 import { ChallengeInput } from '$lib/types/types.d';
-import {UploadType} from '../../../prisma/generated/prisma/enums'
+import { UploadType } from '../../../prisma/generated/prisma/enums'
 import { Status, ProofInput } from '$lib/types/types.d';
 import { Churros1ATo2A } from '$lib/env';
 
@@ -17,43 +17,43 @@ import { Churros1ATo2A } from '$lib/env';
  * @userId identifiant de l'utilisateur qui modifie (accepte/refuse) une preuve
  * @deleted pour pouvoir delet meme si le defi à déjà était accepter
  */
-export async function canModifyChallenge(challengeIdRaw: any , userId: string, deleted : boolean = false) {   
-        const challengeId = parseInt(challengeIdRaw, 10);
-        const challenge = await prisma.challenge.findUnique({
-            where: { challengeId: challengeId },
-            select : {
-                groupId : true,
-                isDeleted: true,  
-                defiAccepte: true
-            }
-        });
-
-        if (!challenge) {
-            throw error(404,'Le challenge est introuvable'); 
+export async function canModifyChallenge(challengeIdRaw: any, userId: string, deleted: boolean = false) {
+    const challengeId = parseInt(challengeIdRaw, 10);
+    const challenge = await prisma.challenge.findUnique({
+        where: { challengeId: challengeId },
+        select: {
+            groupId: true,
+            isDeleted: true,
+            defiAccepte: true
         }
+    });
 
-        // Il est impossible de faire des actions sur un défi refusé
-        // Il doit impérativement être recrée
-        if (challenge.isDeleted) {
-            throw error(409,'Le défi a deja été refusée' );
-        }
+    if (!challenge) {
+        throw error(404, 'Le challenge est introuvable');
+    }
 
-        // si pas du bureau ou admin il est redirigée
-        const userAutorisation = await prisma.user.findUnique({
-            where : {id : userId},
-            select: {
-                isAdmin: true,
-                groupBoard: {
-                    select: {
-                        groupId: true
-                    }
+    // Il est impossible de faire des actions sur un défi refusé
+    // Il doit impérativement être recrée
+    if (challenge.isDeleted) {
+        throw error(409, 'Le défi a deja été refusée');
+    }
+
+    // si pas du bureau ou admin il est redirigée
+    const userAutorisation = await prisma.user.findUnique({
+        where: { id: userId },
+        select: {
+            isAdmin: true,
+            groupBoard: {
+                select: {
+                    groupId: true
                 }
             }
-        });
-
-        if(!userAutorisation.groupBoard.some(board => board.groupId === challenge.groupId) && !userAutorisation.isAdmin){
-                throw error(402,"tu ne fais pas partie du bureau du club")
         }
+    });
+
+    if (!userAutorisation.groupBoard.some(board => board.groupId === challenge.groupId) && !userAutorisation.isAdmin) {
+        throw error(402, "tu ne fais pas partie du bureau du club")
+    }
     return true
 
 }
@@ -71,7 +71,7 @@ export async function saveChallenge(body: ChallengeInput) {
     }
 
     // refusée les 1A
-    if (!(await prisma.user.findUnique({where : {id : userId}, select : {is1A:true}})) && Churros1ATo2A){   
+    if (!(await prisma.user.findUnique({ where: { id: userId }, select: { is1A: true } })) && Churros1ATo2A) {
         throw error(403, 'Tu es un 1A');
     }
 
@@ -92,10 +92,10 @@ export async function saveChallenge(body: ChallengeInput) {
         description: description?.trim() || null,
         nbPoints: Number(nbPoints) || 0,
         type: validatedType,
-        group: { 
-            connect: { groupId: targetGroup.groupId } 
+        group: {
+            connect: { groupId: targetGroup.groupId }
         },
-        location: { 
+        location: {
             connectOrCreate: {
                 where: { name: locationName.trim() },
                 create: { name: locationName.trim() }
@@ -114,7 +114,7 @@ export async function saveChallenge(body: ChallengeInput) {
         return await prisma.challenge.create({
             data: {
                 ...coreData,
-                userId: userId, 
+                userId: userId,
                 defiAccepte: false
             }
         });
@@ -126,7 +126,7 @@ export async function saveChallenge(body: ChallengeInput) {
  * @param userId uid de l'utilisateur
  * @returns challenge mise à jour
  */
-export async function acceptChallenge(challengeIdRaw: any , userId : string) {
+export async function acceptChallenge(challengeIdRaw: any, userId: string) {
     if (!challengeIdRaw || isNaN(Number(challengeIdRaw))) {
         throw { status: 400, message: 'challengeId invalide' };
     }
@@ -152,7 +152,7 @@ export async function acceptChallenge(challengeIdRaw: any , userId : string) {
  * @param userId uid de l'utilisateur
  * @returns challenge mise à jour
  */
-export async function deleteChallenge(challengeIdRaw: any, userId : string) {
+export async function deleteChallenge(challengeIdRaw: any, userId: string) {
     if (!challengeIdRaw || isNaN(Number(challengeIdRaw))) {
         throw { status: 400, message: 'challengeId invalide' };
     }

@@ -1,7 +1,5 @@
-<script lang="ts"> 
-
-    import { Frame, Flex, Button } from 'azucar-ui';
-
+<script lang="ts">
+    import { Frame, Flex, Button } from "azucar-ui";
 </script>
 
 <Frame outline={true}>
@@ -11,9 +9,7 @@
             <p>Vous avez la possibilité d'ajouter des défis.</p>
         </Flex>
         <Flex justify="right">
-            <Button href="/challenge/-1">
-            Ajouter un défi
-            </Button>
+            <Button href="/challenge/-1">Ajouter un défi</Button>
         </Flex>
     </Flex>
 </Frame>

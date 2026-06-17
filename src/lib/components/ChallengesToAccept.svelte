@@ -1,20 +1,19 @@
 <script lang="ts">
-
-    import type { ChallengeRead } from '$lib/types/types.d';
-    import { Avatar, Flex, Frame, Button } from 'azucar-ui';
-    import { ChevronUp, ChevronDown, MapPin, User } from '@lucide/svelte';
-    import AcceptableCard from '$lib/components/AcceptableCard.svelte';
+    import type { ChallengeRead } from "$lib/types/types.d";
+    import { Avatar, Flex, Frame, Button } from "azucar-ui";
+    import { ChevronUp, ChevronDown, MapPin, User } from "@lucide/svelte";
+    import AcceptableCard from "$lib/components/AcceptableCard.svelte";
 
     type Prop = {
-        groupName: string,
-        groupURL: string,
-        challenges: ChallengeRead[],
-        hideDone: boolean,
-        onChallengeApprouved : (id: number) => void
-        onChallengeDeleted : (id: number) => void
+        groupName: string;
+        groupURL: string;
+        challenges: ChallengeRead[];
+        hideDone: boolean;
+        onChallengeApprouved: (id: number) => void;
+        onChallengeDeleted: (id: number) => void;
     };
 
-    let isHide : boolean = $state(false);
+    let isHide: boolean = $state(false);
 
     // Va stocker temporairement et localement les défis qui viennent d'être
     // accepté pour ne pas refaire une requête serveur.
@@ -27,48 +26,53 @@
         challenges = [],
         hideDone = $bindable(),
         onChallengeApprouved,
-        onChallengeDeleted
+        onChallengeDeleted,
     }: Prop = $props();
 
     const visibleChallenges = $derived(
-        challenges.filter(challenge => {
-            if (!hideDone) return true;
+        challenges
+            .filter((challenge) => {
+                if (!hideDone) return true;
 
-            const isApproved = challenge.defiAccepte || successChallengeIds.includes(challenge.challengeId);
-            const isDeleted = challenge.isDeleted || deletedChallengeIds.includes(challenge.challengeId);
+                const isApproved =
+                    challenge.defiAccepte ||
+                    successChallengeIds.includes(challenge.challengeId);
+                const isDeleted =
+                    challenge.isDeleted ||
+                    deletedChallengeIds.includes(challenge.challengeId);
 
-            if (isDeleted) return false;
-            if (hideDone && isApproved) return false;
+                if (isDeleted) return false;
+                if (hideDone && isApproved) return false;
 
-            return true;
-        }).sort((a, b) => Number(a.chellengeId) - Number(b.challengeId))
+                return true;
+            })
+            .sort((a, b) => Number(a.chellengeId) - Number(b.challengeId)),
     );
 
-    async function handleAccept(id : number) {
+    async function handleAccept(id: number) {
         await onChallengeApprouved(id);
         successChallengeIds = [...successChallengeIds, id];
     }
 
-    async function handleDelete(id : number) {
+    async function handleDelete(id: number) {
         await onChallengeDeleted(id);
         deletedChallengeIds = [...deletedChallengeIds, id];
     }
-
 </script>
 
 <Flex gap="xs" direction="column">
-    <button class="no-style" onclick={() => isHide = !isHide}>
-    <Frame transparent={true} border={true} shadow={true}>
-        <Flex align="center">
-            <Avatar src={groupURL} alt={groupName} />
-            <p>{groupName}</p>
-            <Button 
-                variant='outline'
-                icon={isHide ? ChevronUp : ChevronDown}
-                style="margin-left: auto"
-            />
-        </Flex>
-    </Frame>
+    <button class="no-style" onclick={() => (isHide = !isHide)}>
+        <Frame transparent={true} border={true} shadow={true}>
+            <Flex align="center">
+                <Avatar src={groupURL} alt={groupName} />
+                <p>{groupName}</p>
+                <Button
+                    variant="outline"
+                    icon={isHide ? ChevronUp : ChevronDown}
+                    style="margin-left: auto"
+                />
+            </Flex>
+        </Frame>
     </button>
     <Flex gap="xs" direction="column">
         <!-- ne pas afficher les Challenges dones si hideDone est true -->
@@ -77,20 +81,26 @@
                 id={challenge.challengeId}
                 name={challenge.name}
                 points={challenge.nbPoints}
-                isModifiable={!(challenge.isDeleted || deletedChallengeIds.includes(challenge.challengeId))}
+                isModifiable={!(
+                    challenge.isDeleted ||
+                    deletedChallengeIds.includes(challenge.challengeId)
+                )}
                 modifiableURL={`challenge/${challenge.challengeId}`}
-                isApprouved={(challenge.defiAccepte || successChallengeIds.includes(challenge.challengeId)) && !challenge.isDeleted}
-                isDisabled={challenge.isDeleted || deletedChallengeIds.includes(challenge.challengeId)}
+                isApprouved={(challenge.defiAccepte ||
+                    successChallengeIds.includes(challenge.challengeId)) &&
+                    !challenge.isDeleted}
+                isDisabled={challenge.isDeleted ||
+                    deletedChallengeIds.includes(challenge.challengeId)}
                 onAccepted={() => handleAccept(challenge.challengeId)}
                 onDeleted={() => handleDelete(challenge.challengeId)}
             >
                 <Flex direction="column" gap="xs">
                     <Flex wrap={false} gap="xs" align="center">
-                        <MapPin size='15px'/> 
+                        <MapPin size="15px" />
                         <p>{challenge.locationName}</p>
                     </Flex>
                     <Flex wrap={false} gap="xs" align="center">
-                        <User size='15px'/> 
+                        <User size="15px" />
                         <p>{challenge.userName}</p>
                     </Flex>
                 </Flex>

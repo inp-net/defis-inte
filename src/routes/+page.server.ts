@@ -42,7 +42,7 @@ export const load: PageServerLoad = async ({ locals }) => {
 
     const allChallenges = allChallengesUntyped.map(({ group, groupInteSucceed, ...challenge }) => {
         const isDone = Boolean(
-            user?.groupInteId && 
+            user?.groupInteId &&
             groupInteSucceed.some(g => g.groupId === user.groupInteId)
         );
 
@@ -51,12 +51,12 @@ export const load: PageServerLoad = async ({ locals }) => {
             groupName: group.name ?? "",
             groupUrl: group.pictureURL ?? "",
             groupInteSuccedName: groupInteSucceed.map(g => g.name), // Aligné avec votre type ChallengeRead
-            isDone, 
+            isDone,
         };
     });
 
     // Challenges sont les challenges acceptés par un admin
-    const challenges : ChallengeRead[] = allChallenges.filter((a) => a.defiAccepte);
+    const challenges: ChallengeRead[] = allChallenges.filter((a) => a.defiAccepte);
 
     // TODO peut êter à optimiser car requête est déjà fait en haut.
     const pendingChallengeCount = !user ? 0 : await prisma.challenge.count({
@@ -86,13 +86,13 @@ export const load: PageServerLoad = async ({ locals }) => {
             }
         }
     })
- 
+
     return {
         posts: {
             challenges,
             pendingChallengeCount,
             pendingProofCount
-        }, user : locals.user,
+        }, user: locals.user,
     };
 };
 
@@ -105,41 +105,41 @@ export const actions: Actions = {
         const files: File[] = data.getAll('file');
         const isOkTVn7 = data.get('isOkTVn7') === "true";
         const userId = locals.user.id;
-        const maxFiles : number = 15;
+        const maxFiles: number = 15;
 
-        let content : String[] = [];
+        let content: String[] = [];
 
         try {
-            if (textePreuve){
+            if (textePreuve) {
                 content = [textePreuve]
             } else {
-                if(files.length > maxFiles){
-                    throw error (402, "Le nombre de fichier et limiter à 10")
+                if (files.length > maxFiles) {
+                    throw error(402, "Le nombre de fichier et limiter à 10")
                 }
-                for (const file of files){
+                for (const file of files) {
                     const url = await uploadUserFile(file, userId);
                     content.push(url)
                 }
             }
-            const body: ProofInput = { challengeId, userId, type, content, isOkTVn7 } 
+            const body: ProofInput = { challengeId, userId, type, content, isOkTVn7 }
             // Verifie si c'est un 1A 
-            if (!(locals.user.is1A && Churros1ATo2A)){
-                throw error (402, "Tu n'es pas un 1A")
+            if (!(locals.user.is1A && Churros1ATo2A)) {
+                throw error(402, "Tu n'es pas un 1A")
             }
             const proof = await newProof(body);
-            return { 
+            return {
                 success: true,
                 proof: proof
             };
         } catch (error: any) {
             if (error.status && error.message) {
-                return fail(error.status, { 
+                return fail(error.status, {
                     message: error.message,
                 });
             }
             console.error('Action Error:', error);
-            return fail(500, { 
-                message: 'Impossible accepter le défi' 
+            return fail(500, {
+                message: 'Impossible accepter le défi'
             });
         }
     }

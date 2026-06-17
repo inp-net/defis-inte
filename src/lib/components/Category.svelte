@@ -1,36 +1,29 @@
 <script lang="ts">
-
-    import { Flex } from 'azucar-ui';
-    import { ChevronDown, ChevronUp } from '@lucide/svelte';
+    import { Flex } from "azucar-ui";
+    import { ChevronDown, ChevronUp } from "@lucide/svelte";
 
     interface Props {
-        name: string,
-        list: string[],
-        enabled: boolean
+        name: string;
+        list: string[];
+        enabled: boolean;
     }
 
-    let {
-        name,
-        list = $bindable(),
-        enabled = false
-    }: Props = $props();
+    let { name, list = $bindable(), enabled = false }: Props = $props();
 
     /** Ajoute dans la liste si n'est pas présent, supprime si présent. */
     function flipFlopAddList() {
         if (list.includes(name)) {
-            list = list.filter(item => item !== name);
+            list = list.filter((item) => item !== name);
             enabled = false;
         } else {
             list.push(name);
             enabled = true;
         }
     }
-
 </script>
 
-
 <button onclick={() => flipFlopAddList()}>
-    <br>
+    <br />
     <Flex justify="space-between" align="center" margin="xs">
         <h4>{name}</h4>
         {#if enabled}
@@ -39,8 +32,8 @@
             <ChevronDown />
         {/if}
     </Flex>
-    <hr>
-    <br>
+    <hr />
+    <br />
 </button>
 
 <style>
@@ -70,5 +63,4 @@
         display: block;
         -webkit-tap-highlight-color: transparent;
     }
-
 </style>
