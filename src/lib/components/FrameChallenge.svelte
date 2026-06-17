@@ -66,7 +66,9 @@
                 <Flex direction="column" gap="md">
                     <Flex gap="xs" direction="column">
                         {#if children }
-                            {@render children()}
+                            <Flex direction="column" wrap={false} gap="xxs" style="padding: 10px 0;">
+                                {@render children()}
+                            </Flex>
                         {/if}
                         {#if (type != "TEXT")}
                             <Flex gap="xs" align="center"><File size="15px"/>{type}</Flex>

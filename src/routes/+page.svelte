@@ -2,7 +2,7 @@
 
     import type { PageData } from './$types';
     import { Flex, Stack, Button } from 'azucar-ui';
-    import { MapPin, Building, File, Trophy } from '@lucide/svelte';
+    import { MapPin, UsersRound, File, Trophy } from '@lucide/svelte';
     import type { ChallengeRead } from '$lib/types/types.d.ts';
     import Header from '$lib/components/Header.svelte';
     import FrameChallenge from '$lib/components/FrameChallenge.svelte';
@@ -177,7 +177,7 @@
                             {/each}
                         </Flex>
                     </Flex>
-                    <Flex gap="xs" align="center"><Building size="15px"/> {challenge.groupName} </Flex>
+                    <Flex gap="xs" align="center"><UsersRound size="15px"/> {challenge.groupName} </Flex>
                     <Flex gap="xs" align="center"><MapPin size="15px"/> {challenge.locationName} </Flex>
                 </FrameChallenge>
             {/each}
