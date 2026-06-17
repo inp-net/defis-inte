@@ -1,16 +1,20 @@
 <script lang="ts">
 
+    // TS
     import type { PageData } from './$types';
+    import type { ChallengeRead } from '$lib/types/types.d.ts';
+    import { signIn } from "@auth/sveltekit/client";
+    import { Churros1ATo2A } from '$lib/env';
+
+    // composants
     import { Flex, Stack, Button } from 'azucar-ui';
     import { MapPin, UsersRound, File, Trophy } from '@lucide/svelte';
-    import type { ChallengeRead } from '$lib/types/types.d.ts';
     import Header from '$lib/components/Header.svelte';
     import FrameChallenge from '$lib/components/FrameChallenge.svelte';
     import AddChallenge from '$lib/components/AddChallenge.svelte';
     import Sort from '$lib/components/Sort.svelte';
     import SearchBar from '$lib/components/SearchBar.svelte';
-    import { signIn } from "@auth/sveltekit/client";
-    import { Churros1ATo2A } from '$lib/env';
+    import Category from '$lib/components/Category.svelte'
 
 
 
@@ -83,6 +87,8 @@
     let sortBind : string = $state(sortList[1]);
     let isSortDesc = $state(true);
 
+    let hiddenClub: string[] = $state([]);
+
     let sortedSearchedChallenges = $derived.by(() => {
         const items = [...searchedItems]; 
         const flip = isSortDesc ? 1 : -1;
@@ -110,7 +116,21 @@
     });
     let isConnected: boolean = $state(!!user);
 
-    
+    // Précompute les endroits où il faut mettre une catégorie
+    const processedChallenges = $derived(() => {
+        let currentClub = null;
+        return sortedSearchedChallenges.map((challenge) => {
+            const showCategory = sortBind === "clubs" && challenge.groupName !== currentClub;
+            if (showCategory) {
+                currentClub = challenge.groupName;
+            }
+            return {
+                ...challenge,
+                showCategory,
+                is_hidden: hiddenClub.includes(challenge.groupName)
+            };
+        });
+    });
 
 </script>
 {#if !isConnected}
@@ -142,6 +162,22 @@
         </Stack>
     {/if}
 
+    {#snippet challengeDetails(challenge)}
+        <Flex gap="xs" direction="column">
+            <Flex gap="xs" align="center">
+                <Trophy size="15px"/>
+                <p>Défi réussi par :</p>
+            </Flex>
+            <Flex direction="column" gap="xxs" wrap={false} style="max-height: 100px; overflow: scroll; margin-left: 10px;">
+                {#each challenge.groupInteSucceed as inte}
+                    <p>- {inte.name}</p>
+                {/each}
+            </Flex>
+        </Flex>
+        <Flex gap="xs" align="center"><UsersRound size="15px"/> {challenge.groupName} </Flex>
+        <Flex gap="xs" align="center"><MapPin size="15px"/> {challenge.locationName} </Flex>
+    {/snippet}
+
     <!-- Liste des défis -->
     <Stack style="max-width: 100%; min-width: 0; overflow: hidden;">
         <Flex gap="xs" wrap={false} align="center">
@@ -149,10 +185,14 @@
             <Sort bind:bind={sortBind} options={sortList} bind:isDesc={isSortDesc} />
         </Flex>
         <Flex gap="xs" direction="column" style="max-width: 100%; width: 100%;" wrap={false}>
-            {#each sortedSearchedChallenges as challenge}
+        {#each processedChallenges() as challenge (challenge.challengeId)}
+            {#if challenge.showCategory}
+                <Category name={challenge.groupName} bind:list={hiddenClub} />
+            {/if}
+            {#if !challenge.is_hidden}
                 <FrameChallenge
                     challengeId={challenge.challengeId}
-                    name={challenge.isDone ? "✔ " : "" + challenge.name}
+                    name={challenge.isDone ? `✔ ${challenge.name}` : challenge.name}
                     nbPoints={challenge.nbPoints}
                     isText={challenge.type === "TEXT"}
                     location={challenge.locationName}
@@ -162,29 +202,15 @@
                     type={challenge.type}
                     onSave={handleSave}
                     defaultTVn7={user?.isOkTVn7}
-                    is1A = {user?.is1A}
+                    is1A={user?.is1A}
                     isEnabled={isConnected && !challenge.isDone}
                 >
-                    <!-- Toutes les métadonnées affichés pour éviter de surcharger le composant -->
-                    <Flex gap="xs" direction="column">
-                        <Flex gap="xs" align="center">
-                            <Trophy size="15px"/>
-                            <p>Défi réussi par :</p>
-                        </Flex>
-                        <Flex direction="column" gap="xxs" wrap={false} style="max-height: 100px; overflow: scroll; margin-left: 10px;">
-                            {#each challenge.groupInteSucceed as inte }
-                                <p>- {inte.name}</p>
-                            {/each}
-                        </Flex>
-                    </Flex>
-                    <Flex gap="xs" align="center"><UsersRound size="15px"/> {challenge.groupName} </Flex>
-                    <Flex gap="xs" align="center"><MapPin size="15px"/> {challenge.locationName} </Flex>
+                    {@render challengeDetails(challenge)}
                 </FrameChallenge>
-            {/each}
+            {/if}
+
+        {/each}
         </Flex>
     </Stack>
 
 </Flex>
-
-<style>
-</style>
