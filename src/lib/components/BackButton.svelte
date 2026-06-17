@@ -4,15 +4,16 @@
     import { Button } from 'azucar-ui';
     import { ArrowLeft } from '@lucide/svelte';
 
-    let { backCount = 1 }: { backCount?: number } = $props();
+    let { backCount = 1 , specialBack = ''}: { backCount?: number , specialBack?:string} = $props();
     
     function navigateBack() {
         const steps = backCount ?? 1;
 
         const path = window.location.pathname;
         const segments = path.split('/').filter(Boolean);
-        
-        if (segments.length > steps) {
+        if(specialBack){
+            goto(specialBack)
+        }else if (segments.length > steps) {
             const targetSegments = segments.slice(0, segments.length - steps);
             goto('/' + targetSegments.join('/'));
         } else {

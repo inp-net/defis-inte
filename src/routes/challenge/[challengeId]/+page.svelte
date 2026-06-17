@@ -84,7 +84,7 @@
 
     <Stack>
         <Stack align="baseline"> 
-            <BackButton backCount={2} />
+            <BackButton backCount={2} specialBack = {!isNew ? '/board' : null}/>
             {#if isNew}
                 <h2>Ajouter un Défi</h2>
             {:else}
