@@ -1,7 +1,7 @@
 import type { PageServerLoad } from './$types';
 import type { GroupChallenge } from '$lib/types/types.d.ts';
 import { fail, error, type Actions } from '@sveltejs/kit';
-import { acceptChallenge, deleteChallenge, canModifyChallenge} from '$lib/server/challengeService';
+import { acceptChallenge, deleteChallenge, canModifyChallenge } from '$lib/server/challengeService';
 import { prisma } from "$lib/server/prisma";
 
 export const load: PageServerLoad = async ({ locals }) => {
@@ -39,10 +39,10 @@ export const load: PageServerLoad = async ({ locals }) => {
 
     const users = await prisma.user.findMany({
         where: { id: { in: allUserIds } },
-        select: { 
+        select: {
             id: true,
-            firstName : true,
-            lastName : true,
+            firstName: true,
+            lastName: true,
         }
     });
 
@@ -75,51 +75,51 @@ export const load: PageServerLoad = async ({ locals }) => {
 };
 
 export const actions: Actions = {
-    accept: async ({ request , locals}) => {
+    accept: async ({ request, locals }) => {
         const data = await request.formData();
         const challengeId = data.get('challengeId');
 
         const canModify = await canModifyChallenge(challengeId, locals.user.id);
-        if (canModify){
+        if (canModify) {
             try {
-            const updatedChallenge = canModify ? await acceptChallenge(challengeId, locals.user.id) : false;
-            return { 
-                success: true, 
-                challenge: updatedChallenge 
-            };
+                const updatedChallenge = canModify ? await acceptChallenge(challengeId, locals.user.id) : false;
+                return {
+                    success: true,
+                    challenge: updatedChallenge
+                };
             } catch (e: any) {
                 if (e.status && e.message) {
                     error(e.status, e.message)
-                    };
-                return fail(500, { 
-                    message: 'Impossible accepter le défi' 
+                };
+                return fail(500, {
+                    message: 'Impossible accepter le défi'
                 });
             }
-        } else{
-            return { 
-                success: false, 
-                challenge: {} 
+        } else {
+            return {
+                success: false,
+                challenge: {}
             };
         }
-        
+
     },
-    delete: async ({ request , locals}) => {
+    delete: async ({ request, locals }) => {
         const data = await request.formData();
         const challengeId = data.get('challengeId');
         const canModify = await canModifyChallenge(challengeId, locals.user.id);
-        if (canModify){
+        if (canModify) {
             try {
-                const updatedChallenge = canModify ? await deleteChallenge(challengeId, locals.user.id) : false ;
+                const updatedChallenge = canModify ? await deleteChallenge(challengeId, locals.user.id) : false;
                 return { success: true, };
             } catch (error: any) {
                 if (error.status && error.message) {
-                    return fail(error.status, { 
+                    return fail(error.status, {
                         message: error.message,
                         challengeId
                     });
                 }
                 console.error('Action Error:', error);
-                return fail(500, { 
+                return fail(500, {
                     message: 'Impossible de supprimer le défi', error
                 });
             }

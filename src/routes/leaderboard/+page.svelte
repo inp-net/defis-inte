@@ -1,27 +1,25 @@
 <script lang="ts">
-
-    import type { Leaderboard, User } from '$lib/types/types.d';
-    import type { PageData } from './$types';
-    import { Flex, Stack, ButtonGroup, Button } from 'azucar-ui';
-    import BackButton from '$lib/components/BackButton.svelte';
-    import Rank from '$lib/components/Rank.svelte'
+    import type { Leaderboard, User } from "$lib/types/types.d";
+    import type { PageData } from "./$types";
+    import { Flex, Stack, ButtonGroup, Button } from "azucar-ui";
+    import BackButton from "$lib/components/BackButton.svelte";
+    import Rank from "$lib/components/Rank.svelte";
 
     let { data }: { data: PageData } = $props();
 
-    let groups : Leaderboard[] = $derived(data.posts.groups);
-    let usersDB : User[] = $derived(data.posts.users);
-    let users : Leaderboard[] = usersDB.map(user => ({ 
-        ...user, 
-        name: `${user.firstName} ${user.lastName}` 
+    let groups: Leaderboard[] = $derived(data.posts.groups);
+    let usersDB: User[] = $derived(data.posts.users);
+    let users: Leaderboard[] = usersDB.map((user) => ({
+        ...user,
+        name: `${user.firstName} ${user.lastName}`,
     }));
 
-    let isGroupSelected : boolean = $state(true);
-    let leaderboard : Leaderboard[] = $derived(isGroupSelected ? groups : users);
-
+    let isGroupSelected: boolean = $state(true);
+    let leaderboard: Leaderboard[] = $derived(isGroupSelected ? groups : users);
 </script>
 
 <Flex direction="column" gap="xxl" margin="lg">
-    <Stack align="baseline"> 
+    <Stack align="baseline">
         <BackButton />
         <h2>Classement</h2>
         <p>Classement des groupes.</p>
@@ -31,24 +29,29 @@
         <Flex align="center" justify="center">
             <ButtonGroup>
                 <Button
-                    variant={isGroupSelected ? 'default' : 'outline'}
-                    onclick={() => isGroupSelected = true}
-                >Groupe</Button>
-                <Button 
-                    variant={!isGroupSelected ? 'default' : 'outline'}
-                    onclick={() => isGroupSelected = false}
-                >Individuel</Button>
+                    variant={isGroupSelected ? "default" : "outline"}
+                    onclick={() => (isGroupSelected = true)}>Groupe</Button
+                >
+                <Button
+                    variant={!isGroupSelected ? "default" : "outline"}
+                    onclick={() => (isGroupSelected = false)}>Individuel</Button
+                >
             </ButtonGroup>
         </Flex>
 
         <!-- max-width permet d'avoir le scroll horizontal sur les titres groupes -->
-        <Flex gap="sm" justify="space-between" direction="column" style="max-width: 100%;">
+        <Flex
+            gap="sm"
+            justify="space-between"
+            direction="column"
+            style="max-width: 100%;"
+        >
             {#each leaderboard as group, i}
                 <Rank
                     groupName={group.name}
                     groupUrl={group.pictureURL}
                     points={group.points}
-                    rank={(i+1).toString()}
+                    rank={(i + 1).toString()}
                 />
             {/each}
         </Flex>
