@@ -16,6 +16,6 @@ export function FormatGroupInte(chaine: string): boolean {
  * @returns true si c'est un groupe de postulant, false sinon
  */
 export function FormatGroupPostulant(chaine: string): boolean {
-    const modeleGroupPostulant = /^postulant.*$/; 
+    const modeleGroupPostulant = /^postulant.*$/;
     return modeleGroupPostulant.test(chaine);
 }
