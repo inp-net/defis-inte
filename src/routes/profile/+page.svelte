@@ -147,7 +147,7 @@
                     points={proof.challenge.nbPoints}
                     isModifiable={false}
                     modifiableURL=""
-                    hideButtons={false}
+                    hideButtons={true}
                 >
                     <Flex direction="column" gap="lg">
                         {@render proofRender(proof)}
