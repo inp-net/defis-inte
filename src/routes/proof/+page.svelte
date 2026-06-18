@@ -105,6 +105,77 @@
         <h2>Preuves</h2>
         <p>Validation des preuves</p>
     </Stack>
+
+
+    {#snippet proofDetails(proof)}
+        <Flex direction="column" gap="lg">
+            <Flex
+                direction="column"
+                gap="xs"
+                style="max-width: 100%; width: 100%; min-width: 0;"
+            >
+                <Flex wrap={false} gap="xs" align="center">
+                    <User size="15px" />
+                    <p>
+                        {proof.user.firstName}
+                        {proof.user.lastName}
+                    </p>
+                </Flex>
+                <Flex wrap={false} gap="xs" align="center">
+                    <Clock size="15px" />
+                    <p>{formatDateTime(proof.date)}</p>
+                </Flex>
+                <Flex wrap={false} gap="xs" align="center">
+                    <TextAlignStart size="15px" />
+                    <p>{proof.challenge.description}</p>
+                </Flex>
+            </Flex>
+            <div class="proof-media-list">
+                {#each proof.content as content, index}
+                    {#if proof.type == "TEXT"}
+                        <div class="text-response">
+                            <p> <b>Réponse {proof.content.length > 1 ? index + 1 : ""} :</b> {content} </p>
+                        </div>
+                    {:else if proof.type == "VIDEO"}
+                        <div class="media-container video-container" >
+                            <video controls preload="metadata">
+                                <!-- Le navigateur tente d'abord le mov (Apple de mrd) -->
+                                <source
+                                    src={content}
+                                    type="video/mov"
+                                />
+                                <!-- Le navigateur tente d'abord le WebM (optimisé web) -->
+                                <source
+                                    src={content}
+                                    type="video/webm"
+                                />
+                                <!-- S'il échoue, il se rabat sur le MP4 (universel) -->
+                                <source
+                                    src={content}
+                                    type="video/mp4"
+                                />
+                                <p>
+                                    Votre navigateur ne supporte pas
+                                    la vidéo
+                                </p>
+                            </video>
+                        </div>
+                    {:else}
+                        <div
+                            class="media-container image-container"
+                        >
+                            <img
+                                src={content}
+                                alt={`Preuve image ${index + 1}`}
+                                loading="lazy"
+                            />
+                        </div>
+                    {/if}
+                {/each}
+            </div>
+        </Flex>
+    {/snippet}
+
     <Stack
         style="max-width: 100%; width: 100%; min-width: 0; display: flex; flex-direction: column;"
     >
@@ -125,82 +196,7 @@
                     isDisabled={proof.status === Status.DENIED ||
                         deniedProofIds.includes(proof.proofId)}
                 >
-                    <Flex direction="column" gap="lg">
-                        <Flex
-                            direction="column"
-                            gap="xs"
-                            style="max-width: 100%; width: 100%; min-width: 0;"
-                        >
-                            <Flex wrap={false} gap="xs" align="center">
-                                <User size="15px" />
-                                <p>
-                                    {proof.user.firstName}
-                                    {proof.user.lastName}
-                                </p>
-                            </Flex>
-                            <Flex wrap={false} gap="xs" align="center">
-                                <Clock size="15px" />
-                                <p>{formatDateTime(proof.date)}</p>
-                            </Flex>
-                            <Flex wrap={false} gap="xs" align="center">
-                                <TextAlignStart size="15px" />
-                                <p>{proof.challenge.description}</p>
-                            </Flex>
-                        </Flex>
-                        <div class="proof-media-list">
-                            {#each proof.content as content, index}
-                                {#if proof.type == "TEXT"}
-                                    <div class="text-response">
-                                        <p>
-                                            <b
-                                                >Réponse {proof.content.length >
-                                                1
-                                                    ? index + 1
-                                                    : ""} :</b
-                                            >
-                                            {content}
-                                        </p>
-                                    </div>
-                                {:else if proof.type == "VIDEO"}
-                                    <div
-                                        class="media-container video-container"
-                                    >
-                                        <video controls preload="metadata">
-                                            <!-- Le navigateur tente d'abord le mov (Apple de mrd) -->
-                                            <source
-                                                src={content}
-                                                type="video/mov"
-                                            />
-                                            <!-- Le navigateur tente d'abord le WebM (optimisé web) -->
-                                            <source
-                                                src={content}
-                                                type="video/webm"
-                                            />
-                                            <!-- S'il échoue, il se rabat sur le MP4 (universel) -->
-                                            <source
-                                                src={content}
-                                                type="video/mp4"
-                                            />
-                                            <p>
-                                                Votre navigateur ne supporte pas
-                                                la vidéo
-                                            </p>
-                                        </video>
-                                    </div>
-                                {:else}
-                                    <div
-                                        class="media-container image-container"
-                                    >
-                                        <img
-                                            src={content}
-                                            alt={`Preuve image ${index + 1}`}
-                                            loading="lazy"
-                                        />
-                                    </div>
-                                {/if}
-                            {/each}
-                        </div>
-                    </Flex>
+                    {@render proofDetails(proof)}
                 </AcceptableCard>
             {/each}
         </Flex>

@@ -219,12 +219,8 @@
                 {/each}
             </Flex>
         </Flex>
-        <Flex gap="xs" align="center"
-            ><UsersRound size="15px" /> {challenge.groupName}
-        </Flex>
-        <Flex gap="xs" align="center"
-            ><MapPin size="15px" /> {challenge.locationName}
-        </Flex>
+        <Flex gap="xs" align="center" ><UsersRound size="15px" /> {challenge.groupName} </Flex>
+        <Flex gap="xs" align="center" ><MapPin size="15px" /> {challenge.locationName} </Flex>
     {/snippet}
 
     <!-- Liste des défis -->
