@@ -248,6 +248,7 @@
                     <Category
                         name={challenge.groupName}
                         bind:list={hiddenClub}
+                        src={challenge.groupUrl}
                     />
                 {/if}
                 {#if !challenge.is_hidden}
