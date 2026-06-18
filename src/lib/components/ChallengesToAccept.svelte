@@ -33,6 +33,7 @@
         challenges
             .filter((challenge) => {
                 if (!hideDone) return true;
+                if (isHide) return false;
 
                 const isApproved =
                     challenge.defiAccepte ||
@@ -64,7 +65,7 @@
     <button class="no-style" onclick={() => (isHide = !isHide)}>
         <Frame transparent={true} border={true} shadow={true}>
             <Flex align="center">
-                <Avatar src={groupURL} alt={groupName} />
+                <Avatar src={groupURL} alt={groupName} size="lg" />
                 <p>{groupName}</p>
                 <Button
                     variant="outline"
