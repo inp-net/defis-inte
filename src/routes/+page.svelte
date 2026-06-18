@@ -82,7 +82,7 @@
 
     // Trier les défis
 
-    const sortList: string[] = ["points", "clubs", "lieux", "date", "réussite"];
+    const sortList: string[] = ["points", "clubs", "lieux", "date", "tendance"];
     let sortBind: string = $state(sortList[1]);
     let isSortDesc = $state(true);
 
@@ -105,43 +105,26 @@
         switch (sortBind) {
             case "points":
                 return items.sort(
-                    (a, b) =>
-                        sortByDone(a, b) ||
-                        sortByPoints(a, b) ||
-                        sortByClub(a, b),
+                    (a, b) => sortByDone(a, b) || sortByPoints(a, b) || sortByClub(a, b),
                 );
             case "clubs":
                 return items.sort(
-                    (a, b) =>
-                        sortByDone(a, b) ||
-                        sortByClub(a, b) ||
-                        sortByPoints(a, b),
+                    (a, b) => sortByDone(a, b) || sortByClub(a, b) || sortByPoints(a, b),
                 );
             case "lieux":
                 return items.sort(
                     (a, b) =>
                         sortByDone(a, b) ||
-                        flip *
-                            (b.locationName || "").localeCompare(
-                                a.locationName || "",
-                            ) ||
+                        flip * (b.locationName || "").localeCompare( a.locationName || "",) ||
                         secondarySort(a, b),
                 );
             case "date":
                 return items.sort(
-                    (a, b) =>
-                        sortByDone(a, b) ||
-                        flip * (b.challengeId - a.challengeId) ||
-                        secondarySort(a, b),
+                    (a, b) => sortByDone(a, b) || flip * (b.challengeId - a.challengeId) || secondarySort(a, b),
                 );
-            case "réussite":
+            case "tendance":
                 return items.sort(
-                    (a, b) =>
-                        sortByDone(a, b) ||
-                        flip *
-                            (b.groupInteSucceed.length -
-                                a.groupInteSucceed.length) ||
-                        secondarySort(a, b),
+                    (a, b) => sortByDone(a, b) || flip * (b.groupInteSucceedName.length - a.groupInteSucceedName.length) || secondarySort(a, b),
                 );
             default:
                 return items.sort(secondarySort);
@@ -211,8 +194,8 @@
                 wrap={false}
                 style="max-height: 100px; overflow: scroll; margin-left: 10px;"
             >
-                {#each challenge.groupInteSucceed as inte}
-                    <p>- {inte.name}</p>
+                {#each challenge.groupInteSucceedName as name}
+                    <p>- {name}</p>
                 {/each}
             </Flex>
         </Flex>

@@ -50,7 +50,7 @@ export const load: PageServerLoad = async ({ locals }) => {
             ...challenge,
             groupName: group.name ?? "",
             groupUrl: group.pictureURL ?? "",
-            groupInteSuccedName: groupInteSucceed.map(g => g.name), // Aligné avec votre type ChallengeRead
+            groupInteSucceedName: groupInteSucceed.map(g => g.name), // Aligné avec votre type ChallengeRead
             isDone,
         };
     });
