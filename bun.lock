@@ -11,7 +11,7 @@
         "@prisma/adapter-pg": "^7.8.0",
         "@prisma/client": "^7.8.0",
         "auth": "",
-        "azucar-ui": "^0.0.5",
+        "azucar-ui": "^0.0.6",
         "dotenv": "^17.4.2",
         "fs": "",
         "pg": "^8.21.0",
@@ -260,7 +260,7 @@
 
     "axobject-query": ["axobject-query@4.1.0", "", {}, ""],
 
-    "azucar-ui": ["azucar-ui@0.0.5", "", { "dependencies": { "@lucide/svelte": "^1.3.0", "@sveltejs/adapter-static": "^3.0.10", "csstype": "^3.2.3" }, "peerDependencies": { "svelte": "^5.0.0" } }, "sha512-++xBod8xq3/n8kxiUNSQsRjduNsZEDCtT6ev3SBhwA61PgsxyK7WAKFJbWeP7eT8COtNi6y1sSrNMG1IcJDG8Q=="],
+    "azucar-ui": ["azucar-ui@0.0.6", "", { "dependencies": { "@lucide/svelte": "^1.3.0", "@sveltejs/adapter-static": "^3.0.10", "csstype": "^3.2.3" }, "peerDependencies": { "svelte": "^5.0.0" } }, "sha512-+qaQqL5TvwKLZ4VbaxybZPR/VtngB/c6YlKO0VQcqioJbhuq7i4d/eTa4IJIdWl/cheedl4Q7xgMsJrK3jFzNg=="],
 
     "baseline-browser-mapping": ["baseline-browser-mapping@2.10.34", "", { "bin": { "baseline-browser-mapping": "dist/cli.cjs" } }, "sha512-IMDedajPifLnHNY0X9n8hKxRTQ6/eTHwr5bDo04WnuqxyKw6LYtQywCuuqPZwhl3aBXMvQpJov42GLCwRRdQzw=="],
 
