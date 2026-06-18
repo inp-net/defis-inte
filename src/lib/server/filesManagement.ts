@@ -6,11 +6,11 @@ import * as crypto from 'node:crypto';
 import { dirname, join } from 'path';
 import { fileURLToPath } from 'node:url';
 import type { GroupClub } from '~generated//client';
-import { BETTER_AUTH_SECRET } from '$env/static/private';
+import { env } from '$env/dynamic/private';
 
 // ENREGISTREMENT DE FICHIER
 
-const SECRET = BETTER_AUTH_SECRET!;
+const SECRET : string = env.BETTER_AUTH_SECRET!;
 
 export function avatarFromName(name: string): string {
 	return `https://ui-avatars.com/api/?name=${encodeURIComponent(name).replace(/%20/g, '+')}&background=random`;

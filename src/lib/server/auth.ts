@@ -4,10 +4,16 @@ import Credentials from '@auth/sveltekit/providers/credentials';
 import type { Profile, Session } from '@auth/core/types';
 import type { UserChurros } from '$lib/types/types';
 import { userChurrosToPrisma } from './prisma';
-import { BETTER_AUTH_SECRET, AUTH_AUTHENTIK_SECRET, AUTH_AUTHENTIK_ID } from '$env/static/private';
-import { PUBLIC_AUTH_AUTHENTIK_ISSUER } from '$env/static/public';
+import { env as privatEnv } from '$env/dynamic/private';
+import { env } from '$env/dynamic/public';
 import type { CredentialInput, CredentialsConfig, OAuthConfig } from '@auth/core/providers';
 import { prisma } from '$lib/server/prisma';
+
+const BETTER_AUTH_SECRET : string = privatEnv.BETTER_AUTH_SECRET ; 
+const AUTH_AUTHENTIK_SECRET : string = privatEnv.AUTH_AUTHENTIK_SECRET ;
+const AUTH_AUTHENTIK_ID : string = privatEnv.AUTH_AUTHENTIK_ID ;
+const PUBLIC_AUTH_AUTHENTIK_ISSUER : string = env.PUBLIC_AUTH_AUTHENTIK_ISSUER ;
+
 
 // GESTION DE L'AUTHENTIFICATION
 
