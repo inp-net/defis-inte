@@ -13,7 +13,7 @@
     const {
         src,
         alt = "Avatar",
-        size = "small",
+        size = "xl",
         firstName,
         lastName,
         hideName = false,

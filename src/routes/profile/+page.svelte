@@ -82,7 +82,7 @@
         <Frame transparent={true} border={true} shadow={true}>
             <Flex direction="column" gap="lg">
                 <Profile
-                    size="large"
+                    size="xl"
                     firstName={user.firstName}
                     lastName={user.lastName}
                     src={user.profilePictureURL}
