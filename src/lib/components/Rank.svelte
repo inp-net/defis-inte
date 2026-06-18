@@ -28,7 +28,7 @@
             style="min-width: 0; width: 100%; flex: 1; max-width: 100%;"
         >
             <div class="no-shrink">
-                <Avatar src={groupUrl} alt={groupName} />
+                <Avatar src={groupUrl} alt={groupName} size="xl" />
             </div>
             <p class="scrollable-text">{groupName}</p>
         </Flex>
