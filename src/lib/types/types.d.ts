@@ -38,11 +38,6 @@ export type {
     User
 }
 
-type Category = {
-    key: String;
-    valeurs: String[];
-}
-
 // Input pour crée une preuve
 export type ProofInput = {
     challengeId: number;
@@ -51,6 +46,10 @@ export type ProofInput = {
     content: String[];
     isOkTVn7: boolean;
 }
+
+// Pour lire les preuves, informations utiles
+export type ProofRead = Pick< Proof, "proofId" | "type" | "content" | "date" | "status" | "validatorId" >
+    & { user: Pick<User, "firstName" | "lastName">; challenge: Pick<Challenge, "name" | "nbPoints"> | null; };
 
 // Input pour crée un challenge
 export type ChallengeInput = {
@@ -65,9 +64,9 @@ export type ChallengeInput = {
 }
 
 export enum Status {
-  PENDING = 'PENDING',
-  VALID = 'VALID',
-  DENIED = 'DENIED'
+    PENDING = 'PENDING',
+    VALID = 'VALID',
+    DENIED = 'DENIED'
 }
 
 // Type GroupLeaderboard utilisé pour l'affichage du classement
@@ -83,8 +82,6 @@ export type Leaderboard = {
 export type ChallengeRead = Pick<
     Challenge, "challengeId" | "name" | "description" | "type" | "nbPoints" | "locationName" | "defiAccepte" | "isDeleted"
 > & { groupName: string; groupUrl: string | null; } & { userName: string } & { groupInteSuccedName: string[] } & { isDone?: boolean }
-
-export type ProofRead = Pick<Proof, "proofId" | "userId" | "challengeId" | "status" | "type" | "content" | "date" >;
 
 // Type Group Challenge réunit les ChallengeRead dans des groupes
 export type GroupChallenge = Pick<GroupClub, "name" | "pictureURL"> & { challenges: ChallengeRead[] };

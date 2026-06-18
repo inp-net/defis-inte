@@ -34,7 +34,7 @@
     <Frame transparent={true} border={true} shadow={true}>
         <Flex justify="space-between" align="center" wrap={false}>
             <Flex align="center" gap="md">
-                <Profile {firstName} {lastName} src={picture} hideName={true} />
+                <Profile {firstName} {lastName} src={picture} hideName={true} size="xl" />
             </Flex>
             <Flex wrap={false} gap="xs" align="center">
                 <Button href="/leaderboard">Classement</Button>

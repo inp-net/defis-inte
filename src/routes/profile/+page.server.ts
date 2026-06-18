@@ -1,35 +1,65 @@
 import type { PageServerLoad } from './$types';
-import type { Category } from '$lib/types/types.d';
-import type { Actions } from './$types';
-import { canUseAdmin, reCalculPoint } from '../../lib/server/adminCommand';
+import { prisma } from "$lib/server/prisma";
+import { type ProofRead, Status, type Proof } from "$lib/types/types.d";
 
 export const load: PageServerLoad = async ({ locals }) => {
 
-    let user = locals.user
-    let groupPoints = user.groupInte.points
+    const user = locals.user;
 
-    let returnCategories: Category[] = [
-        { key: "Stats Groupe", valeurs: ["Vous avez " + groupPoints + (groupPoints <= 1 ? " point" : " points"), "Gros nul"] },
-    ];
+    const userGroupInteId = user.groupInteId || (await prisma.user.findUnique({
+        where: { id: user.id },
+        select: { groupInteId: true }
+    }))?.groupInteId;
 
-    returnCategories.push(
-    );
+    const userProofs : ProofRead[] = await prisma.proof.findMany({
+        where: {
+            user: {
+                groupInteId: userGroupInteId
+            }
+        },
+        select: {
+            proofId: true,
+            type: true,
+            content: true,
+            date: true,
+            status: true,
+            validatorId: true,
+            user: {
+                select: {
+                    firstName: true,
+                    lastName: true
+                }
+            },
+            challenge: {
+                select: {
+                    name: true,
+                    nbPoints: true
+                }
+            }
+        }
+    });
+
+    //
+    // Statistiques
+    //
+
+    const proofByUser : Proof[] = await prisma.proof.findMany({
+        where: {
+            userId: user.id
+        },
+        select: {
+            status: true
+        }
+    })
+
+    const proofCount = proofByUser.length;
+    const proofDoneCount = proofByUser.filter(p => p.status === Status.Done).length;
 
     return {
         posts: {
-            returnCategories
+            userProofs,
+            proofCount,
+            proofDoneCount
         }, user
     };
 };
-
-export const actions: Actions = {
-    // Action pour crée ou modifier : upsert
-    reCalculPoints: async ({ locals }) => {
-        const userId = locals.user.id
-        canUseAdmin(userId);
-        try {
-            reCalculPoint();
-        } catch (err: any) {
-        }
-    }
-} satisfies Actions;

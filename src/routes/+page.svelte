@@ -4,6 +4,7 @@
     import type { ChallengeRead } from "$lib/types/types.d.ts";
     import { signIn } from "@auth/sveltekit/client";
     import { Churros1ATo2A } from "$lib/env";
+    import { Toaster, toast } from "svelte-sonner";
 
     // composants
     import { Flex, Stack, Button } from "azucar-ui";
@@ -44,6 +45,8 @@
         challengeId: number,
     ) {
         try {
+            toast.info("Preuve envoyée.");
+
             const formData = new FormData();
             formData.append("challengeId", challengeId.toString());
             formData.append("type", type);
@@ -64,28 +67,22 @@
             if (response.ok) {
                 // Changement local des modifications serveur
                 const result = await response.json();
-                if (result.type === "failure") {
-                    console.error(
-                        "Erreur de validation :",
-                        result.data?.message,
-                    );
-                    return;
-                }
-                /*
-                const proof : Proof = proofs.find(c => c.proofId === id);
-                if (proof) {
-                    proof.status = 'VALID'
-                }
-                */
+
+                if (result.type === "success")
+                    toast.success("Preuve ajouté avec succès");
+
+                if (result.type === "failure")
+                    toast.error("Impossible d'envoyer la preuve. Vérifier sa présence dans la page profil.")
             }
         } catch (err) {
+            toast.error("Erreur dans l'envoie du défi : " + err);
             console.error("Erreur lors de l'envoi du form : ", err);
         }
     }
 
     // Trier les défis
 
-    const sortList: string[] = ["points", "clubs", "lieux", "date", "réussite"];
+    const sortList: string[] = ["points", "clubs", "lieux", "date", "tendance"];
     let sortBind: string = $state(sortList[1]);
     let isSortDesc = $state(true);
 
@@ -108,43 +105,26 @@
         switch (sortBind) {
             case "points":
                 return items.sort(
-                    (a, b) =>
-                        sortByDone(a, b) ||
-                        sortByPoints(a, b) ||
-                        sortByClub(a, b),
+                    (a, b) => sortByDone(a, b) || sortByPoints(a, b) || sortByClub(a, b),
                 );
             case "clubs":
                 return items.sort(
-                    (a, b) =>
-                        sortByDone(a, b) ||
-                        sortByClub(a, b) ||
-                        sortByPoints(a, b),
+                    (a, b) => sortByDone(a, b) || sortByClub(a, b) || sortByPoints(a, b),
                 );
             case "lieux":
                 return items.sort(
                     (a, b) =>
                         sortByDone(a, b) ||
-                        flip *
-                            (b.locationName || "").localeCompare(
-                                a.locationName || "",
-                            ) ||
+                        flip * (b.locationName || "").localeCompare( a.locationName || "",) ||
                         secondarySort(a, b),
                 );
             case "date":
                 return items.sort(
-                    (a, b) =>
-                        sortByDone(a, b) ||
-                        flip * (b.challengeId - a.challengeId) ||
-                        secondarySort(a, b),
+                    (a, b) => sortByDone(a, b) || flip * (b.challengeId - a.challengeId) || secondarySort(a, b),
                 );
-            case "réussite":
+            case "tendance":
                 return items.sort(
-                    (a, b) =>
-                        sortByDone(a, b) ||
-                        flip *
-                            (b.groupInteSucceed.length -
-                                a.groupInteSucceed.length) ||
-                        secondarySort(a, b),
+                    (a, b) => sortByDone(a, b) || flip * (b.groupInteSucceedName.length - a.groupInteSucceedName.length) || secondarySort(a, b),
                 );
             default:
                 return items.sort(secondarySort);
@@ -214,17 +194,13 @@
                 wrap={false}
                 style="max-height: 100px; overflow: scroll; margin-left: 10px;"
             >
-                {#each challenge.groupInteSucceed as inte}
-                    <p>- {inte.name}</p>
+                {#each challenge.groupInteSucceedName as name}
+                    <p>- {name}</p>
                 {/each}
             </Flex>
         </Flex>
-        <Flex gap="xs" align="center"
-            ><UsersRound size="15px" /> {challenge.groupName}
-        </Flex>
-        <Flex gap="xs" align="center"
-            ><MapPin size="15px" /> {challenge.locationName}
-        </Flex>
+        <Flex gap="xs" align="center" ><UsersRound size="15px" /> {challenge.groupName} </Flex>
+        <Flex gap="xs" align="center" ><MapPin size="15px" /> {challenge.locationName} </Flex>
     {/snippet}
 
     <!-- Liste des défis -->
@@ -248,6 +224,7 @@
                     <Category
                         name={challenge.groupName}
                         bind:list={hiddenClub}
+                        src={challenge.groupUrl}
                     />
                 {/if}
                 {#if !challenge.is_hidden}
@@ -260,7 +237,7 @@
                         isText={challenge.type === "TEXT"}
                         location={challenge.locationName}
                         clubName={challenge.groupName}
-                        clubUrl={challenge.groupUrl}
+                        clubUrl={sortBind === "clubs" ? "" : challenge.groupUrl}
                         desc={challenge.description}
                         type={challenge.type}
                         onSave={handleSave}
@@ -274,4 +251,6 @@
             {/each}
         </Flex>
     </Stack>
+
+    <Toaster />
 </Flex>

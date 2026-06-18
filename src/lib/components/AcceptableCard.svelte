@@ -22,6 +22,8 @@
         onAccepted: (id: number) => void;
         /** Callback déclenché lors du refus/suppression, reçoit l'id de l'élément.*/
         onDeleted: (id: number) => void;
+        /** Cacher les boutons. */
+        hideButtons: boolean
         /** Contenu optionnel affiché dans la zone pliable lorsqu'on clique sur l'en-tête.*/
         children?: import("svelte").Snippet;
     };
@@ -36,6 +38,7 @@
         modifiableURL,
         onAccepted,
         onDeleted,
+        hideButtons = false,
         children,
     }: Props = $props();
 
@@ -95,20 +98,22 @@ Carte interactive pour afficher des éléments à valider, refuser ou modifier.
                         Modifier
                     </Button>
                 {/if}
-                <Button
-                    icon={XIcon}
-                    class="danger"
-                    name="Delete"
-                    disabled={isDisabled}
-                    onclick={() => onDeleted(id)}
-                />
-                <Button
-                    icon={Check}
-                    class="success"
-                    name="Success"
-                    disabled={isApprouved || isDisabled}
-                    onclick={() => onAccepted(id)}
-                />
+                {#if !hideButtons}
+                    <Button
+                        icon={XIcon}
+                        class="danger"
+                        name="Delete"
+                        disabled={isDisabled}
+                        onclick={() => onDeleted(id)}
+                    />
+                    <Button
+                        icon={Check}
+                        class="success"
+                        name="Success"
+                        disabled={isApprouved || isDisabled}
+                        onclick={() => onAccepted(id)}
+                    />
+                {/if}
             </Flex>
         </Flex>
     </Frame>

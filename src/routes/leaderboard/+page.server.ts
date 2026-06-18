@@ -21,6 +21,9 @@ export const load: PageServerLoad = async ({ params }) => {
         orderBy: {
             points: 'desc',
         },
+        where: {
+            is1A: true
+        },
         select: {
             firstName: true,
             lastName: true,
