@@ -156,8 +156,7 @@
     const processedChallenges = $derived(() => {
         let currentClub = null;
         return sortedSearchedChallenges.map((challenge) => {
-            const showCategory =
-                sortBind === "clubs" && challenge.groupName !== currentClub;
+            const showCategory = sortBind === "clubs" && challenge.groupName !== currentClub;
             if (showCategory) {
                 currentClub = challenge.groupName;
             }
@@ -244,6 +243,7 @@
                     <Category
                         name={challenge.groupName}
                         bind:list={hiddenClub}
+                        src={challenge.groupUrl}
                     />
                 {/if}
                 {#if !challenge.is_hidden}
@@ -256,7 +256,7 @@
                         isText={challenge.type === "TEXT"}
                         location={challenge.locationName}
                         clubName={challenge.groupName}
-                        clubUrl={challenge.groupUrl}
+                        clubUrl={sortBind === 'clubs' ? "" : challenge.groupUrl}
                         desc={challenge.description}
                         type={challenge.type}
                         onSave={handleSave}

@@ -98,7 +98,7 @@ Carte interactive pour afficher des éléments à valider, refuser ou modifier.
                         Modifier
                     </Button>
                 {/if}
-                {#if hideButtons}
+                {#if !hideButtons}
                     <Button
                         icon={XIcon}
                         class="danger"

@@ -1,14 +1,15 @@
 <script lang="ts">
-    import { Flex } from "azucar-ui";
+    import { Flex, Avatar } from "azucar-ui";
     import { ChevronDown, ChevronUp } from "@lucide/svelte";
 
     interface Props {
         name: string;
         list: string[];
+        src?: string;
         enabled: boolean;
     }
 
-    let { name, list = $bindable(), enabled = false }: Props = $props();
+    let { name, list = $bindable(), src, enabled = false }: Props = $props();
 
     /** Ajoute dans la liste si n'est pas présent, supprime si présent. */
     function flipFlopAddList() {
@@ -25,7 +26,10 @@
 <button onclick={() => flipFlopAddList()}>
     <br />
     <Flex justify="space-between" align="center" margin="xs">
-        <h4>{name}</h4>
+        <Flex gap="md" align="center">
+            <img src={src} alt={name} />
+            <h4>{name}</h4>
+        </Flex>
         {#if enabled}
             <ChevronUp />
         {:else}
@@ -62,5 +66,11 @@
         min-width: 0;
         display: block;
         -webkit-tap-highlight-color: transparent;
+    }
+
+    img {
+        width: 3em;
+        height: 3em;
+        border-radius: 100%;
     }
 </style>

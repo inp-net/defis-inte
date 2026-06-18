@@ -74,6 +74,8 @@
         >
             {#if clubUrl}
                 <img src={clubUrl} alt={clubName} />
+            {:else}
+                <span style="display: inline-block; height: 2.5em;"></span>
             {/if}
             <!-- Le nom peut être scroll horizontalement si il y a pas de places -->
             <div class="scrollable" style="min-width: 0;">
