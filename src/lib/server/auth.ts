@@ -2,7 +2,7 @@ import { SvelteKitAuth } from '@auth/sveltekit';
 import Authentik, { type AuthentikProfile } from '@auth/sveltekit/providers/authentik';
 import Credentials from '@auth/sveltekit/providers/credentials';
 import type { Profile, Session } from '@auth/core/types';
-import type { UserChurros } from '$lib/types/types';
+import type { UserChurros } from '$lib/types/types.d';
 import { userChurrosToPrisma } from './prisma';
 import { env as privatEnv } from '$env/dynamic/private';
 import { env } from '$env/dynamic/public';

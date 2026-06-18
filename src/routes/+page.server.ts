@@ -1,5 +1,5 @@
 import type { PageServerLoad } from './$types';
-import { ProofInput, type ChallengeRead } from '$lib/types/types.d';
+import type { ProofInput, ChallengeRead } from '$lib/types/types.d';
 import { newProof } from '$lib/server/proofService';
 import { prisma } from "$lib/server/prisma";
 import { error, fail, type Actions } from '@sveltejs/kit';

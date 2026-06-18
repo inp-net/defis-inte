@@ -1,8 +1,8 @@
 import { prisma } from '$lib/server/prisma';
 import { error } from '@sveltejs/kit';
-import { ChallengeInput } from '$lib/types/types.d';
+import type { ChallengeInput } from '$lib/types/types.d';
 import { UploadType } from '../../../prisma/generated/prisma/enums'
-import { Status, ProofInput } from '$lib/types/types.d';
+import type { Status, ProofInput } from '$lib/types/types.d';
 import { Churros1ATo2A } from '$lib/env';
 
 

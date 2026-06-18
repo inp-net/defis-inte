@@ -1,6 +1,6 @@
 import { prisma } from '$lib/server/prisma';
 import { error } from '@sveltejs/kit';
-import { Status, ProofInput } from '$lib/types/types.d';
+import type { Status, ProofInput } from '$lib/types/types.d';
 import { UploadType } from '../../../prisma/generated/prisma/client'
 import { Churros1ATo2A } from '$lib/env';
 

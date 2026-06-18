@@ -4,7 +4,7 @@
     import { User, Clock, TextAlignStart } from "@lucide/svelte";
     import BackButton from "$lib/components/BackButton.svelte";
     import type { Proof } from "$lib/types/types.d";
-    import { Status } from "$lib/types/types.d";
+    import type { Status } from "$lib/types/types.d";
     import AcceptableCard from "$lib/components/AcceptableCard.svelte";
 
     let { data }: { data: PageData } = $props();
