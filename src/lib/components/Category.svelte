@@ -5,10 +5,11 @@
     interface Props {
         name: string;
         list: string[];
+        src?: string;
         enabled: boolean;
     }
 
-    let { name, list = $bindable(), enabled = false }: Props = $props();
+    let { name, list = $bindable(), src, enabled = false }: Props = $props();
 
     /** Ajoute dans la liste si n'est pas présent, supprime si présent. */
     function flipFlopAddList() {
@@ -25,7 +26,12 @@
 <button onclick={() => flipFlopAddList()}>
     <br />
     <Flex justify="space-between" align="center" margin="xs">
-        <h4>{name}</h4>
+        <Flex align="center" gap="md">
+            {#if src}
+                <img src={src} alt={name} />
+            {/if}
+            <h4>{name}</h4>
+        </Flex>
         {#if enabled}
             <ChevronUp />
         {:else}
@@ -39,6 +45,12 @@
 <style>
     br {
         padding: 0 var(--size-xl);
+    }
+
+    img {
+        height: 3em;
+        width: 3em;
+        border-radius: 100%;
     }
 
     hr {
