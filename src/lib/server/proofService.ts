@@ -212,18 +212,21 @@ export async function pointsUpdate(proofId: number) {
     const newPointGroup: number = proofData.challenge.nbPoints + proofData.user.groupInte.points;
 
     const groupInteUpdate = await prisma.groupInte.update({
-        proofData: {
-            points: newPointGroup,
-            challengeSucceed: { connect: { challengeId: proofData.challengeId } }
+        where: {
+            groupId: proofData.user.groupInteId
         },
-        where: { groupId: proofData.user.groupInteId }
+        data: {
+            points: newPointGroup,
+            challengeSucceed: { 
+                connect: { challengeId: proofData.challengeId } 
+            }
+        }
     })
 
     const userUpdate = await prisma.user.update({
-        proofData: { points: newPointUser },
-        where: { id: proofData.userId }
+        where: { id: proofData.userId },
+        data: { points: newPointUser } 
     })
 
     return
-
 }

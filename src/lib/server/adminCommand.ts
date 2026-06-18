@@ -25,7 +25,7 @@ export async function canUseAdmin(userId: string) {
  * crée pour les admins
  * exemple utilisation : supression de defi déja réalisée 
  */
-export async function reCalculPoint() {
+export async function recomputePoints() {
     // remise à 0 de tout les points 
     try {
         const [resetUsers, resetGroups, disconnectAll] = await prisma.$transaction([

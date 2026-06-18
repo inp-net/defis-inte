@@ -1,7 +1,5 @@
 import type { PageServerLoad } from './$types';
-import type { Actions } from './$types';
 import { prisma } from "$lib/server/prisma";
-import { canUseAdmin, reCalculPoint } from '../../lib/server/adminCommand';
 import { type ProofRead, Status, type Proof } from "$lib/types/types.d";
 
 export const load: PageServerLoad = async ({ locals }) => {
@@ -65,15 +63,3 @@ export const load: PageServerLoad = async ({ locals }) => {
         }, user
     };
 };
-
-export const actions: Actions = {
-    // Action pour crée ou modifier : upsert
-    reCalculPoints: async ({ locals }) => {
-        const userId = locals.user.id
-        canUseAdmin(userId);
-        try {
-            reCalculPoint();
-        } catch (err: any) {
-        }
-    }
-} satisfies Actions;

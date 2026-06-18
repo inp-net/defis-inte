@@ -1,14 +1,16 @@
 <script lang="ts">
-    import { Flex, Stack, Frame, Button, Switch } from "azucar-ui";
+    import { Flex, Stack, Button, Switch, Frame } from "azucar-ui";
     import BackButton from "$lib/components/BackButton.svelte";
-    import { Power } from "@lucide/svelte";
+    import { Power, Settings2, UserRound, Wrench, Recycle } from "@lucide/svelte";
     import { signOut } from "@auth/sveltekit/client";
-    import { goto } from "$app/navigation";
+    import { Toaster, toast } from "svelte-sonner";
 
     let { data } = $props();
 
     let darkMode = $state(data.user?.darkMode ?? false);
     let okTVn7 = $state(data.user?.isOkTVn7 ?? false);
+
+    const user = $derived(data.user);
 
     async function darkModeChange() {
         try {
@@ -60,38 +62,92 @@
             console.error("Erreur lors de l'envoi du form : ", err);
         }
     }
+
+    let hasRecomputedPoints : boolean = $state(false);
+
+    async function recomputePoints() {
+        if (hasRecomputedPoints) return;
+
+        toast.info("Recalcul des points en cours.");
+        try {
+            const response = await fetch("?/recomputePoints", {
+                method: "POST",
+                headers: { "x-sveltekit-action": "true" },
+                body: new FormData(),
+            });
+
+            if (response.ok) {
+                hasRecomputedPoinst = true;
+                if (result.type === "success")
+                    toast.success("Points recalculés, merci de ne pas abuser.");
+
+            }
+
+        } catch (err) {
+            toast.error("Impossible de recalculer les points");
+            console.error("Erreur lors de l'envoi du form : ", err);
+        }
+    }
+
 </script>
 
-<Flex direction="column" gap="xxl" margin="lg">
+<Flex direction="column" gap="lg" margin="lg">
     <Stack align="baseline">
         <BackButton />
         <h2>Paramètres</h2>
-        <p>Paramètres de l'application</p>
+    </Stack>
+    <span style="height: 2em;"></span>
+    <Frame>
+    <Stack align="baseline">
+        <Flex wrap={false} gap="sm" align="center">
+            <Settings2 size="15px"/>
+            <h3>Paramètres généraux</h3>
+        </Flex>
+        <p>Paramètres de l'application.</p>
         <Flex direction="column">
-            <Flex>
-                <Switch bind:checked={darkMode} onchange={darkModeChange}
-                ></Switch>
+            <Flex wrap={false}>
+                <Switch bind:checked={darkMode} onchange={darkModeChange}></Switch>
                 <p>Thème sombre</p>
             </Flex>
-            <Flex>
+            <Flex wrap={false}>
                 <Switch bind:checked={okTVn7} onchange={okTVn7Change}></Switch>
                 <p>
-                    Autoriser automatiquement TVN7 à utiliser les médias
-                    transmis*
+                    Autoriser automatiquement TVN7 à utiliser les médias transmis
                 </p>
             </Flex>
-            <Flex>
-                <Button
-                    icon={Power}
-                    onclick={() => signOut({ redirectTo: "/" })}
-                    >Se déconnecter</Button
-                >
-            </Flex>
         </Flex>
-        <!-- TODO remplir les explications TVN7-->
-        <p>* explications</p>
     </Stack>
+    </Frame>
+    <Frame>
+    <Stack align="baseline">
+        <Flex wrap={false} gap="sm" align="center">
+            <UserRound size="15px"/>
+            <h3>Paramètres du compte</h3>
+        </Flex>
+        <p>Gestion de votre compte INP-net.</p>
+        <Flex direction="column">
+            <Button icon={Power} variant="outline" onclick={() => signOut({ redirectTo: "/" })}> Se déconnecter </Button >
+        </Flex>
+    </Stack>
+    </Frame> 
+
+    {#if user.isAdmin}
+    <Frame>
+    <Stack align="baseline">
+        <Flex wrap={false} gap="sm" align="center">
+            <Wrench size="15px"/>
+            <h3>Board Admin</h3>
+        </Flex>
+        <p>Paramètres administrateurs.</p>
+        <Flex direction="column">
+            <Button disabled={hasRecomputedPoints} icon={Recycle} variant="outline" onclick={() => recomputePoints()}>Re-calculer les points</Button>
+        </Flex>
+    </Stack>
+    </Frame>
+    {/if}
 </Flex>
+
+<Toaster />
 
 <style>
 </style>
