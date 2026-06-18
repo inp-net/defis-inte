@@ -1,5 +1,6 @@
 import type { PageServerLoad } from './$types';
 import { fail, type Actions } from '@sveltejs/kit';
+import { canUseAdmin, recomputePoints } from '../../lib/server/adminCommand';
 import { switchMode, switchTVn7 } from '$lib/server/userService';
 
 export const load: PageServerLoad = async ({ locals }) => {
@@ -48,4 +49,9 @@ export const actions: Actions = {
             });
         }
     },
+    recomputePoints: async ({ locals }) => {
+        const userId = locals.user.id;
+        canUseAdmin(userId);
+        recomputePoints();
+    }
 }

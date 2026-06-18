@@ -102,18 +102,6 @@
             </Flex>
         </Frame>
     </Stack>
-    {#if user.isAdmin}
-        <Stack align="baseline">
-            <h2>Admin</h2>
-            <Button onclick={() => (showPopUp = true)}>Re Calcul Points</Button>
-        </Stack>
-
-        <PopUpVerification
-            bind:open={showPopUp}
-            message="Es-tu sûr de vouloir recalculer les points ?"
-            onConfirm={() => reCalculPoints()}
-        />
-    {/if}
 
     {#snippet proofRender(proof)}
         <!-- métadonnées -->
