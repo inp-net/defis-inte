@@ -1,3 +1,4 @@
+import 'dotenv/config'
 import type { UserChurros } from '$lib/types/types.d';
 import { PrismaClient, Prisma } from '../../../prisma/generated/prisma/client';
 import { PrismaPg } from '@prisma/adapter-pg';
@@ -10,7 +11,7 @@ const DATABASE_URL : string = env.DATABASE_URL;
 /**
  * Je sais pas mais la doc le met et ca marche
  */
-const adapter = new PrismaPg({ connectionString: DATABASE_URL });
+const adapter = new PrismaPg({ connectionString: process.env.DATABASE_URL });
 
 /**
  * Instance de Prisma à utiliser
