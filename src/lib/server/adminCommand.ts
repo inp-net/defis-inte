@@ -1,7 +1,7 @@
 import { prisma } from '$lib/server/prisma';
 import { error } from '@sveltejs/kit';
-import { ChallengeInput } from '$lib/types/types.d';
-import { Status, ProofInput } from '$lib/types/types.d';
+import type { ChallengeInput } from '$lib/types/types.d';
+import type { Status, ProofInput } from '$lib/types/types.d';
 import { pointsUpdate } from '$lib/server/proofService';
 
 // COMMANDES POUR LES ADMIN

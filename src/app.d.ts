@@ -1,5 +1,5 @@
 import type { Session } from '@auth/core/types';
-import type { User, UserChurros } from '$lib/types/types';
+import type { User, UserChurros } from '$lib/types/types.d';
 
 
 // definie que l'uid est un types string

@@ -1,3 +1,3 @@
-import { PUBLIC_1ATo2AChurros } from '$env/static/public';
+import { env } from '$env/dynamic/public';
 
-export const Churros1ATo2A = PUBLIC_1ATo2AChurros === 'true';
+export const Churros1ATo2A = env.PUBLIC_1ATo2AChurros === 'true';
