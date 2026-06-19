@@ -7,8 +7,8 @@ services:
       db:
         condition: service_healthy
     ports:
-      - "3000:3000"  # Serveur prod
-      - "5555:5555"  # Prisma Studio
+      - "3000:3000" # Serveur prod
+      - "5555:5555" # Prisma Studio
     env_file:
       - .env.docker
     volumes:
