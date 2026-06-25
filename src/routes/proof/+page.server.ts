@@ -51,7 +51,7 @@ export const actions: Actions = {
     approve: async ({ request, locals }) => {
         // si pas du bureau ou admin il est redirigée
         if (!locals.user.groupBoard && !locals.user.isAdmin) {
-            throw error(402, "tu ne fais pas partie du bureau d'un club")
+            throw error(403, "tu ne fais pas partie du bureau d'un club")
         }
 
         const data = await request.formData();
