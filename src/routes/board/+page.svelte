@@ -127,7 +127,7 @@
             {#each activeGroups as group}
                 <ChallengesToAccept
                     groupName={group.name}
-                    groupURL={group.groupURL}
+                    groupURL={group.pictureURL}
                     challenges={group.challenges}
                     bind:hideDone
                     onChallengeApprouved={approuveChallenge}
