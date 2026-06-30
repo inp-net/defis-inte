@@ -227,7 +227,7 @@
                         src={challenge.groupUrl}
                     />
                 {/if}
-                {#if !challenge.is_hidden}
+                {#if !challenge.is_hidden || sortBind!=="clubs"}
                     <FrameChallenge
                         challengeId={challenge.challengeId}
                         name={challenge.isDone
