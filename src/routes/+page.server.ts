@@ -114,7 +114,7 @@ export const actions: Actions = {
                 content = [textePreuve]
             } else {
                 if (files.length > maxFiles) {
-                    throw error(402, "Le nombre de fichier et limiter à 10")
+                    throw error(413, "Le nombre de fichier et limiter à 10")
                 }
                 for (const file of files) {
                     const url = await uploadUserFile(file, userId);
@@ -124,7 +124,7 @@ export const actions: Actions = {
             const body: ProofInput = { challengeId, userId, type, content, isOkTVn7 }
             // Verifie si c'est un 1A 
             if (!(locals.user.is1A && Churros1ATo2A)) {
-                throw error(402, "Tu n'es pas un 1A")
+                throw error(403, "Tu n'es pas un 1A")
             }
             const proof = await newProof(body);
             return {

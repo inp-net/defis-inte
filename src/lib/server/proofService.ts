@@ -50,7 +50,7 @@ async function canModifyProof(proofId: number, userId: string) {
     const groupIdProof = groupProof.challenge.groupId;
 
     if (!userAutorisation.groupBoard.some(board => board.groupId === groupIdProof) && !userAutorisation.isAdmin) {
-        throw error(402, "tu ne fais pas partie du bureau du club")
+        throw error(403, "tu ne fais pas partie du bureau du club")
     }
 }
 
