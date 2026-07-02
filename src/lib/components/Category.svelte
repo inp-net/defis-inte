@@ -23,6 +23,15 @@
     }
 </script>
 
+<!--
+    @component
+    Composant Category. Il permet à l'utilisateur de cliquer sur une catégorie
+    pour l'activer ou la désactiver, ce qui met à jour une liste partagée avec
+    le composant parent.
+    Utilisé par exemple comme Header d'un club (net7) dans la liste des défis
+    et cache la liste des défis si folded.
+-->
+
 <button onclick={() => flipFlopAddList()}>
     <br />
     <Flex justify="space-between" align="center" margin="xs">

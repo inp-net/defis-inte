@@ -1,12 +1,10 @@
 <script lang="ts">
     import Select from "$lib/components/Select.svelte";
-    import ButtonGroupFix from "$lib/components/ButtonGroupFix.svelte";
     import BackButton from "$lib/components/BackButton.svelte";
     import type { Location, GroupClub } from "$lib/types/types.d";
     import { UploadType } from "../../../../prisma/generated/prisma/enums";
-    import type { PageData } from "./$types";
     import { Toaster, toast } from "svelte-sonner";
-    import { Button, Flex, Stack, Frame, TextInput } from "azucar-ui";
+    import { Button, Flex, Stack, Frame, TextInput, ButtonGroup } from "azucar-ui";
     import { SearchIcon, Check } from "@lucide/svelte";
 
     let { data } = $props();
@@ -165,7 +163,7 @@
                         <div
                             style="display: flex; flex-direction: column; gap: 8px;"
                         >
-                            <ButtonGroupFix>
+                            <ButtonGroup>
                                 {#each presetPoints as pts}
                                     <Button
                                         variant={formState.nbPoints === pts
@@ -177,7 +175,7 @@
                                         {pts}
                                     </Button>
                                 {/each}
-                            </ButtonGroupFix>
+                            </ButtonGroup>
                         </div>
                     </Flex>
                 </Flex>

@@ -3,7 +3,6 @@
     import { Dot, Settings, Wrench, ImageUp } from "@lucide/svelte";
     import Profile from "$lib/components/Profile.svelte";
     import ButtonNotification from "$lib/components/ButtonNotification.svelte";
-    import type { User } from "$lib/types/types.d";
 
     const dotSize = "15px";
 

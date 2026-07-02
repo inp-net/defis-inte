@@ -61,6 +61,12 @@
     }
 </script>
 
+<!--
+    @component
+    Composant qui liste tous les défis pouvant être acceptés. Les défis déjà
+    accepté peuvent être masqué. Ce composant gère le masquage.
+-->
+
 <Flex gap="xs" direction="column">
     <button class="no-style" onclick={() => (isHide = !isHide)}>
         <Frame transparent={true} border={true} shadow={true}>

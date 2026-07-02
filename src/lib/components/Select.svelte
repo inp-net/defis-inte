@@ -6,7 +6,6 @@
     } from "svelte/elements";
     import { ChevronDown } from "@lucide/svelte";
 
-    // Combine attributes to accommodate either a select or an input element safely
     type Props = (HTMLSelectAttributes & HTMLInputAttributes) & {
         options: string[];
         icon?: typeof Icon;
@@ -38,6 +37,15 @@
             .join(" "),
     );
 </script>
+
+<!--
+    @component
+    Composant pour rechercher parmi une liste déjà prédéfinie. Utilisé par
+    exemple pour la séléction d'un club parmi tous les clubs.
+    Ce composant peut agit comme :
+    - un select : navigation dans une liste
+    - un datalist : l'utilisateur écrit et le composant lui suggère la suite.
+-->
 
 <label class={classes}>
     {#if children}

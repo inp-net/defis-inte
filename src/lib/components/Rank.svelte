@@ -16,6 +16,12 @@
     }: RankGroup = $props();
 </script>
 
+<!--
+    @component
+    Composant utilisé pour le classement. Met le nombre de points, le rang et
+    les informations utilises pour un classement.
+-->
+
 <Frame style="border-radius: 50pt; max-width: 100%;">
     <Flex
         justify="space-between"

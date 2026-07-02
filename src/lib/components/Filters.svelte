@@ -59,6 +59,14 @@
     }
 </script>
 
+<!--
+    @component
+    Composant qui fait une liste de badges pouvant être activé une par une pour
+    faire un Filtre. Ce composant met à jour une liste d'index des badges
+    activés pour le parent. Si aucun badge n'est activé, Tous est activé par
+    défaut.
+-->
+
 <div class="scrollable flex-container">
     {#each sortedFilters as { id, name, originalIndex, isTous } (id)}
         {@const isActive = isTous

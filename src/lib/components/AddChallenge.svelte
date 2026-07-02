@@ -2,7 +2,12 @@
     import { Frame, Flex, Button } from "azucar-ui";
 </script>
 
-<Frame outline={true}>
+<!--
+    @component
+    Composant ajouter un déjà dans la page d'acceuil.
+-->
+
+<Frame>
     <Flex direction="column" gap="lg">
         <Flex gap="xs" direction="column">
             <h3>Ajouter un défi</h3>

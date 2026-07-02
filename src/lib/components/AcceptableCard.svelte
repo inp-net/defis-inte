@@ -46,21 +46,14 @@
 </script>
 
 <!--
-@component
-Carte interactive pour afficher des éléments à valider, refuser ou modifier.
+    @component
+    Composant utilisé pour valider, modifier, refuser un challenge. Ce composant est modulaire.
 -->
+
 <main class="custom-frame">
     <Frame style="overflow: visible">
-        <Flex
-            justify="space-between"
-            gap="md"
-            direction="column"
-            style="width: 100%; max-width: 100%; min-width: 0;"
-        >
-            <button
-                class="no-style"
-                onclick={() => (showChildren = !showChildren)}
-            >
+        <Flex justify="space-between" gap="md" direction="column" style="width: 100%; max-width: 100%; min-width: 0;" >
+            <button class="no-style" onclick={() => (showChildren = !showChildren)} >
                 <Flex justify="space-between" align="center" gap="xs">
                     {#if isApprouved}
                         <Check style="flex-shrink: 0;" />
@@ -68,18 +61,13 @@ Carte interactive pour afficher des éléments à valider, refuser ou modifier.
                         <XIcon style="flex-shrink: 0;" />
                     {/if}
 
-                    <div
-                        class="scrollable-container"
-                        style="flex: 1 1 0%; min-width: 0;"
-                    >
+                    <div class="scrollable-container" style="flex: 1 1 0%; min-width: 0;" >
                         <p class="scrollable-text">{name}</p>
                     </div>
 
                     {#if points}
                         <Flex style="margin-left: auto; flex-shrink: 0;">
-                            <p style="text-wrap: nowrap;">
-                                <b>{points} pts</b>
-                            </p>
+                            <p style="text-wrap: nowrap;"> <b>{points} pts</b> </p>
                         </Flex>
                     {/if}
                 </Flex>

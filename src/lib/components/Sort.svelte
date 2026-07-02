@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { ArrowDownUp, ArrowUp, ArrowDown } from "@lucide/svelte";
+    import { ArrowUp, ArrowDown } from "@lucide/svelte";
     import { Button, Flex } from "azucar-ui";
 
     type Props = {
@@ -35,13 +35,12 @@
     }
 </script>
 
-<Flex>
-    <!-- <Button variant="outline" icon={ArrowDownUp}> -->
-    <!--     <select> -->
-    <!--     <h4>Trier</h4> -->
-    <!--     </select> -->
-    <!-- </Button> -->
+<!--
+    @component
+    Composant pour faire un filtre parmi une selection.
+-->
 
+<Flex>
     <Button variant="outline">
         {#if isDesc}
             <ArrowUp size="20px" onclick={() => flipSortType()} />

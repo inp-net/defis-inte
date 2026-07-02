@@ -24,4 +24,10 @@
     }
 </script>
 
+<!--
+    @component
+    Composant overengineered pour faire un retour de n pages.
+    Il n'utilise pas le retour de l'historique mais supprime les / du site.
+-->
+
 <Button icon={ArrowLeft} onclick={navigateBack}>Retour</Button>

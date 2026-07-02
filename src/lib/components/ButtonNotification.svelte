@@ -1,6 +1,11 @@
 <script lang="ts">
+    import type { HTMLAnchorAttributes, HTMLButtonAttributes } from 'svelte/elements';
     import type { Icon } from "@lucide/svelte";
     import { Button } from "azucar-ui";
+
+    // Le LSP veut pas détecter disabled sans ça
+    type AnchorProps = HTMLAnchorAttributes & { href: string, disabled: boolean };
+    type ButtonProps = HTMLButtonAttributes & { href?: never, disabled: boolean };
 
     type Props = (AnchorProps | ButtonProps) & {
         variant?: "default" | "outline" | "ghost";
@@ -19,6 +24,11 @@
         ...rest
     }: Props = $props();
 </script>
+
+<!--
+    @component
+    Composant bouton de Azucar-UI avec la possibilité de mettre un compteur de notifications.
+-->
 
 <div class="button-container">
     <Button {icon} {variant} {disabled} {href}></Button>

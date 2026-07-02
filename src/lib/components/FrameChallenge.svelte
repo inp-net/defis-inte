@@ -1,14 +1,6 @@
 <script lang="ts">
-    import {
-        ChevronDown,
-        ChevronUp,
-        Upload,
-        MapPin,
-        Building,
-        File,
-        TextAlignStart,
-    } from "@lucide/svelte";
-    import { Frame, Flex, Button, Avatar } from "azucar-ui";
+    import { TextAlignStart, } from "@lucide/svelte";
+    import { Frame, Flex } from "azucar-ui";
     import UploadProof from "./UploadProof.svelte";
     import { Churros1ATo2A } from "$lib/env";
 
@@ -18,7 +10,6 @@
         challengeId: number;
         name: string;
         nbPoints: number;
-        location: string;
         clubName: string;
         clubUrl: string;
         desc: string;
@@ -40,7 +31,6 @@
         challengeId = 0,
         name = "",
         nbPoints = 0,
-        location,
         clubName,
         clubUrl,
         desc = "",
@@ -54,6 +44,13 @@
 
     let isUnfolded = $state(false);
 </script>
+
+<!--
+    @component
+    Composant FrameChallenge est le composant qui permet de lire et d'envoyer les challenges.
+    Il est présent dans la page d'acceuil.
+    Il peut être unfold.
+-->
 
 <Frame
     border={true}
@@ -143,7 +140,6 @@
     }
 
     .scrollable {
-        /* padding: var(--size-xxs) 0px;  */
         width: 100%;
         overflow-x: auto;
         -webkit-overflow-scrolling: touch;

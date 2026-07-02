@@ -20,6 +20,11 @@
     }: Props = $props();
 </script>
 
+<!--
+    @component
+    Composant Profile met l'avatar et le nom et prénom d'un utilisateur.
+-->
+
 <a href="/profile">
     <Flex align="center" gap="md">
         <Avatar {src} {alt} {size} />
