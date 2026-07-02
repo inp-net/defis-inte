@@ -73,18 +73,16 @@ async function formatUserForPrisma(userChurros: UserChurros): Promise<{
             // Groupe d'inté
             if (FormatGroupInte(dataGroup.group.uid)) {
                 groupInteId = dataGroup.group.uid;
-                const groupFind = await prisma.groupInte.findUnique({ where: { groupId: dataGroup.group.uid } });
+                
                 //si le groupe n'est pas dans la db on synchronise le groupes de churros avec la db
-                if (groupFind == null) {
+                
                     const groupAdded = await syncGroupFromChurros(dataGroup.group.uid);
-                }
+                
 
                 // Club ou Assos
             } else if (!FormatGroupPostulant(dataGroup.group.uid)) {
-                const groupFind = await prisma.groupClub.findUnique({ where: { groupId: dataGroup.group.uid } });
-                //Si le groupe n'est pas dans la db on synchronise le groupes de churros avec la db
+                // on synchronise le groupes de churros uid avec la db
                 // Fait pour éviter d'avoir ce que l'ont veut pas dans la db  
-                if (groupFind == null) {
                     const groupAdded = await syncGroupFromChurros(dataGroup.group.uid);
                     if (groupAdded) {
                         group.push(dataGroup.group);
@@ -93,13 +91,6 @@ async function formatUserForPrisma(userChurros: UserChurros): Promise<{
                             groupBoard.push(dataGroup.group);
                         }
                     }
-                } else {
-                    group.push(dataGroup.group);
-                    // On vérifie si l'utilisateur est dans un bureau du groupe et si oui on le connecte au groupe en base de données
-                    if (dataGroup.secretary || dataGroup.president || dataGroup.vicePresident || dataGroup.treasurer) {
-                        groupBoard.push(dataGroup.group);
-                    }
-                }
             }
         } catch (error) {
             console.log("Erreur : ", error)

@@ -29,22 +29,33 @@ export async function syncGroupFromChurros(groupId: string) {
     // on rajoute le groupe dans la db en fonction de si c'est un club ou un group d'inté
     const dataPull = await response.json();
     const groupData = dataPull.data.group;
+
+    const update = {
+            name: groupData.name,
+            pictureURL: groupData.pictureURL
+        };
+    const create = {
+            groupId: groupId,
+            name: groupData.name,
+            pictureURL: groupData.pictureURL
+        };
+
     if (groupData.type === 'Club' || groupData.type === 'Association' || groupData.type === 'StudentAssociationSection') {
-        await prisma.groupClub.create({
-            data: {
-                groupId: groupId,
-                name: groupData.name,
-                pictureURL: groupData.pictureURL
-            }
+
+        await prisma.groupClub.upsert({
+            where: {
+                groupId: groupId
+            },update,
+            create
         });
         return true;
     } else if (groupData.type === 'Integration') {
-        await prisma.groupInte.create({
-            data: {
-                groupId: groupId,
-                name: groupData.name,
-                pictureURL: groupData.pictureURL
-            }
+
+        await prisma.groupInte.upsert({
+            where: {
+                groupId: groupId
+            },update,
+            create
         });
         return true;
     }
