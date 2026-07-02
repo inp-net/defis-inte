@@ -52,7 +52,7 @@ export async function canModifyChallenge(challengeIdRaw: any, userId: string, de
     });
 
     if (!userAutorisation.groupBoard.some(board => board.groupId === challenge.groupId) && !userAutorisation.isAdmin) {
-        throw error(402, "tu ne fais pas partie du bureau du club")
+        throw error(403, "tu ne fais pas partie du bureau du club")
     }
     return true
 
