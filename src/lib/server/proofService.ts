@@ -186,7 +186,7 @@ export async function denyProof(proofId: number, userId: string) {
     return updatedProof;
 }
 
-/** Mise a jour des points de l'utilisateur et du groupe reussisant le challenge 
+/** Mise a jour des points de l'utilisateur reussisant le challenge 
 * @param proofId identifiant de la preuve qui à été modifier
 */
 export async function pointsUpdate(proofId: number) {
@@ -198,36 +198,56 @@ export async function pointsUpdate(proofId: number) {
             userId: true,
             user: {
                 select: {
-                    points: true,
-                    groupInteId: true,
-                    groupInte: { select: { points: true } }
+                    points: true
                 }
             },
             challengeId: true,
             challenge: { select: { nbPoints: true } }
         }
     })
-    console.log("ca marche")
     let newPointUser: number = proofData.challenge.nbPoints + proofData.user.points;
-        console.log("ca marche la aussi ")
-    const newPointGroup: number = proofData.challenge.nbPoints + proofData.user.groupInte.points;
-
-    const groupInteUpdate = await prisma.groupInte.update({
-        where: {
-            groupId: proofData.user.groupInteId
-        },
-        data: {
-            points: newPointGroup,
-            challengeSucceed: { 
-                connect: { challengeId: proofData.challengeId } 
-            }
-        }
-    })
 
     const userUpdate = await prisma.user.update({
         where: { id: proofData.userId },
-        data: { points: newPointUser } 
+        data: { points: newPointUser }
     })
 
-    return
+    return userUpdate;
+}
+
+/**Ajout d'un challenge réussi pour le groupe d'intégration de l'utilisateur
+ * @param userId // identifiant de l'utilisateur 
+ * @param proofId // identifiant de la preuve 
+ */
+export async function addChallengeSucced(userId: string, proofId: number) {
+    const proofData = await prisma.proof.findUnique({
+        where: {
+            proofId: proofId
+        },
+        select: {
+            challengeId: true
+        }
+    });
+    const userUpdate = await prisma.user.findUnique({
+        where: { id: userId },
+        select: {
+            groupInteId: true
+        }
+    });
+
+    const challengeUpdate = await prisma.challenge.update({
+        where: {
+            challengeId: proofData.challengeId
+        },
+        data: {
+            groupInteSucceed: {
+                connect: {
+                    id: userUpdate.groupInteId
+                }
+            }
+        }
+    });
+
+    return challengeUpdate;
+
 }
