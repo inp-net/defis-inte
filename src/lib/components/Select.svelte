@@ -14,6 +14,7 @@
         disabled?: boolean;
         id?: string;
         type?: "select" | "datalist";
+        outline?: boolean;
     };
 
     let {
@@ -26,13 +27,14 @@
         type = "select",
         id,
         class: className,
+        outline = false,
         ...rest
     }: Props = $props();
 
     const datalistId = $derived(id);
 
     const classes = $derived(
-        ["text-input", icon && "text-input-has-icon", className]
+        ["text-input", icon && "text-input-has-icon", outline && "text-outline", className]
             .filter(Boolean)
             .join(" "),
     );
@@ -107,7 +109,7 @@
         width: 100%;
     }
 
-    @media (min-width: 768px) {
+    @media (min-width: 600px) {
         .text-input {
             width: 25%;
         }
@@ -192,4 +194,37 @@
         outline: 2px solid var(--color-border-focus);
         outline-offset: 4px;
     }
+
+    .text-outline .input-wrapper {
+        color: var(--color-fg-low);
+        background-color: var(--color-bg);
+        box-shadow:
+            0 0 0 1px var(--color-border) inset,
+            var(--shadow-surface);
+    }
+
+    .text-outline .input-wrapper:hover:not([data-disabled="true"]) {
+        background-color: var(--color-bg-hover);
+    }
+
+    .text-outline .input-wrapper:has(select:active, input:active):not([data-disabled="true"]) {
+        color: var(--color-fg-low);
+        background-color: var(--color-bg-active);
+        box-shadow:
+            0 0 0 1px var(--color-border-focus) inset,
+            var(--shadow-surface);
+        scale: var(--active-scale-factor);
+    }
+
+    .text-outline .input-wrapper:has(select:focus-visible, input:focus-visible):not([data-disabled="true"]) {
+        box-shadow: var(--shadow-surface);
+    }
+
+    .text-outline .input-wrapper[data-disabled="true"] {
+        --base-color: var(--color-neutral);
+        color: var(--color-border-subtle);
+        background: var(--color-bg);
+        cursor: not-allowed;
+    }
+
 </style>

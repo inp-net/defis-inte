@@ -1,6 +1,6 @@
 <script lang="ts">
     import { Flex, Frame, Button } from "azucar-ui";
-    import { Dot, Settings, Wrench, ImageUp } from "@lucide/svelte";
+    import { Trophy, Settings, Wrench, ImageUp } from "@lucide/svelte";
     import Profile from "$lib/components/Profile.svelte";
     import ButtonNotification from "$lib/components/ButtonNotification.svelte";
 
@@ -9,6 +9,7 @@
     type Props = {
         firstName: string;
         lastName: string;
+        groupName: string;
         picture: string;
         accessAdmin: boolean;
         notificationsDefis?: number;
@@ -18,6 +19,7 @@
     const {
         firstName,
         lastName,
+        groupName,
         picture,
         accessAdmin,
         notificationsDefis,
@@ -33,10 +35,12 @@
     <Frame transparent={true} border={true} shadow={true}>
         <Flex justify="space-between" align="center" wrap={false}>
             <Flex align="center" gap="md">
-                <Profile {firstName} {lastName} src={picture} hideName={true} size="xl" />
+                <Profile {firstName} {lastName} {groupName} src={picture} hideName={true} size="xl" />
             </Flex>
             <Flex wrap={false} gap="xs" align="center">
-                <Button href="/leaderboard">Classement</Button>
+                <Button href="/leaderboard" icon={Trophy}>
+                    <span class="hide-small">Classement</span>
+                </Button>
                 {#if accessAdmin}
                     <ButtonNotification
                         href="/board"
@@ -64,5 +68,11 @@
         top: 0;
         padding: 10px;
         z-index: 100;
+    }
+
+    @media (max-width: 600px) {
+        .hide-small {
+            display: none;
+        }
     }
 </style>

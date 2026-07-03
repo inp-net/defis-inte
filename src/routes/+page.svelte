@@ -8,7 +8,7 @@
 
     // composants
     import { Flex, Stack, Button } from "azucar-ui";
-    import { MapPin, UsersRound, Trophy } from "@lucide/svelte";
+    import { MapPin, UsersRound, Trophy, LogIn } from "@lucide/svelte";
     import Header from "$lib/components/Header.svelte";
     import FrameChallenge from "$lib/components/FrameChallenge.svelte";
     import AddChallenge from "$lib/components/AddChallenge.svelte";
@@ -17,7 +17,7 @@
     import Category from "$lib/components/Category.svelte";
 
     let { data }: { data: PageData } = $props();
-    let challenges: ChallengeRead[] = $state(data.posts.challenges);
+    let challenges: ChallengeRead[] = $derived(data.posts.challenges);
 
     // Données liées au profil de l'utilisateur
     const user = $derived(data?.user);
@@ -130,7 +130,7 @@
                 return items.sort(secondarySort);
         }
     });
-    let isConnected: boolean = $state(!!user);
+    let isConnected: boolean = $derived(Boolean(user));
 
     // Précompute les endroits où il faut mettre une catégorie
     const processedChallenges = $derived(() => {
@@ -151,10 +151,10 @@
 </script>
 
 {#if !isConnected}
-    <Flex gap="xs" margin="xs" justify="right">
+    <Flex gap="xs" margin="lg" justify="right">
         <Button
             onclick={() => signIn("authentik", { callbackUrl: "/" })}
-            style="padding: var(--size-md)"
+            icon={LogIn}
         >
             Se connecter
         </Button>
@@ -163,6 +163,7 @@
     <Header
         firstName={user?.firstName ?? null}
         lastName={user?.lastName ?? null}
+        groupName={user?.is1A ? user?.groupInte?.name : ""}
         picture={user?.profilePictureURL ?? null}
         accessAdmin={user?.isAdmin || user?.groupBoard.length > 0}
         notificationsDefis={data.posts.pendingChallengeCount}
@@ -205,7 +206,7 @@
 
     <!-- Liste des défis -->
     <Stack style="max-width: 100%; min-width: 0; overflow: hidden;">
-        <Flex gap="xs" wrap={false} align="center">
+        <Flex gap="xxs" wrap={false} align="center">
             <SearchBar bind:value={searchValue} />
             <Sort
                 bind:bind={sortBind}
