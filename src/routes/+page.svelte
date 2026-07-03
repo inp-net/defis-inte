@@ -17,7 +17,7 @@
     import Category from "$lib/components/Category.svelte";
 
     let { data }: { data: PageData } = $props();
-    let challenges: ChallengeRead[] = $state(data.posts.challenges);
+    let challenges: ChallengeRead[] = $derived(data.posts.challenges);
 
     // Données liées au profil de l'utilisateur
     const user = $derived(data?.user);
@@ -130,7 +130,7 @@
                 return items.sort(secondarySort);
         }
     });
-    let isConnected: boolean = $state(!!user);
+    let isConnected: boolean = $derived(Boolean(user));
 
     // Précompute les endroits où il faut mettre une catégorie
     const processedChallenges = $derived(() => {
