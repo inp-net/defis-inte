@@ -8,8 +8,6 @@ import type {
     UploadType,
 } from '../../../prisma/generated/prisma/client';
 
-
-
 export type UserChurros = {
     uid: string;
     firstName: string;
