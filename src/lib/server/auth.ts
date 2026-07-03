@@ -32,6 +32,11 @@ const providers: Provider[] = [
 export const { handle, signIn, signOut } = SvelteKitAuth({
     secret: BETTER_AUTH_SECRET,
     providers,
+    session: {
+    strategy: "jwt",
+    maxAge: 2 * 60 * 60,  // durée du token en secondes (ici 2 heures)
+    updateAge: 1 * 60 * 60,   // durée de mise à jour du token en secondes (ici 24 heures)
+  },
     trustHost: true,
     logger: {
         error: (code, ...message) => {
