@@ -32,10 +32,9 @@
     et cache la liste des défis si folded.
 -->
 
-<button onclick={() => flipFlopAddList()}>
-    <br />
-    <Flex justify="space-between" align="center" margin="xs">
-        <Flex align="center" gap="md">
+<button onclick={() => flipFlopAddList()} style="margin: 2em 0">
+    <Flex justify="space-between" align="center" margin="xs" wrap={false}>
+        <Flex align="center" gap="md" wrap={false}>
             {#if src}
                 <img src={src} alt={name} />
             {/if}
@@ -48,14 +47,9 @@
         {/if}
     </Flex>
     <hr />
-    <br />
 </button>
 
 <style>
-    br {
-        padding: 0 var(--size-xl);
-    }
-
     img {
         height: 3em;
         width: 3em;
@@ -69,6 +63,11 @@
         background-color: var(--color-fg-high);
         border: none;
         border-radius: 1px;
+    }
+
+    h4 {
+        margin: 0;
+        text-align: left;
     }
 
     button {
