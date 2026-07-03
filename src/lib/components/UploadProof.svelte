@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { Flex, Button, TextInput, Switch } from "azucar-ui";
+    import { Flex, Button, TextInput, Switch, Frame } from "azucar-ui";
 
     type Prop = {
         challengeId: number;
@@ -51,25 +51,23 @@
                 (textePreuve = (e.target as HTMLInputElement).value)}
         ></TextInput>
     {:else}
-        <Flex
-            align="center"
-            style="padding: 15px; border: 2px dashed #ccc; border-radius: 6px; background-color: #fafafa;"
-        >
-            <input
-                type="file"
-                bind:files={fichiers}
-                accept=".png, .jpeg, .jpg, .mp4, .tif, .tiff, .avif, .heif, .heic, .webm, .mov, .webp, .gif"
-                style="width: 100%; cursor: pointer;"
-            />
-        </Flex>
+        <Frame style="border: dashed 2px;">
+            <Flex align="center" >
+                <input
+                    type="file"
+                    bind:files={fichiers}
+                    accept=".png, .jpeg, .jpg, .mp4, .tif, .tiff, .avif, .heif, .heic, .webm, .mov, .webp, .gif"
+                    style="width: 100%; cursor: pointer;"
+                />
+            </Flex>
+        </Frame>
     {/if}
 
     <Flex justify="flex-end" align="center">
         {#if type != "TEXT"}
-            <Switch bind:checked={isOkTVn7}
-                >J'accepte que TVN7 utilise ces fichiers (+ d'infos dans
-                Paramètres)</Switch
-            >
+            <Switch bind:checked={isOkTVn7}>
+                <span class="scrollable"> J'autorise TVn7 à utiliser l'image. </span>
+            </Switch>
         {/if}
         <Button
             onclick={() =>
@@ -80,3 +78,15 @@
         </Button>
     </Flex>
 </Flex>
+
+<style>
+
+    .scrollable {
+        display: inline-block;
+        max-width: 250px;
+        white-space: nowrap;
+        overflow-x: auto;
+        vertical-align: middle;
+    }
+
+</style>
