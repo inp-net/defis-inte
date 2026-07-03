@@ -183,22 +183,25 @@
         </Stack>
     {/if}
 
+    <!-- Snippet pour afficher les métadonnées -->
     {#snippet challengeDetails(challenge)}
         <Flex gap="xs" direction="column">
             <Flex gap="xs" align="center">
                 <Trophy size="15px" />
                 <p>Défi réussi par :</p>
             </Flex>
-            <Flex
-                direction="column"
-                gap="xxs"
-                wrap={false}
-                style="max-height: 100px; overflow: scroll; margin-left: 10px;"
-            >
-                {#each challenge.groupInteSucceedName as name}
-                    <p>- {name}</p>
-                {/each}
-            </Flex>
+            {#if challenge.groupInteSucceedName.length > 0}
+                <Flex
+                    direction="column"
+                    gap="xxs"
+                    wrap={false}
+                    style="max-height: 100px; overflow: scroll; margin-left: 10px;"
+                >
+                    {#each challenge.groupInteSucceedName as name}
+                        <p>- {name}</p>
+                    {/each}
+                </Flex>
+            {/if}
         </Flex>
         <Flex gap="xs" align="center" ><UsersRound size="15px" /> {challenge.groupName} </Flex>
         <Flex gap="xs" align="center" ><MapPin size="15px" /> {challenge.locationName} </Flex>
