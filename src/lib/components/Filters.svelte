@@ -16,7 +16,6 @@
 
     let isTousActive = $derived(activeIndexes.length === 0);
 
-    // 1. Map items with a strictly unique string ID to prevent collision with -1
     let sortedFilters = $derived(
         [
             { id: "all", name: "Tous", originalIndex: -1, isTous: true },
@@ -120,5 +119,35 @@
         flex-shrink: 0;
         display: inline-flex;
         will-change: transform;
+    }
+
+    .scrollable::-webkit-scrollbar {
+        display: none;
+    }
+
+    /* Utile pour les souris et afficher la scrollbar */
+    @media (pointer: fine) {
+        .scrollable {
+            scrollbar-width: auto;
+            padding-bottom: 8px;
+        }
+
+        .scrollable::-webkit-scrollbar {
+            display: block;
+            height: 6px;
+        }
+
+        .scrollable::-webkit-scrollbar-track {
+            background: transparent; 
+        }
+
+        .scrollable::-webkit-scrollbar-thumb {
+            background-color: rgba(0, 0, 0, 0.2);
+            border-radius: 10px;
+        }
+
+        .scrollable::-webkit-scrollbar-thumb:hover {
+            background-color: rgba(0, 0, 0, 0.4);
+        }
     }
 </style>
