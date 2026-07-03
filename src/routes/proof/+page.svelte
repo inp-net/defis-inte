@@ -6,10 +6,10 @@
     import type { Proof } from "$lib/types/types.d";
     import { Status } from "$lib/types/types.d";
     import AcceptableCard from "$lib/components/AcceptableCard.svelte";
+    import { invalidateAll } from '$app/navigation';
 
     let { data }: { data: PageData } = $props();
     let proofs: Proof[] = $state(data.posts.proofs);
-
     $effect(() => {
         proofs = data.posts.proofs;
     });
@@ -73,17 +73,14 @@
         }
     }
 
-    let validProofIds = $state<number[]>([]);
-    let deniedProofIds = $state<number[]>([]);
-
     async function handleAccept(id: number) {
-        await approveProof(id);
-        validProofIds.push(id);
+        approveProof(id);
+        invalidateAll(); // reset les données
     }
 
     async function handleDeny(id: number) {
-        await denyProof(id);
-        deniedProofIds.push(id);
+        denyProof(id);
+        invalidateAll();
     }
 
     function formatDateTime(date: Date | string): string {
@@ -191,10 +188,8 @@
                     isModifiable={false}
                     onAccepted={() => handleAccept(proof.proofId)}
                     onDeleted={() => handleDeny(proof.proofId)}
-                    isApprouved={proof.status === Status.VALID ||
-                        validProofIds.includes(proof.proofId)}
-                    isDisabled={proof.status === Status.DENIED ||
-                        deniedProofIds.includes(proof.proofId)}
+                    isApprouved={proof.status === Status.VALID}
+                    isDisabled={proof.status === Status.DENIED}
                 >
                     {@render proofDetails(proof)}
                 </AcceptableCard>
@@ -204,11 +199,6 @@
 </Flex>
 
 <style>
-    .proof-content {
-        max-width: 100%;
-        overflow-x: hidden;
-    }
-
     .proof-media-list {
         display: flex;
         flex-direction: column;
