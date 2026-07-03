@@ -19,7 +19,7 @@
 
 <div class="container">
     {@render children?.()}
-    <Footer />
+    <Footer isDarkTheme={darkMode} />
 </div>
 
 <style>
