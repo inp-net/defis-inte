@@ -5,6 +5,7 @@
     import { signIn } from "@auth/sveltekit/client";
     import { Churros1ATo2A } from "$lib/env";
     import { Toaster, toast } from "svelte-sonner";
+    import { invalidateAll } from '$app/navigation';
 
     // composants
     import { Flex, Stack, Button } from "azucar-ui";
@@ -37,14 +38,26 @@
         }),
     );
 
+    let isSending = $state(false);
+
     async function handleSave(
         fichiers: FileList | null,
         textePreuve: string,
         type: string,
         isOkTVn7: boolean = false,
         challengeId: number,
-    ) {
+    ){
+        if (isSending) return;
+
+        // Vérifie que le groupe n'a pas déjà fait le défi
+        const currentChallenge = challenges.find(c => c.challengeId === challengeId);
+        if (currentChallenge?.isDone) {
+            toast.error("Votre groupe a déjà validé ce défi !");
+            return;
+        }
+
         try {
+            isSending = true;
             toast.info("Preuve envoyée.");
 
             const formData = new FormData();
@@ -54,8 +67,10 @@
                 formData.append("textePreuve", textePreuve);
             } else {
                 formData.append("isOkTVn7", isOkTVn7.toString());
-                for (const file of fichiers) {
-                    formData.append("file", file);
+                if (fichiers) {
+                    for (const file of fichiers) {
+                        formData.append("file", file);
+                    }
                 }
             }
 
@@ -65,11 +80,12 @@
                 body: formData,
             });
             if (response.ok) {
-                // Changement local des modifications serveur
                 const result = await response.json();
 
-                if (result.type === "success")
+                if (result.type === "success") {
                     toast.success("Preuve ajouté avec succès");
+                    invalidateAll();
+                }
 
                 if (result.type === "failure")
                     toast.error("Impossible d'envoyer la preuve. Vérifier sa présence dans la page profil.")
@@ -77,6 +93,8 @@
         } catch (err) {
             toast.error("Erreur dans l'envoie du défi : " + err);
             console.error("Erreur lors de l'envoi du form : ", err);
+        } finally {
+            isSending = false;
         }
     }
 
@@ -224,6 +242,14 @@
             wrap={false}
         >
             {#each processedChallenges() as challenge (challenge.challengeId)}
+                {@const isDone = challenge.isDone}
+                {@const isPending = challenge.isPending}
+                {@const challengeTitle = isDone 
+                    ? `✔ ${challenge.name}` 
+                    : isPending 
+                        ? `⏳ ${challenge.name} (En attente)` 
+                        : challenge.name}
+
                 {#if challenge.showCategory}
                     <Category
                         name={challenge.groupName}
@@ -234,9 +260,7 @@
                 {#if !challenge.is_hidden || sortBind!=="clubs"}
                     <FrameChallenge
                         challengeId={challenge.challengeId}
-                        name={challenge.isDone
-                            ? `✔ ${challenge.name}`
-                            : challenge.name}
+                        name={challengeTitle}
                         nbPoints={challenge.nbPoints}
                         isText={challenge.type === "TEXT"}
                         location={challenge.locationName}
@@ -247,7 +271,7 @@
                         onSave={handleSave}
                         defaultTVn7={user?.isOkTVn7}
                         is1A={user?.is1A}
-                        isEnabled={isConnected && !challenge.isDone}
+                        isEnabled={isConnected && !challenge.isDone && !isSending}
                     >
                         {@render challengeDetails(challenge)}
                     </FrameChallenge>

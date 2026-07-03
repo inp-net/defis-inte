@@ -43,12 +43,12 @@
     );
 
     async function handleAccept(id: number) {
-        await onChallengeApprouved(id);
+        onChallengeApprouved(id);
         invalidateAll();
     }
 
     async function handleDelete(id: number) {
-        await onChallengeDeleted(id);
+        onChallengeDeleted(id);
         invalidateAll();
     }
 </script>

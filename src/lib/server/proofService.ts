@@ -60,16 +60,17 @@ async function canModifyProof(proofId: number, userId: string) {
  * @param body information nécessaire (voire type ProofInput)
  * @returns ce qui à été crée en db 
  */
-export async function newProof(body: ProofInput) {
+ export async function newProof(body: ProofInput) {
     const { challengeId, userId, type, content, isOkTVn7 } = body;
 
     const challenge = await prisma.challenge.findFirst({
         where: { challengeId: challengeId }
     });
 
+    // On récupère l'utilisateur ainsi que son groupe d'intégration d'un seul coup
     const user = await prisma.user.findUnique({
         where: { id: userId }
-    })
+    });
 
     if (!challenge) {
         throw error(404, `Challenge non trouvé: ${challengeId}`);
@@ -80,52 +81,42 @@ export async function newProof(body: ProofInput) {
     }
 
     // Vérifie si l'utilisateur existe
-    if (! await prisma.user.findUnique({ where: { id: userId } })) {
-        throw error(403, "l'utilisateur n'existe pas")
+    if (!user) {
+        throw error(403, "L'utilisateur n'existe pas");
     }
 
-    //verifier que c'est bien un is1A    
-    if ((!await prisma.user.findUnique({ where: { id: userId }, select: { is1A: true } })) && Churros1ATo2A) {
-        throw error(403, 'Tu n\'es pas un 1A');
+    // Vérifier que c'est bien un 1A    
+    if (!user.is1A && Churros1ATo2A) {
+        throw error(403, "Tu n'es pas un 1A");
     }
 
-    //on ne peut pas envoyé plusieur preuve par groupe d'inté 
-    const challengeCheck = await prisma.challenge.findUnique({
-        where: {
-            challengeId: challengeId,
-        },
-        select: {
-            groupInteSucceed: {
-                where: {
-                    usersInte: {
-                        some: { id: userId }
-                    }
-                },
-                select: {
-                    groupId: true
+    // Vérifier si son groupe d'inté a déjà fait le défi
+    if (user.groupInteId) {
+        const existingProofFromGroup = await prisma.proof.findFirst({
+            where: {
+                challengeId: challengeId,
+                status: { in: ["PENDING", "VALID"] },
+                user: {
+                    groupInteId: user.groupInteId
+                }
+            },
+            select: {
+                status: true,
+                user: {
+                    select: { firstName: true, lastName: true }
                 }
             }
-        }
-    });
+        });
 
-    if (challengeCheck && challengeCheck.groupInteSucceed.length > 0) {
-        throw error(403, "Challenge déjà fait par un membre de ton groupe d'intégration.");
-    }
-
-    // On ne peut pas envoyer si un défi est PENDING
-    const existingGroupPendingProof = await prisma.proof.findFirst({
-        where: {
-            challengeId: challengeId,
-            status: Status.PENDING,
-            user: {
-                groupInteId: user.groupInteId
+        if (existingProofFromGroup) {
+            const author = `${existingProofFromGroup.user.firstName} ${existingProofFromGroup.user.lastName}`;
+            if (existingProofFromGroup.status === "PENDING") {
+                throw error(400, `Une preuve a déjà été soumise par ${author} et attend validation.`);
+            } else {
+                throw error(400, `Votre groupe a déjà validé ce défi (validé par ${author}).`);
             }
         }
-    });
-    if (existingGroupPendingProof) {
-        throw error(403, "Challenge déjà fait par un membre de ton groupe d'intégration.");
     }
-
 
     const coreData = {
         user: {
@@ -146,88 +137,4 @@ export async function newProof(body: ProofInput) {
             ...coreData,
         }
     });
-}
-
-/** Accepter une preuve. 
-* @param proofId identifiant de la preuve
-* @param userId identifiant de l'utilisateur ayant valider la preuve
-*/
-export async function approveProof(proofId: number, userId: string) {
-    await canModifyProof(proofId, userId);
-
-    const updatedProof = await prisma.proof.update({
-        where: { proofId: proofId },
-        data: {
-            status: Status.VALID,
-            validatorId: userId
-        }
-    });
-
-    return updatedProof;
-}
-
-
-/** refuser une preuve. 
-* @param proofId identifiant de la preuve
-* @param userId identifiant de l'utilisateur ayant valider la preuve
-*/
-export async function denyProof(proofId: number, userId: string) {
-
-    await canModifyProof(proofId, userId);
-
-    const updatedProof = await prisma.proof.update({
-        where: { proofId: proofId },
-        data: {
-            status: Status.DENIED,
-            validatorId: userId
-        }
-    });
-
-    return updatedProof;
-}
-
-/** Mise a jour des points de l'utilisateur et du groupe reussisant le challenge 
-* @param proofId identifiant de la preuve qui à été modifier
-*/
-export async function pointsUpdate(proofId: number) {
-    const proofData = await prisma.proof.findUnique({
-        where: {
-            proofId: proofId
-        },
-        select: {
-            userId: true,
-            user: {
-                select: {
-                    points: true,
-                    groupInteId: true,
-                    groupInte: { select: { points: true } }
-                }
-            },
-            challengeId: true,
-            challenge: { select: { nbPoints: true } }
-        }
-    })
-    console.log("ca marche")
-    let newPointUser: number = proofData.challenge.nbPoints + proofData.user.points;
-        console.log("ca marche la aussi ")
-    const newPointGroup: number = proofData.challenge.nbPoints + proofData.user.groupInte.points;
-
-    const groupInteUpdate = await prisma.groupInte.update({
-        where: {
-            groupId: proofData.user.groupInteId
-        },
-        data: {
-            points: newPointGroup,
-            challengeSucceed: { 
-                connect: { challengeId: proofData.challengeId } 
-            }
-        }
-    })
-
-    const userUpdate = await prisma.user.update({
-        where: { id: proofData.userId },
-        data: { points: newPointUser } 
-    })
-
-    return
 }

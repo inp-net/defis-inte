@@ -11,12 +11,12 @@ export const load: PageServerLoad = async ({ locals }) => {
 
     const user = locals.user || null;
 
+    // Récupère tous les challenges sans typages
     const allChallengesUntyped = await prisma.challenge.findMany({
         where: {
             isDeleted: false
         },
         select: {
-            // Prend que les informations utiles
             challengeId: true,
             name: true,
             description: true,
@@ -36,22 +36,37 @@ export const load: PageServerLoad = async ({ locals }) => {
                     groupId: true,
                     name: true,
                 }
+            },
+            proofs: {
+                where: {
+                    status: "PENDING",
+                    user: {
+                        groupInteId: user?.groupInteId ?? ""
+                    }
+                },
+                select: {
+                    proofId: true
+                }
             }
         }
     })
 
-    const allChallenges = allChallengesUntyped.map(({ group, groupInteSucceed, ...challenge }) => {
+    // Ajoute une information si un membre du groupe à fait le défi
+    const allChallenges = allChallengesUntyped.map(({ group, groupInteSucceed, proofs, ...challenge }) => {
         const isDone = Boolean(
             user?.groupInteId &&
             groupInteSucceed.some(g => g.groupId === user.groupInteId)
         );
 
+        const isPending = user?.groupInteId ? proofs.length > 0 : false;
+
         return {
             ...challenge,
             groupName: group.name ?? "",
             groupUrl: group.pictureURL ?? "",
-            groupInteSucceedName: groupInteSucceed.map(g => g.name), // Aligné avec votre type ChallengeRead
+            groupInteSucceedName: groupInteSucceed.map(g => g.name),
             isDone,
+            isPending,
         };
     });
 
@@ -72,6 +87,7 @@ export const load: PageServerLoad = async ({ locals }) => {
         }
     })
 
+    // Le nombre de preuves en attentes d'être validés par l'utilisateur
     const pendingProofCount = !user ? 0 : await prisma.proof.count({
         where: {
             status: "PENDING",
@@ -107,6 +123,9 @@ export const actions: Actions = {
         const userId = locals.user.id;
         const maxFiles: number = 15;
 
+        // Récupérer le groupe d'intégration de l'utilisateur actuel
+        const userGroupInteId = locals.user.groupInteId;
+
         let content: String[] = [];
 
         try {
@@ -114,18 +133,21 @@ export const actions: Actions = {
                 content = [textePreuve]
             } else {
                 if (files.length > maxFiles) {
-                    throw error(413, "Le nombre de fichier et limiter à 10")
+                    throw error(413, "Le nombre de fichier est limité à 10")
                 }
                 for (const file of files) {
                     const url = await uploadUserFile(file, userId);
                     content.push(url)
                 }
             }
+            
             const body: ProofInput = { challengeId, userId, type, content, isOkTVn7 }
-            // Verifie si c'est un 1A 
+            
+            // Vérifie si c'est un 1A 
             if (!(locals.user.is1A && Churros1ATo2A)) {
                 throw error(403, "Tu n'es pas un 1A")
             }
+            
             const proof = await newProof(body);
             return {
                 success: true,
@@ -139,7 +161,7 @@ export const actions: Actions = {
             }
             console.error('Action Error:', error);
             return fail(500, {
-                message: 'Impossible accepter le défi'
+                message: 'Impossible d\'accepter le défi'
             });
         }
     }
