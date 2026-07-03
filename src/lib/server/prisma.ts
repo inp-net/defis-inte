@@ -6,7 +6,7 @@ import { env } from '$env/dynamic/private';
 import { syncGroupFromChurros } from './pullChurrosData';
 import { FormatGroupInte, FormatGroupPostulant } from './formaCheck'
 
-const DATABASE_URL : string = env.DATABASE_URL;
+const DATABASE_URL: string = env.DATABASE_URL;
 
 /**
  * Je sais pas mais la doc le met et ca marche
@@ -60,6 +60,8 @@ async function formatUserForPrisma(userChurros: UserChurros): Promise<{
     create: Prisma.UserCreateInput;
     update: Prisma.UserUpdateInput;
 }> {
+
+    // Info des group du user
     let groupInteId = null;
     let groupBoard = [];
     let group = [];
@@ -68,43 +70,26 @@ async function formatUserForPrisma(userChurros: UserChurros): Promise<{
 
     // Parcours les groupes reçu de Authentik de l'utilisateurs
     for (const dataGroup of userChurros.churrosGroups) {
-        // Teste si le groupe est dans la db
         try {
-            // Groupe d'inté
-            if (FormatGroupInte(dataGroup.group.uid)) {
-                groupInteId = dataGroup.group.uid;
-                const groupFind = await prisma.groupInte.findUnique({ where: { groupId: dataGroup.group.uid } });
-                //si le groupe n'est pas dans la db on synchronise le groupes de churros avec la db
-                if (groupFind == null) {
-                    const groupAdded = await syncGroupFromChurros(dataGroup.group.uid);
-                }
+            //On met à jour/ajoute le groupe dans la db 
+            const groupAdded = await syncGroupFromChurros(dataGroup.group.uid); // true si club/asso, null si groupe d'inté, false sinon
 
-                // Club ou Assos
-            } else if (!FormatGroupPostulant(dataGroup.group.uid)) {
-                const groupFind = await prisma.groupClub.findUnique({ where: { groupId: dataGroup.group.uid } });
-                //Si le groupe n'est pas dans la db on synchronise le groupes de churros avec la db
-                // Fait pour éviter d'avoir ce que l'ont veut pas dans la db  
-                if (groupFind == null) {
-                    const groupAdded = await syncGroupFromChurros(dataGroup.group.uid);
-                    if (groupAdded) {
-                        group.push(dataGroup.group);
-                        // On vérifie si l'utilisateur est dans un bureau du groupe et si oui on le connecte au groupe en base de données
-                        if (dataGroup.secretary || dataGroup.president || dataGroup.vicePresident || dataGroup.treasurer) {
-                            groupBoard.push(dataGroup.group);
-                        }
-                    }
-                } else {
-                    group.push(dataGroup.group);
-                    // On vérifie si l'utilisateur est dans un bureau du groupe et si oui on le connecte au groupe en base de données
-                    if (dataGroup.secretary || dataGroup.president || dataGroup.vicePresident || dataGroup.treasurer) {
-                        groupBoard.push(dataGroup.group);
-                    }
+            if (groupAdded) {
+                group.push(dataGroup.group);
+                // On vérifie si l'utilisateur est dans un bureau du groupe et si oui on le connecte au groupe en base de données
+                if (dataGroup.secretary || dataGroup.president || dataGroup.vicePresident || dataGroup.treasurer) {
+                    groupBoard.push(dataGroup.group);
                 }
+            } else if (groupAdded === null) {
+                groupInteId = dataGroup.group.uid;
             }
+
         } catch (error) {
             console.log("Erreur : ", error)
         }
     }
+
+    // Autre info du USER
 
     const firstName = userChurros.firstName || userChurros.uid;
     const lastName = userChurros.lastName || "Étudiant";

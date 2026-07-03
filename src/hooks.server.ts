@@ -37,7 +37,7 @@ const handlePerms: Handle = async ({ event, resolve }) => {
     }
 
     //Empecher l'acces au 1A ou non connéctées
-    const forbidenRoutes = ['/proof', '/board', '/challenge'];
+    const forbidenRoutes = ['/proof', '/board', '/challenge', '/profile', '/settings', '/leaderboard'];
     if (forbidenRoutes.some(route => currentPath.startsWith(route)) && (!session?.uid || (session.is1A && Churros1ATo2A))) { // 
         throw error(403, 'Accès interdit');
     }

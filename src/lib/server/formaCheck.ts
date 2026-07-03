@@ -3,7 +3,7 @@
 /**
  * Verifie que c'est un groupe d'Intégration en testant si le nom du groupe correspond au format "groupe-*-202*"
  * @param chaine le nom du groupe à tester
- * @returns true si c'est un groupe d'intégration, false sinon
+ * @returns true si c'est un groupe d'intégration de la bonne année, false sinon
  */
 export function FormatGroupInte(chaine: string): boolean {
     const modeleGroupInte = /^groupe-.*-2026$/; // A changer chaque année pour récup les groupes que de cette année 
