@@ -205,7 +205,7 @@
 
     <!-- Liste des défis -->
     <Stack style="max-width: 100%; min-width: 0; overflow: hidden;">
-        <Flex gap="xs" wrap={false} align="center">
+        <Flex gap="xxs" wrap={false} align="center">
             <SearchBar bind:value={searchValue} />
             <Sort
                 bind:bind={sortBind}
