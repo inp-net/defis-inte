@@ -84,20 +84,19 @@
     <Flex gap="xs" direction="column">
         <!-- ne pas afficher les Challenges dones si hideDone est true -->
         {#each visibleChallenges as challenge (challenge.challengeId)}
+            {@const defiApprouved = challenge.defiAccepte}
+            {@const defiDeleted = challenge.isDeleted}
+            <!-- pour éviter de surcharger le serveur, les données sont sauvegardés en locals -->
+            {@const clientDeleted = deletedChallengeIds.includes(challenge.challengeId)}
+            {@const clientApprouved = successChallengeIds.includes(challenge.challengeId)}
             <AcceptableCard
                 id={challenge.challengeId}
                 name={challenge.name}
                 points={challenge.nbPoints}
-                isModifiable={!(
-                    challenge.isDeleted ||
-                    deletedChallengeIds.includes(challenge.challengeId)
-                )}
+                isModifiable={!(defiDeleted || clientDeleted)}
+                isApprouved={(defiApprouved || clientApprouved) && !defiDeleted}
+                isDisabled={defiDeleted || clientDeleted}
                 modifiableURL={`challenge/${challenge.challengeId}`}
-                isApprouved={(challenge.defiAccepte ||
-                    successChallengeIds.includes(challenge.challengeId)) &&
-                    !challenge.isDeleted}
-                isDisabled={challenge.isDeleted ||
-                    deletedChallengeIds.includes(challenge.challengeId)}
                 onAccepted={() => handleAccept(challenge.challengeId)}
                 onDeleted={() => handleDelete(challenge.challengeId)}
             >

@@ -46,7 +46,9 @@ export const load: PageServerLoad = async ({ locals }) => {
         }
     });
 
-    const userMap = new Map(users.map(u => [u.id, u.name]));
+    const userMap = new Map(
+        users.map(u => [u.id, `${u.firstName} ${u.lastName}`.trim()])
+    );
 
     const challenges = clubsWithChallenges.map((club) => ({
         name: club.name,
