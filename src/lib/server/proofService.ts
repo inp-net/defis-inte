@@ -1,6 +1,6 @@
 import { prisma } from '$lib/server/prisma';
 import { error } from '@sveltejs/kit';
-import type { Status, ProofInput } from '$lib/types/types.d';
+import { Status, type ProofInput } from '$lib/types/types.d';
 import { UploadType } from '../../../prisma/generated/prisma/client'
 import { Churros1ATo2A } from '$lib/env';
 
@@ -207,8 +207,9 @@ export async function pointsUpdate(proofId: number) {
             challenge: { select: { nbPoints: true } }
         }
     })
-
+    console.log("ca marche")
     let newPointUser: number = proofData.challenge.nbPoints + proofData.user.points;
+        console.log("ca marche la aussi ")
     const newPointGroup: number = proofData.challenge.nbPoints + proofData.user.groupInte.points;
 
     const groupInteUpdate = await prisma.groupInte.update({
