@@ -8,7 +8,7 @@
 
     // composants
     import { Flex, Stack, Button } from "azucar-ui";
-    import { MapPin, UsersRound, Trophy } from "@lucide/svelte";
+    import { MapPin, UsersRound, Trophy, LogIn } from "@lucide/svelte";
     import Header from "$lib/components/Header.svelte";
     import FrameChallenge from "$lib/components/FrameChallenge.svelte";
     import AddChallenge from "$lib/components/AddChallenge.svelte";
@@ -151,10 +151,10 @@
 </script>
 
 {#if !isConnected}
-    <Flex gap="xs" margin="xs" justify="right">
+    <Flex gap="xs" margin="lg" justify="right">
         <Button
             onclick={() => signIn("authentik", { callbackUrl: "/" })}
-            style="padding: var(--size-md)"
+            icon={LogIn}
         >
             Se connecter
         </Button>
