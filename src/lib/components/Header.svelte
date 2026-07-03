@@ -9,6 +9,7 @@
     type Props = {
         firstName: string;
         lastName: string;
+        groupName: string;
         picture: string;
         accessAdmin: boolean;
         notificationsDefis?: number;
@@ -18,6 +19,7 @@
     const {
         firstName,
         lastName,
+        groupName,
         picture,
         accessAdmin,
         notificationsDefis,
@@ -33,7 +35,7 @@
     <Frame transparent={true} border={true} shadow={true}>
         <Flex justify="space-between" align="center" wrap={false}>
             <Flex align="center" gap="md">
-                <Profile {firstName} {lastName} src={picture} hideName={true} size="xl" />
+                <Profile {firstName} {lastName} {groupName} src={picture} hideName={true} size="xl" />
             </Flex>
             <Flex wrap={false} gap="xs" align="center">
                 <Button href="/leaderboard" icon={Trophy}>

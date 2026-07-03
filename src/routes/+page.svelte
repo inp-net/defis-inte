@@ -163,6 +163,7 @@
     <Header
         firstName={user?.firstName ?? null}
         lastName={user?.lastName ?? null}
+        groupName={user?.is1A ? user?.groupInte?.name : ""}
         picture={user?.profilePictureURL ?? null}
         accessAdmin={user?.isAdmin || user?.groupBoard.length > 0}
         notificationsDefis={data.posts.pendingChallengeCount}
