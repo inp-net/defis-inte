@@ -1,9 +1,11 @@
 <script lang="ts">
     import { Flex, Stack, Button, Switch, Frame } from "azucar-ui";
-    import BackButton from "$lib/components/BackButton.svelte";
     import { Power, Settings2, UserRound, Wrench, Recycle } from "@lucide/svelte";
     import { signOut } from "@auth/sveltekit/client";
     import { Toaster, toast } from "svelte-sonner";
+    import { invalidateAll } from '$app/navigation';
+    import { deserialize } from '$app/forms';
+    import BackButton from "$lib/components/BackButton.svelte";
 
     let { data } = $props();
 
@@ -22,16 +24,15 @@
                 headers: { "x-sveltekit-action": "true" },
                 body: formData,
             });
-            if (response.ok) {
-                const result = await response.json();
-                if (result.type === "failure") {
-                    console.error(
-                        "Erreur de validation :",
-                        result.data?.message,
-                    );
-                    return;
-                }
-                window.location.reload();
+
+            const result = deserialize(await response.text());
+
+            if (result.type === "success") {
+                await invalidateAll(); 
+            } else if (result.type === "failure") {
+                toast.error(result.data?.message || "Une erreur est survenue");
+                // Revert UI switch state if it failed
+                darkMode = data.user?.darkMode ?? false; 
             }
         } catch (err) {
             console.error("Erreur lors de l'envoi du form : ", err);
@@ -63,31 +64,18 @@
         }
     }
 
-    let hasRecomputedPoints : boolean = $state(false);
+    $effect(() => {
+        darkMode = data.user?.darkMode ?? false;
+        okTVn7 = data.user?.isOkTVn7 ?? false;
+    });
 
-    async function recomputePoints() {
-        if (hasRecomputedPoints) return;
-
-        toast.info("Recalcul des points en cours.");
-        try {
-            const response = await fetch("?/recomputePoints", {
-                method: "POST",
-                headers: { "x-sveltekit-action": "true" },
-                body: new FormData(),
-            });
-
-            if (response.ok) {
-                hasRecomputedPoinst = true;
-                if (result.type === "success")
-                    toast.success("Points recalculés, merci de ne pas abuser.");
-
-            }
-
-        } catch (err) {
-            toast.error("Impossible de recalculer les points");
-            console.error("Erreur lors de l'envoi du form : ", err);
+    $effect(() => {
+        if (darkMode) {
+            document.documentElement.classList.add('dark');
+        } else {
+            document.documentElement.classList.remove('dark');
         }
-    }
+    });
 
 </script>
 
@@ -139,9 +127,6 @@
             <h3>Board Admin</h3>
         </Flex>
         <p>Paramètres administrateurs.</p>
-        <Flex direction="column">
-            <Button disabled={hasRecomputedPoints} icon={Recycle} variant="outline" onclick={() => recomputePoints()}>Re-calculer les points</Button>
-        </Flex>
     </Stack>
     </Frame>
     {/if}
