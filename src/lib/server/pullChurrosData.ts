@@ -10,7 +10,7 @@ import { FormatGroupInte, FormatGroupPostulant } from './formaCheck'
  * @param groupId 
  * @return true si club/asso, null si groupe d'inté, false sinon
  */
-export async function syncGroupFromChurros(groupId: string) : Promise<boolean | null> {
+export async function syncGroupFromChurros(groupId: string): Promise<boolean | null> {
 
     //on recupere sur churros le group
     const response = await fetch('https://churros.inpt.fr/graphql', {

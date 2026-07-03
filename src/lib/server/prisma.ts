@@ -70,17 +70,17 @@ async function formatUserForPrisma(userChurros: UserChurros): Promise<{
 
     // Parcours les groupes reçu de Authentik de l'utilisateurs
     for (const dataGroup of userChurros.churrosGroups) {
-        try {            
+        try {
             //On met à jour/ajoute le groupe dans la db 
             const groupAdded = await syncGroupFromChurros(dataGroup.group.uid); // true si club/asso, null si groupe d'inté, false sinon
-            
+
             if (groupAdded) {
                 group.push(dataGroup.group);
                 // On vérifie si l'utilisateur est dans un bureau du groupe et si oui on le connecte au groupe en base de données
                 if (dataGroup.secretary || dataGroup.president || dataGroup.vicePresident || dataGroup.treasurer) {
                     groupBoard.push(dataGroup.group);
                 }
-            }else if (groupAdded === null) {
+            } else if (groupAdded === null) {
                 groupInteId = dataGroup.group.uid;
             }
 

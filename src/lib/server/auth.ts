@@ -9,10 +9,10 @@ import { env } from '$env/dynamic/public';
 import type { CredentialInput, CredentialsConfig, OAuthConfig } from '@auth/core/providers';
 import { prisma } from '$lib/server/prisma';
 
-const BETTER_AUTH_SECRET : string = privatEnv.BETTER_AUTH_SECRET ; 
-const AUTH_AUTHENTIK_SECRET : string = privatEnv.AUTH_AUTHENTIK_SECRET ;
-const AUTH_AUTHENTIK_ID : string = privatEnv.AUTH_AUTHENTIK_ID ;
-const PUBLIC_AUTH_AUTHENTIK_ISSUER : string = env.PUBLIC_AUTH_AUTHENTIK_ISSUER ;
+const BETTER_AUTH_SECRET: string = privatEnv.BETTER_AUTH_SECRET;
+const AUTH_AUTHENTIK_SECRET: string = privatEnv.AUTH_AUTHENTIK_SECRET;
+const AUTH_AUTHENTIK_ID: string = privatEnv.AUTH_AUTHENTIK_ID;
+const PUBLIC_AUTH_AUTHENTIK_ISSUER: string = env.PUBLIC_AUTH_AUTHENTIK_ISSUER;
 
 
 // GESTION DE L'AUTHENTIFICATION
@@ -33,10 +33,10 @@ export const { handle, signIn, signOut } = SvelteKitAuth({
     secret: BETTER_AUTH_SECRET,
     providers,
     session: {
-    strategy: "jwt",
-    maxAge: 2 * 60 * 60,  // durée du token en secondes (ici 2 heures)
-    updateAge: 1 * 60 * 60,   // durée de mise à jour du token en secondes (ici 24 heures)
-  },
+        strategy: "jwt",
+        maxAge: 2 * 60 * 60,  // durée du token en secondes (ici 2 heures)
+        updateAge: 1 * 60 * 60,   // durée de mise à jour du token en secondes (ici 1 heures)
+    },
     trustHost: true,
     logger: {
         error: (code, ...message) => {
