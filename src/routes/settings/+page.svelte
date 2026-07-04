@@ -77,7 +77,7 @@
             });
 
             if (response.ok) {
-                hasRecomputedPoinst = true;
+                hasRecomputedPoints = true;
                 if (result.type === "success")
                     toast.success("Points recalculés, merci de ne pas abuser.");
 
