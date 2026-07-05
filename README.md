@@ -62,6 +62,13 @@ bun --dev run dev
   `PUBLIC_1ATo2AChurros` à `false` temporairement.
 
 - L'ajout des clubs est faite lorsqu'un membre concerné par ce dernier se
-  connecte. Si lorsque vous lancez le projet, vous ne voyez aucun clubs, c'est
-  normal. Vous pouvez utiliser [Prisma Studio](https://www.prisma.io/studio)
-  pour falsifier le DB.
+  connecte. Si lorsque vous lancez le projet en prod, vous ne voyez pas tous
+  les clubs, c'est normal.
+
+## Stack technique
+
+Ce projet a été développé en Svelte. Il utilise
+[Prisma 7](https://www.prisma.io/docs/orm) pour la base de données.
+
+L'UI a été réalisé à l'aide de l'a librairie de composant
+[Azucar-UI](https://git.inpt.fr/inp-net/azucar-ui) développé en interne.
