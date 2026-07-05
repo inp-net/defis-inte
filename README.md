@@ -1,4 +1,4 @@
-# Défis site intégration 2026 - 2027
+# Site des défis d'intégration
 
 ## Projet
 
