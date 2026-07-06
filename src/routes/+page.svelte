@@ -100,7 +100,7 @@
 
     // Trier les défis
 
-    const sortList: string[] = ["points", "clubs", "lieux", "date", "tendance"];
+    const sortList: string[] = ["Points", "Clubs", "Lieux", "Date", "Tendance"];
     let sortBind: string = $state(sortList[1]);
     let isSortDesc = $state(true);
 
@@ -121,26 +121,26 @@
             sortByClub(a, b) || sortByPoints(a, b);
 
         switch (sortBind) {
-            case "points":
+            case "Points":
                 return items.sort(
                     (a, b) => sortByDone(a, b) || sortByPoints(a, b) || sortByClub(a, b),
                 );
-            case "clubs":
+            case "Clubs":
                 return items.sort(
                     (a, b) => sortByDone(a, b) || sortByClub(a, b) || sortByPoints(a, b),
                 );
-            case "lieux":
+            case "Lieux":
                 return items.sort(
                     (a, b) =>
                         sortByDone(a, b) ||
                         flip * (b.locationName || "").localeCompare( a.locationName || "",) ||
                         secondarySort(a, b),
                 );
-            case "date":
+            case "Date":
                 return items.sort(
                     (a, b) => sortByDone(a, b) || flip * (b.challengeId - a.challengeId) || secondarySort(a, b),
                 );
-            case "tendance":
+            case "Tendance":
                 return items.sort(
                     (a, b) => sortByDone(a, b) || flip * (b.groupInteSucceedName.length - a.groupInteSucceedName.length) || secondarySort(a, b),
                 );
@@ -155,7 +155,7 @@
         let currentClub = null;
         return sortedSearchedChallenges.map((challenge) => {
             const showCategory =
-                sortBind === "clubs" && challenge.groupName !== currentClub;
+                sortBind === "Clubs" && challenge.groupName !== currentClub;
             if (showCategory) {
                 currentClub = challenge.groupName;
             }
@@ -257,7 +257,7 @@
                         src={challenge.groupUrl}
                     />
                 {/if}
-                {#if !challenge.is_hidden || sortBind!=="clubs"}
+                {#if !challenge.is_hidden || sortBind!=="Clubs"}
                     <FrameChallenge
                         challengeId={challenge.challengeId}
                         name={challengeTitle}
@@ -265,7 +265,7 @@
                         isText={challenge.type === "TEXT"}
                         location={challenge.locationName}
                         clubName={challenge.groupName}
-                        clubUrl={sortBind === "clubs" ? "" : challenge.groupUrl}
+                        clubUrl={sortBind === "Clubs" ? "" : challenge.groupUrl}
                         desc={challenge.description}
                         type={challenge.type}
                         onSave={handleSave}
