@@ -2,7 +2,7 @@ import { prisma } from '$lib/server/prisma';
 import { error } from '@sveltejs/kit';
 import type { ChallengeInput } from '$lib/types/types.d';
 import type { Status, ProofInput } from '$lib/types/types.d';
-import { pointsUpdate } from '$lib/server/proofService';
+import { pointsUpdate, addChallengeSucced } from '$lib/server/proofService';
 
 // COMMANDES POUR LES ADMIN
 
@@ -22,17 +22,14 @@ export async function canUseAdmin(userId: string) {
 }
 
 /** Fonction servant à recalculer tout les points des utilisateur et des groups
- * crée pour les admins
+ * créer pour les admins
  * exemple utilisation : supression de defi déja réalisée 
  */
-export async function recomputePoints() {
+export async function recomptePoints() {
     // remise à 0 de tout les points 
     try {
-        const [resetUsers, resetGroups, disconnectAll] = await prisma.$transaction([
+        const [resetUsers, disconnectAll] = await prisma.$transaction([
             prisma.user.updateMany({
-                data: { points: 0 }
-            }),
-            prisma.groupInte.updateMany({
                 data: { points: 0 }
             }),
             prisma.$executeRawUnsafe(
@@ -54,9 +51,20 @@ export async function recomputePoints() {
     })
 
     // parcours des preuves et ajout des points en consequence
+    try {
     for (const proof of proofs) {
-        console.log(proof.proofId)
+
         pointsUpdate(proof.proofId);
+
+        const user = await prisma.proof.findUnique({
+            where: { proofId: proof.proofId },
+            select: { userId: true }
+        })
+
+        addChallengeSucced(user.userId, proof.proofId);
+    }
+    } catch (error) {
+        console.error( error);
     }
 
 }

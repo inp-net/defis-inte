@@ -78,6 +78,7 @@
 
             if (response.ok) {
                 hasRecomputedPoints = true;
+                const result = await response.json();
                 if (result.type === "success")
                     toast.success("Points recalculés, merci de ne pas abuser.");
 
