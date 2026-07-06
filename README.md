@@ -1,4 +1,4 @@
-# Site des défis d'intégration
+# Site des défis d'intégration 2026 - 2027
 
 ## Projet
 
@@ -13,6 +13,27 @@ Il permet de faire les actions suivantes :
 - Les 1A, membres d'un groupe d'intégration, peuvent réaliser les défis validés par les clubs.
 - Les membres du bureau des clubs respectifs peuvent valider les réalisations.
 - Les points sont mis à jour.
+
+## A faire chaque année
+- Dans formatCheck changer l'année des groups d'inté
+
+- Dans `.env` mettre `PUBLIC_1ATo2AChurros` à `false` avant l'inté. PENSEZ A LA METTRE A TRUE AU DEBUT DE L'INTE
+
+### Mettre en prod
+#### Tester si l'image docker marche 
+Tester si l'image de prod marche `docker compose -f docker-compose-test-prod.yml up --build`
+
+#### Mettre en prod (ROOT)
+1 - Sur git mettre un TAG 
+
+2 - mettre à jour la version dans deployment.yaml sur fluxcd et dans configmap mettre PUBLIC_1ATo2AChurros à false. **PENSEZ A LA METTRE A TRUE AU DEBUT DE L'INTE**
+
+3 - Supprimer les volumes si ce n'es pas déjà fait 
+
+#### 3 (ROOT)
+
+1 - Se connecter à la db pour mettre admin les personnes que l'on veut
+
 
 ## Contribuer
 
@@ -59,11 +80,13 @@ bun --dev run dev
 - Les utilisateurs travaillant sur le projet avant l'intégration seront
   considérés comme 1A par Churros. En effet, la mise à jour est tardive. Pour
   résoudre ce problème, mettre la variable d'environnement dans le `.env`
-  `PUBLIC_1ATo2AChurros` à `false` temporairement.
+  `PUBLIC_1ATo2AChurros` à `false` temporairement. PENSEZ A LA METTRE A TRUE AU DEBUT DE L'INTE
 
 - L'ajout des clubs est faite lorsqu'un membre concerné par ce dernier se
   connecte. Si lorsque vous lancez le projet en prod, vous ne voyez pas tous
   les clubs, c'est normal.
+
+- Si on whipe la db les cookie reste sur le site ( car son sur le navigateur ) donc peut arriver probleme de connexion, pensez donc à les supprimer en même temps.
 
 ## Stack technique
 
