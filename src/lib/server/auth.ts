@@ -94,7 +94,7 @@ export const { handle, signIn, signOut } = SvelteKitAuth({
             // Si c'est Authentik
             if (profile) {
                 const { iss, sub, aud, exp, iat, auth_time, jti, acr, amr, sid, ...user } = profile;
-                const success = await userChurrosToPrisma(churrosData as UserChurros);
+                const success = await userChurrosToPrisma(user as UserChurros);
                 if (!success) return false;
             }
             return true;
