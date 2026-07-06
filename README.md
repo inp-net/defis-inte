@@ -1,48 +1,74 @@
-# Défis site intégration 2026 - 2027
+# Site des défis d'intégration
 
-## DEV 
+## Projet
 
--- Faire Attention --
-- si on whipe la db les cookie reste sur le site ( car son sur le navigateur ) donc peut arriver probleme de connexion 
+Ce site a été réalisé dans le cadre du [stage de 2026](https://git.inpt.fr/net7/stage-26-27).
 
-### Lancer le projet en devloppement 
+![ImagePreview](preview1.png)
 
-1 - installer bun ([https://bun.com/])
+Ce site est connecté à l'API de Churros.
+Il permet de faire les actions suivantes :
+- Les 2A peuvent proposer des défis pour chaque club.
+- Les membres du bureau de chaque club peuvent valider les défis.
+- Les 1A, membres d'un groupe d'intégration, peuvent réaliser les défis validés par les clubs.
+- Les membres du bureau des clubs respectifs peuvent valider les réalisations.
+- Les points sont mis à jour.
 
-2 - faire bun install pour installer les dependances.
+## Contribuer
 
-1 -  copier .env.exemple dans .env et demander les auth à un root.
+### Lancer en développement
 
-2 - Lancer le docker 
-    docker compose up
+1. Installer [bun](https://bun.com/) et les dépendences :
 
-### Info utile pour le devleoppement 
+```
+bun install
+```
 
-- churros change les années des utilisateur fin aout donc pour securiser correctement variable PUBLIC_1ATo2AChurros à false avant puis à true au changement sur churros
+2. Copier le fichier `.env.exemple` et le renommer `.env`. Remplir le fichier avec les secrets.
 
-- On ajoutes les clubs que des gens qui s'inscrivent quand ils se connecte pour la première fois
+3. \[Optionnel\] Si vous voulez lancer le projet sans Authentik, modifier la valeur de `ENABLE_MOCK_AUTH` à `true`.
 
-- 
+4. Lancer la base de données avec docker :
 
-### TODO 
-- Dans formatCheck changer l'année des groups d'inté
+```
+docker compose up -d
+```
 
-## PROD 
+5. Préparer Prisma :
 
-#### 1 Tester si l'image docker marche 
+Appliquer le schéma à la DB.
 
-1 - 
+```
+bun prisma db push
+```
 
-2 - Tester si l'image de prod marche 
-    docker compose -f docker-compose-test-prod.yml up --build
+6. Remplissage de la base de données (Seed) :
 
-#### 2 mettre en prod (ROOT)
-1 - Sur git mettre un TAG 
+```
+bun prisma db seed
+```
 
-2 - mettre à jour la version dans deployment.yaml sur fluxcd et dans configmap mettre PUBLIC_1ATo2AChurros à false 
+7. Lancer le projet Svelte :
 
-3 - Supprimer les volumes si ce n'es pas déjà fait 
+```
+bun --dev run dev
+```
 
-#### 3 (ROOT)
+### Résolution de problèmes
 
-1 - se connecter à la db et mettre admin les personnes que l'on veut : 
+- Les utilisateurs travaillant sur le projet avant l'intégration seront
+  considérés comme 1A par Churros. En effet, la mise à jour est tardive. Pour
+  résoudre ce problème, mettre la variable d'environnement dans le `.env`
+  `PUBLIC_1ATo2AChurros` à `false` temporairement.
+
+- L'ajout des clubs est faite lorsqu'un membre concerné par ce dernier se
+  connecte. Si lorsque vous lancez le projet en prod, vous ne voyez pas tous
+  les clubs, c'est normal.
+
+## Stack technique
+
+Ce projet a été développé en Svelte. Il utilise
+[Prisma 7](https://www.prisma.io/docs/orm) pour la base de données.
+
+L'UI a été réalisé à l'aide de l'a librairie de composant
+[Azucar-UI](https://git.inpt.fr/inp-net/azucar-ui) développé en interne.

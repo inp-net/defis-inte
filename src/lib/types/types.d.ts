@@ -8,8 +8,6 @@ import type {
     UploadType,
 } from '../../../prisma/generated/prisma/client';
 
-
-
 export type UserChurros = {
     uid: string;
     firstName: string;
@@ -81,7 +79,7 @@ export type Leaderboard = {
 // Type Challenge Read utilisé uniquement pour l'affichage UI du challenge
 export type ChallengeRead = Pick<
     Challenge, "challengeId" | "name" | "description" | "type" | "nbPoints" | "locationName" | "defiAccepte" | "isDeleted"
-> & { groupName: string; groupUrl: string | null; } & { userName: string } & { groupInteSuccedName: string[] } & { isDone?: boolean }
+> & { groupName: string; groupUrl: string | null; } & { userName: string } & { groupInteSuccedName: string[] } & { isDone?: boolean, isPending?: boolean }
 
 // Type Group Challenge réunit les ChallengeRead dans des groupes
 export type GroupChallenge = Pick<GroupClub, "name" | "pictureURL"> & { challenges: ChallengeRead[] };

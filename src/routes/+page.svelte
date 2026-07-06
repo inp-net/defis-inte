@@ -5,10 +5,11 @@
     import { signIn } from "@auth/sveltekit/client";
     import { Churros1ATo2A } from "$lib/env";
     import { Toaster, toast } from "svelte-sonner";
+    import { invalidateAll } from '$app/navigation';
 
     // composants
     import { Flex, Stack, Button } from "azucar-ui";
-    import { MapPin, UsersRound, Trophy } from "@lucide/svelte";
+    import { MapPin, UsersRound, Trophy, LogIn } from "@lucide/svelte";
     import Header from "$lib/components/Header.svelte";
     import FrameChallenge from "$lib/components/FrameChallenge.svelte";
     import AddChallenge from "$lib/components/AddChallenge.svelte";
@@ -17,7 +18,7 @@
     import Category from "$lib/components/Category.svelte";
 
     let { data }: { data: PageData } = $props();
-    let challenges: ChallengeRead[] = $state(data.posts.challenges);
+    let challenges: ChallengeRead[] = $derived(data.posts.challenges);
 
     // Données liées au profil de l'utilisateur
     const user = $derived(data?.user);
@@ -37,14 +38,26 @@
         }),
     );
 
+    let isSending = $state(false);
+
     async function handleSave(
         fichiers: FileList | null,
         textePreuve: string,
         type: string,
         isOkTVn7: boolean = false,
         challengeId: number,
-    ) {
+    ){
+        if (isSending) return;
+
+        // Vérifie que le groupe n'a pas déjà fait le défi
+        const currentChallenge = challenges.find(c => c.challengeId === challengeId);
+        if (currentChallenge?.isDone) {
+            toast.error("Votre groupe a déjà validé ce défi !");
+            return;
+        }
+
         try {
+            isSending = true;
             toast.info("Preuve envoyée.");
 
             const formData = new FormData();
@@ -54,8 +67,10 @@
                 formData.append("textePreuve", textePreuve);
             } else {
                 formData.append("isOkTVn7", isOkTVn7.toString());
-                for (const file of fichiers) {
-                    formData.append("file", file);
+                if (fichiers) {
+                    for (const file of fichiers) {
+                        formData.append("file", file);
+                    }
                 }
             }
 
@@ -65,11 +80,12 @@
                 body: formData,
             });
             if (response.ok) {
-                // Changement local des modifications serveur
                 const result = await response.json();
 
-                if (result.type === "success")
+                if (result.type === "success") {
                     toast.success("Preuve ajouté avec succès");
+                    invalidateAll();
+                }
 
                 if (result.type === "failure")
                     toast.error("Impossible d'envoyer la preuve. Vérifier sa présence dans la page profil.")
@@ -77,12 +93,14 @@
         } catch (err) {
             toast.error("Erreur dans l'envoie du défi : " + err);
             console.error("Erreur lors de l'envoi du form : ", err);
+        } finally {
+            isSending = false;
         }
     }
 
     // Trier les défis
 
-    const sortList: string[] = ["points", "clubs", "lieux", "date", "tendance"];
+    const sortList: string[] = ["Points", "Clubs", "Lieux", "Date", "Tendance"];
     let sortBind: string = $state(sortList[1]);
     let isSortDesc = $state(true);
 
@@ -103,26 +121,26 @@
             sortByClub(a, b) || sortByPoints(a, b);
 
         switch (sortBind) {
-            case "points":
+            case "Points":
                 return items.sort(
                     (a, b) => sortByDone(a, b) || sortByPoints(a, b) || sortByClub(a, b),
                 );
-            case "clubs":
+            case "Clubs":
                 return items.sort(
                     (a, b) => sortByDone(a, b) || sortByClub(a, b) || sortByPoints(a, b),
                 );
-            case "lieux":
+            case "Lieux":
                 return items.sort(
                     (a, b) =>
                         sortByDone(a, b) ||
                         flip * (b.locationName || "").localeCompare( a.locationName || "",) ||
                         secondarySort(a, b),
                 );
-            case "date":
+            case "Date":
                 return items.sort(
                     (a, b) => sortByDone(a, b) || flip * (b.challengeId - a.challengeId) || secondarySort(a, b),
                 );
-            case "tendance":
+            case "Tendance":
                 return items.sort(
                     (a, b) => sortByDone(a, b) || flip * (b.groupInteSucceedName.length - a.groupInteSucceedName.length) || secondarySort(a, b),
                 );
@@ -130,14 +148,14 @@
                 return items.sort(secondarySort);
         }
     });
-    let isConnected: boolean = $state(!!user);
+    let isConnected: boolean = $derived(Boolean(user));
 
     // Précompute les endroits où il faut mettre une catégorie
     const processedChallenges = $derived(() => {
         let currentClub = null;
         return sortedSearchedChallenges.map((challenge) => {
             const showCategory =
-                sortBind === "clubs" && challenge.groupName !== currentClub;
+                sortBind === "Clubs" && challenge.groupName !== currentClub;
             if (showCategory) {
                 currentClub = challenge.groupName;
             }
@@ -151,10 +169,10 @@
 </script>
 
 {#if !isConnected}
-    <Flex gap="xs" margin="xs" justify="right">
+    <Flex gap="xs" margin="lg" justify="right">
         <Button
             onclick={() => signIn("authentik", { callbackUrl: "/" })}
-            style="padding: var(--size-md)"
+            icon={LogIn}
         >
             Se connecter
         </Button>
@@ -163,6 +181,7 @@
     <Header
         firstName={user?.firstName ?? null}
         lastName={user?.lastName ?? null}
+        groupName={user?.is1A ? user?.groupInte?.name : ""}
         picture={user?.profilePictureURL ?? null}
         accessAdmin={user?.isAdmin || user?.groupBoard.length > 0}
         notificationsDefis={data.posts.pendingChallengeCount}
@@ -182,22 +201,25 @@
         </Stack>
     {/if}
 
+    <!-- Snippet pour afficher les métadonnées -->
     {#snippet challengeDetails(challenge)}
         <Flex gap="xs" direction="column">
             <Flex gap="xs" align="center">
                 <Trophy size="15px" />
                 <p>Défi réussi par :</p>
             </Flex>
-            <Flex
-                direction="column"
-                gap="xxs"
-                wrap={false}
-                style="max-height: 100px; overflow: scroll; margin-left: 10px;"
-            >
-                {#each challenge.groupInteSucceedName as name}
-                    <p>- {name}</p>
-                {/each}
-            </Flex>
+            {#if challenge.groupInteSucceedName.length > 0}
+                <Flex
+                    direction="column"
+                    gap="xxs"
+                    wrap={false}
+                    style="max-height: 100px; overflow: scroll; margin-left: 10px;"
+                >
+                    {#each challenge.groupInteSucceedName as name}
+                        <p>- {name}</p>
+                    {/each}
+                </Flex>
+            {/if}
         </Flex>
         <Flex gap="xs" align="center" ><UsersRound size="15px" /> {challenge.groupName} </Flex>
         <Flex gap="xs" align="center" ><MapPin size="15px" /> {challenge.locationName} </Flex>
@@ -205,7 +227,7 @@
 
     <!-- Liste des défis -->
     <Stack style="max-width: 100%; min-width: 0; overflow: hidden;">
-        <Flex gap="xs" wrap={false} align="center">
+        <Flex gap="xxs" wrap={false} align="center">
             <SearchBar bind:value={searchValue} />
             <Sort
                 bind:bind={sortBind}
@@ -220,6 +242,14 @@
             wrap={false}
         >
             {#each processedChallenges() as challenge (challenge.challengeId)}
+                {@const isDone = challenge.isDone}
+                {@const isPending = challenge.isPending}
+                {@const challengeTitle = isDone 
+                    ? `✔ ${challenge.name}` 
+                    : isPending 
+                        ? `⏳ ${challenge.name} (En attente)` 
+                        : challenge.name}
+
                 {#if challenge.showCategory}
                     <Category
                         name={challenge.groupName}
@@ -227,23 +257,21 @@
                         src={challenge.groupUrl}
                     />
                 {/if}
-                {#if !challenge.is_hidden || sortBind!=="clubs"}
+                {#if !challenge.is_hidden || sortBind!=="Clubs"}
                     <FrameChallenge
                         challengeId={challenge.challengeId}
-                        name={challenge.isDone
-                            ? `✔ ${challenge.name}`
-                            : challenge.name}
+                        name={challengeTitle}
                         nbPoints={challenge.nbPoints}
                         isText={challenge.type === "TEXT"}
                         location={challenge.locationName}
                         clubName={challenge.groupName}
-                        clubUrl={sortBind === "clubs" ? "" : challenge.groupUrl}
+                        clubUrl={sortBind === "Clubs" ? "" : challenge.groupUrl}
                         desc={challenge.description}
                         type={challenge.type}
                         onSave={handleSave}
                         defaultTVn7={user?.isOkTVn7}
                         is1A={user?.is1A}
-                        isEnabled={isConnected && !challenge.isDone}
+                        isEnabled={isConnected && !challenge.isDone && !isSending}
                     >
                         {@render challengeDetails(challenge)}
                     </FrameChallenge>

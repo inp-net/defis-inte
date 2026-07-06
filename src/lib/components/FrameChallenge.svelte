@@ -118,6 +118,8 @@
                             {onSave}
                             {defaultTVn7}
                         ></UploadProof>
+                    {:else}
+                        <span>Connectez-vous pour réaliser le défi</span>
                     {/if}
                 </Flex>
             </div>

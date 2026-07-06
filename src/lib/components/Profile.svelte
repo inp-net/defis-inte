@@ -4,9 +4,10 @@
     type Props = {
         src?: string;
         alt: string;
-        size?: "small" | "large";
+        size?: string;
         firstName: string;
         lastName: string;
+        groupName: string;
         hideName?: boolean; // Will hide the name on small screens
     };
 
@@ -16,6 +17,7 @@
         size = "xl",
         firstName,
         lastName,
+        groupName,
         hideName = false,
     }: Props = $props();
 </script>
@@ -32,6 +34,7 @@
             <Flex direction="column" gap="xxs">
                 <h4 class={`title-${size}`}>{firstName}</h4>
                 <h4 class={`title-${size}`}>{lastName}</h4>
+                <p>{groupName}</p>
             </Flex>
         </div>
     </Flex>

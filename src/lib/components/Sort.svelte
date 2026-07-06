@@ -1,6 +1,7 @@
 <script lang="ts">
     import { ArrowUp, ArrowDown } from "@lucide/svelte";
     import { Button, Flex } from "azucar-ui";
+    import Select from '$lib/components/Select.svelte';
 
     type Props = {
         bind: string;
@@ -20,6 +21,8 @@
         return String(val).charAt(0).toUpperCase() + String(val).slice(1);
     }
 
+    const capitalizedOptions = $derived(options.map(capitalizeFirstLetter));
+
     /** Fonction qui récupère le click sur le composant.
      * Appel la fonction onSorted spécifié en paramètre.
      * @param option: string l'option cliqué.
@@ -33,6 +36,7 @@
         isDesc = !isDesc;
         onSorted?.(bind, isDesc);
     }
+
 </script>
 
 <!--
@@ -40,35 +44,16 @@
     Composant pour faire un filtre parmi une selection.
 -->
 
-<Flex>
-    <Button variant="outline">
-        {#if isDesc}
-            <ArrowUp size="20px" onclick={() => flipSortType()} />
-        {:else}
-            <ArrowDown size="20px" onclick={() => flipSortType()} />
-        {/if}
-
-        <select
-            bind:value={bind}
-            class="select-invisible"
-            onclick={() => handleInternalClick(bind)}
-        >
-            {#each options as option}
-                <option value={option}>{capitalizeFirstLetter(option)}</option>
-            {/each}
-        </select>
-    </Button>
+<Flex wrap={false} gap="xxs" style="flex-grow: 1;">
+    <Select
+        options={capitalizedOptions}
+        bind:value={bind}
+        outline={true}
+        id="sort-select"
+    />
+    <Button
+        variant="outline"
+        icon={isDesc ? ArrowUp : ArrowDown}
+        onclick={() => flipSortType()}
+    />
 </Flex>
-
-<style>
-    select.select-invisible {
-        background: transparent;
-        border: none;
-        color: inherit;
-        font-family: inherit;
-        font-size: inherit;
-        cursor: pointer;
-        outline: none;
-        padding-left: 5px;
-    }
-</style>

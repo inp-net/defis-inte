@@ -3,6 +3,7 @@
     import { Avatar, Flex, Frame, Button } from "azucar-ui";
     import { ChevronUp, ChevronDown, MapPin, User } from "@lucide/svelte";
     import AcceptableCard from "$lib/components/AcceptableCard.svelte";
+    import { invalidateAll } from '$app/navigation';
 
     type Prop = {
         groupName: string;
@@ -14,11 +15,6 @@
     };
 
     let isHide: boolean = $state(false);
-
-    // Va stocker temporairement et localement les défis qui viennent d'être
-    // accepté pour ne pas refaire une requête serveur.
-    let successChallengeIds = $state<number[]>([]);
-    let deletedChallengeIds = $state<number[]>([]);
 
     const {
         groupName = "",
@@ -35,12 +31,8 @@
                 if (!hideDone) return true;
                 if (isHide) return false;
 
-                const isApproved =
-                    challenge.defiAccepte ||
-                    successChallengeIds.includes(challenge.challengeId);
-                const isDeleted =
-                    challenge.isDeleted ||
-                    deletedChallengeIds.includes(challenge.challengeId);
+                const isApproved = challenge.defiAccepte;
+                const isDeleted = challenge.isDeleted;
 
                 if (isDeleted) return false;
                 if (hideDone && isApproved) return false;
@@ -51,13 +43,13 @@
     );
 
     async function handleAccept(id: number) {
-        await onChallengeApprouved(id);
-        successChallengeIds = [...successChallengeIds, id];
+        onChallengeApprouved(id);
+        invalidateAll();
     }
 
     async function handleDelete(id: number) {
-        await onChallengeDeleted(id);
-        deletedChallengeIds = [...deletedChallengeIds, id];
+        onChallengeDeleted(id);
+        invalidateAll();
     }
 </script>
 
@@ -84,20 +76,17 @@
     <Flex gap="xs" direction="column">
         <!-- ne pas afficher les Challenges dones si hideDone est true -->
         {#each visibleChallenges as challenge (challenge.challengeId)}
+            {@const defiApprouved = challenge.defiAccepte}
+            {@const defiDeleted = challenge.isDeleted}
+            <!-- pour éviter de surcharger le serveur, les données sont sauvegardés en locals -->
             <AcceptableCard
                 id={challenge.challengeId}
                 name={challenge.name}
                 points={challenge.nbPoints}
-                isModifiable={!(
-                    challenge.isDeleted ||
-                    deletedChallengeIds.includes(challenge.challengeId)
-                )}
+                isModifiable={!(defiDeleted)}
+                isApprouved={(defiApprouved) && !defiDeleted}
+                isDisabled={defiDeleted}
                 modifiableURL={`challenge/${challenge.challengeId}`}
-                isApprouved={(challenge.defiAccepte ||
-                    successChallengeIds.includes(challenge.challengeId)) &&
-                    !challenge.isDeleted}
-                isDisabled={challenge.isDeleted ||
-                    deletedChallengeIds.includes(challenge.challengeId)}
                 onAccepted={() => handleAccept(challenge.challengeId)}
                 onDeleted={() => handleDelete(challenge.challengeId)}
             >

@@ -4,7 +4,6 @@ import { canUseAdmin, recomptePoints } from '../../lib/server/adminCommand';
 import { switchMode, switchTVn7 } from '$lib/server/userService';
 
 export const load: PageServerLoad = async ({ locals }) => {
-
     return {
         user: locals.user
     };
@@ -12,6 +11,8 @@ export const load: PageServerLoad = async ({ locals }) => {
 
 export const actions: Actions = {
     modifyDarkMode: async ({ request, locals }) => {
+        if (!locals.user) return fail(401, { message: 'Non authentifié' });
+
         const data = await request.formData();
         const darkMode = data.get('darkMode') === "true";
 
@@ -20,17 +21,16 @@ export const actions: Actions = {
             return { success: true };
         } catch (error: any) {
             if (error.status && error.message) {
-                return fail(error.status, {
-                    message: error.message,
-                });
+                return fail(error.status, { message: error.message });
             }
             console.error('Action Error:', error);
-            return fail(500, {
-                message: 'Impossible de modifier le paramètre'
-            });
+            return fail(500, { message: 'Impossible de modifier le paramètre' });
         }
     },
+
     modifyOkTVn7: async ({ request, locals }) => {
+        if (!locals.user) return fail(401, { message: 'Non authentifié' });
+
         const data = await request.formData();
         const okTVn7 = data.get('okTVn7') === "true";
 
@@ -39,16 +39,13 @@ export const actions: Actions = {
             return { success: true };
         } catch (error: any) {
             if (error.status && error.message) {
-                return fail(error.status, {
-                    message: error.message,
-                });
+                return fail(error.status, { message: error.message });
             }
             console.error('Action Error:', error);
-            return fail(500, {
-                message: 'Impossible de modifier le paramètre'
-            });
+            return fail(500, { message: 'Impossible de modifier le paramètre' });
         }
     },
+
     recomputePoints: async ({ locals }) => {
         try {
             const userId = locals.user.id;
