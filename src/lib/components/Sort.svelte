@@ -22,7 +22,6 @@
     }
 
     const capitalizedOptions = $derived(options.map(capitalizeFirstLetter));
-    let bindCapitalize = $derived(capitalizeFirstLetter(bind));
 
     /** Fonction qui récupère le click sur le composant.
      * Appel la fonction onSorted spécifié en paramètre.
@@ -48,7 +47,7 @@
 <Flex wrap={false} gap="xxs" style="flex-grow: 1;">
     <Select
         options={capitalizedOptions}
-        bind:value={bindCapitalize}
+        bind:value={bind}
         outline={true}
         id="sort-select"
     />
