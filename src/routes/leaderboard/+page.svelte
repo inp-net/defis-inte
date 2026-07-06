@@ -7,7 +7,7 @@
 
     let { data }: { data: PageData } = $props();
 
-    let groups: Leaderboard[] = $derived(data.posts.groups);
+    let groups: Leaderboard[] = $derived(data.posts.groupLeaderboard);
     let usersDB: User[] = $derived(data.posts.users);
     let users: Leaderboard[] = usersDB.map((user) => ({
         ...user,

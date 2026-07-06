@@ -20,70 +20,46 @@ export type GroupInteModel = runtime.Types.Result.DefaultSelection<Prisma.$Group
 
 export type AggregateGroupInte = {
   _count: GroupInteCountAggregateOutputType | null
-  _avg: GroupInteAvgAggregateOutputType | null
-  _sum: GroupInteSumAggregateOutputType | null
   _min: GroupInteMinAggregateOutputType | null
   _max: GroupInteMaxAggregateOutputType | null
-}
-
-export type GroupInteAvgAggregateOutputType = {
-  points: number | null
-}
-
-export type GroupInteSumAggregateOutputType = {
-  points: number | null
 }
 
 export type GroupInteMinAggregateOutputType = {
   groupId: string | null
   name: string | null
   pictureURL: string | null
-  points: number | null
 }
 
 export type GroupInteMaxAggregateOutputType = {
   groupId: string | null
   name: string | null
   pictureURL: string | null
-  points: number | null
 }
 
 export type GroupInteCountAggregateOutputType = {
   groupId: number
   name: number
   pictureURL: number
-  points: number
   _all: number
 }
 
-
-export type GroupInteAvgAggregateInputType = {
-  points?: true
-}
-
-export type GroupInteSumAggregateInputType = {
-  points?: true
-}
 
 export type GroupInteMinAggregateInputType = {
   groupId?: true
   name?: true
   pictureURL?: true
-  points?: true
 }
 
 export type GroupInteMaxAggregateInputType = {
   groupId?: true
   name?: true
   pictureURL?: true
-  points?: true
 }
 
 export type GroupInteCountAggregateInputType = {
   groupId?: true
   name?: true
   pictureURL?: true
-  points?: true
   _all?: true
 }
 
@@ -125,18 +101,6 @@ export type GroupInteAggregateArgs<ExtArgs extends runtime.Types.Extensions.Inte
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
    * 
-   * Select which fields to average
-  **/
-  _avg?: GroupInteAvgAggregateInputType
-  /**
-   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-   * 
-   * Select which fields to sum
-  **/
-  _sum?: GroupInteSumAggregateInputType
-  /**
-   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-   * 
    * Select which fields to find the minimum value
   **/
   _min?: GroupInteMinAggregateInputType
@@ -167,8 +131,6 @@ export type GroupInteGroupByArgs<ExtArgs extends runtime.Types.Extensions.Intern
   take?: number
   skip?: number
   _count?: GroupInteCountAggregateInputType | true
-  _avg?: GroupInteAvgAggregateInputType
-  _sum?: GroupInteSumAggregateInputType
   _min?: GroupInteMinAggregateInputType
   _max?: GroupInteMaxAggregateInputType
 }
@@ -177,10 +139,7 @@ export type GroupInteGroupByOutputType = {
   groupId: string
   name: string
   pictureURL: string | null
-  points: number
   _count: GroupInteCountAggregateOutputType | null
-  _avg: GroupInteAvgAggregateOutputType | null
-  _sum: GroupInteSumAggregateOutputType | null
   _min: GroupInteMinAggregateOutputType | null
   _max: GroupInteMaxAggregateOutputType | null
 }
@@ -207,7 +166,6 @@ export type GroupInteWhereInput = {
   groupId?: Prisma.StringFilter<"GroupInte"> | string
   name?: Prisma.StringFilter<"GroupInte"> | string
   pictureURL?: Prisma.StringNullableFilter<"GroupInte"> | string | null
-  points?: Prisma.IntFilter<"GroupInte"> | number
   usersInte?: Prisma.UserListRelationFilter
   challengeSucceed?: Prisma.ChallengeListRelationFilter
 }
@@ -216,7 +174,6 @@ export type GroupInteOrderByWithRelationInput = {
   groupId?: Prisma.SortOrder
   name?: Prisma.SortOrder
   pictureURL?: Prisma.SortOrderInput | Prisma.SortOrder
-  points?: Prisma.SortOrder
   usersInte?: Prisma.UserOrderByRelationAggregateInput
   challengeSucceed?: Prisma.ChallengeOrderByRelationAggregateInput
 }
@@ -228,7 +185,6 @@ export type GroupInteWhereUniqueInput = Prisma.AtLeast<{
   NOT?: Prisma.GroupInteWhereInput | Prisma.GroupInteWhereInput[]
   name?: Prisma.StringFilter<"GroupInte"> | string
   pictureURL?: Prisma.StringNullableFilter<"GroupInte"> | string | null
-  points?: Prisma.IntFilter<"GroupInte"> | number
   usersInte?: Prisma.UserListRelationFilter
   challengeSucceed?: Prisma.ChallengeListRelationFilter
 }, "groupId">
@@ -237,12 +193,9 @@ export type GroupInteOrderByWithAggregationInput = {
   groupId?: Prisma.SortOrder
   name?: Prisma.SortOrder
   pictureURL?: Prisma.SortOrderInput | Prisma.SortOrder
-  points?: Prisma.SortOrder
   _count?: Prisma.GroupInteCountOrderByAggregateInput
-  _avg?: Prisma.GroupInteAvgOrderByAggregateInput
   _max?: Prisma.GroupInteMaxOrderByAggregateInput
   _min?: Prisma.GroupInteMinOrderByAggregateInput
-  _sum?: Prisma.GroupInteSumOrderByAggregateInput
 }
 
 export type GroupInteScalarWhereWithAggregatesInput = {
@@ -252,14 +205,12 @@ export type GroupInteScalarWhereWithAggregatesInput = {
   groupId?: Prisma.StringWithAggregatesFilter<"GroupInte"> | string
   name?: Prisma.StringWithAggregatesFilter<"GroupInte"> | string
   pictureURL?: Prisma.StringNullableWithAggregatesFilter<"GroupInte"> | string | null
-  points?: Prisma.IntWithAggregatesFilter<"GroupInte"> | number
 }
 
 export type GroupInteCreateInput = {
   groupId: string
   name: string
   pictureURL?: string | null
-  points?: number
   usersInte?: Prisma.UserCreateNestedManyWithoutGroupInteInput
   challengeSucceed?: Prisma.ChallengeCreateNestedManyWithoutGroupInteSucceedInput
 }
@@ -268,7 +219,6 @@ export type GroupInteUncheckedCreateInput = {
   groupId: string
   name: string
   pictureURL?: string | null
-  points?: number
   usersInte?: Prisma.UserUncheckedCreateNestedManyWithoutGroupInteInput
   challengeSucceed?: Prisma.ChallengeUncheckedCreateNestedManyWithoutGroupInteSucceedInput
 }
@@ -277,7 +227,6 @@ export type GroupInteUpdateInput = {
   groupId?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   pictureURL?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  points?: Prisma.IntFieldUpdateOperationsInput | number
   usersInte?: Prisma.UserUpdateManyWithoutGroupInteNestedInput
   challengeSucceed?: Prisma.ChallengeUpdateManyWithoutGroupInteSucceedNestedInput
 }
@@ -286,7 +235,6 @@ export type GroupInteUncheckedUpdateInput = {
   groupId?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   pictureURL?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  points?: Prisma.IntFieldUpdateOperationsInput | number
   usersInte?: Prisma.UserUncheckedUpdateManyWithoutGroupInteNestedInput
   challengeSucceed?: Prisma.ChallengeUncheckedUpdateManyWithoutGroupInteSucceedNestedInput
 }
@@ -295,21 +243,18 @@ export type GroupInteCreateManyInput = {
   groupId: string
   name: string
   pictureURL?: string | null
-  points?: number
 }
 
 export type GroupInteUpdateManyMutationInput = {
   groupId?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   pictureURL?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  points?: Prisma.IntFieldUpdateOperationsInput | number
 }
 
 export type GroupInteUncheckedUpdateManyInput = {
   groupId?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   pictureURL?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  points?: Prisma.IntFieldUpdateOperationsInput | number
 }
 
 export type GroupInteNullableScalarRelationFilter = {
@@ -321,29 +266,18 @@ export type GroupInteCountOrderByAggregateInput = {
   groupId?: Prisma.SortOrder
   name?: Prisma.SortOrder
   pictureURL?: Prisma.SortOrder
-  points?: Prisma.SortOrder
-}
-
-export type GroupInteAvgOrderByAggregateInput = {
-  points?: Prisma.SortOrder
 }
 
 export type GroupInteMaxOrderByAggregateInput = {
   groupId?: Prisma.SortOrder
   name?: Prisma.SortOrder
   pictureURL?: Prisma.SortOrder
-  points?: Prisma.SortOrder
 }
 
 export type GroupInteMinOrderByAggregateInput = {
   groupId?: Prisma.SortOrder
   name?: Prisma.SortOrder
   pictureURL?: Prisma.SortOrder
-  points?: Prisma.SortOrder
-}
-
-export type GroupInteSumOrderByAggregateInput = {
-  points?: Prisma.SortOrder
 }
 
 export type GroupInteListRelationFilter = {
@@ -414,7 +348,6 @@ export type GroupInteCreateWithoutUsersInteInput = {
   groupId: string
   name: string
   pictureURL?: string | null
-  points?: number
   challengeSucceed?: Prisma.ChallengeCreateNestedManyWithoutGroupInteSucceedInput
 }
 
@@ -422,7 +355,6 @@ export type GroupInteUncheckedCreateWithoutUsersInteInput = {
   groupId: string
   name: string
   pictureURL?: string | null
-  points?: number
   challengeSucceed?: Prisma.ChallengeUncheckedCreateNestedManyWithoutGroupInteSucceedInput
 }
 
@@ -446,7 +378,6 @@ export type GroupInteUpdateWithoutUsersInteInput = {
   groupId?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   pictureURL?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  points?: Prisma.IntFieldUpdateOperationsInput | number
   challengeSucceed?: Prisma.ChallengeUpdateManyWithoutGroupInteSucceedNestedInput
 }
 
@@ -454,7 +385,6 @@ export type GroupInteUncheckedUpdateWithoutUsersInteInput = {
   groupId?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   pictureURL?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  points?: Prisma.IntFieldUpdateOperationsInput | number
   challengeSucceed?: Prisma.ChallengeUncheckedUpdateManyWithoutGroupInteSucceedNestedInput
 }
 
@@ -462,7 +392,6 @@ export type GroupInteCreateWithoutChallengeSucceedInput = {
   groupId: string
   name: string
   pictureURL?: string | null
-  points?: number
   usersInte?: Prisma.UserCreateNestedManyWithoutGroupInteInput
 }
 
@@ -470,7 +399,6 @@ export type GroupInteUncheckedCreateWithoutChallengeSucceedInput = {
   groupId: string
   name: string
   pictureURL?: string | null
-  points?: number
   usersInte?: Prisma.UserUncheckedCreateNestedManyWithoutGroupInteInput
 }
 
@@ -502,14 +430,12 @@ export type GroupInteScalarWhereInput = {
   groupId?: Prisma.StringFilter<"GroupInte"> | string
   name?: Prisma.StringFilter<"GroupInte"> | string
   pictureURL?: Prisma.StringNullableFilter<"GroupInte"> | string | null
-  points?: Prisma.IntFilter<"GroupInte"> | number
 }
 
 export type GroupInteUpdateWithoutChallengeSucceedInput = {
   groupId?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   pictureURL?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  points?: Prisma.IntFieldUpdateOperationsInput | number
   usersInte?: Prisma.UserUpdateManyWithoutGroupInteNestedInput
 }
 
@@ -517,7 +443,6 @@ export type GroupInteUncheckedUpdateWithoutChallengeSucceedInput = {
   groupId?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   pictureURL?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  points?: Prisma.IntFieldUpdateOperationsInput | number
   usersInte?: Prisma.UserUncheckedUpdateManyWithoutGroupInteNestedInput
 }
 
@@ -525,7 +450,6 @@ export type GroupInteUncheckedUpdateManyWithoutChallengeSucceedInput = {
   groupId?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   pictureURL?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  points?: Prisma.IntFieldUpdateOperationsInput | number
 }
 
 
@@ -572,7 +496,6 @@ export type GroupInteSelect<ExtArgs extends runtime.Types.Extensions.InternalArg
   groupId?: boolean
   name?: boolean
   pictureURL?: boolean
-  points?: boolean
   usersInte?: boolean | Prisma.GroupInte$usersInteArgs<ExtArgs>
   challengeSucceed?: boolean | Prisma.GroupInte$challengeSucceedArgs<ExtArgs>
   _count?: boolean | Prisma.GroupInteCountOutputTypeDefaultArgs<ExtArgs>
@@ -582,24 +505,21 @@ export type GroupInteSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Ext
   groupId?: boolean
   name?: boolean
   pictureURL?: boolean
-  points?: boolean
 }, ExtArgs["result"]["groupInte"]>
 
 export type GroupInteSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   groupId?: boolean
   name?: boolean
   pictureURL?: boolean
-  points?: boolean
 }, ExtArgs["result"]["groupInte"]>
 
 export type GroupInteSelectScalar = {
   groupId?: boolean
   name?: boolean
   pictureURL?: boolean
-  points?: boolean
 }
 
-export type GroupInteOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"groupId" | "name" | "pictureURL" | "points", ExtArgs["result"]["groupInte"]>
+export type GroupInteOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"groupId" | "name" | "pictureURL", ExtArgs["result"]["groupInte"]>
 export type GroupInteInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   usersInte?: boolean | Prisma.GroupInte$usersInteArgs<ExtArgs>
   challengeSucceed?: boolean | Prisma.GroupInte$challengeSucceedArgs<ExtArgs>
@@ -618,7 +538,6 @@ export type $GroupIntePayload<ExtArgs extends runtime.Types.Extensions.InternalA
     groupId: string
     name: string
     pictureURL: string | null
-    points: number
   }, ExtArgs["result"]["groupInte"]>
   composites: {}
 }
@@ -1047,7 +966,6 @@ export interface GroupInteFieldRefs {
   readonly groupId: Prisma.FieldRef<"GroupInte", 'String'>
   readonly name: Prisma.FieldRef<"GroupInte", 'String'>
   readonly pictureURL: Prisma.FieldRef<"GroupInte", 'String'>
-  readonly points: Prisma.FieldRef<"GroupInte", 'Int'>
 }
     
 

@@ -77,9 +77,9 @@ async function main() {
 
     // 3. Mock Integration Groups Data
     const mockIntes = [
-        { groupId: "inte-clan-1", name: "Les Castors Givrés", points: 120 },
-        { groupId: "inte-clan-2", name: "Les Marmottes Enragées", points: 90 },
-        { groupId: "inte-clan-3", name: "Les Loutres de l'Espace", points: 150 }
+        { groupId: "inte-clan-1", name: "Les Castors Givrés"},
+        { groupId: "inte-clan-2", name: "Les Marmottes Enragées"},
+        { groupId: "inte-clan-3", name: "Les Loutres de l'Espace"}
     ];
 
     const groupeInte = await Promise.all(
