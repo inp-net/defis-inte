@@ -14,27 +14,6 @@ Il permet de faire les actions suivantes :
 - Les membres du bureau des clubs respectifs peuvent valider les réalisations.
 - Les points sont mis à jour.
 
-## A faire chaque année
-- Dans formatCheck changer l'année des groups d'inté
-
-- Dans `.env` mettre `PUBLIC_1ATo2AChurros` à `false` avant l'inté. PENSEZ A LA METTRE A TRUE AU DEBUT DE L'INTE
-
-### Mettre en prod
-#### Tester si l'image docker marche 
-Tester si l'image de prod marche `docker compose -f docker-compose-test-prod.yml up --build`
-
-#### Mettre en prod (ROOT)
-1 - Sur git mettre un TAG 
-
-2 - mettre à jour la version dans deployment.yaml sur fluxcd et dans configmap mettre PUBLIC_1ATo2AChurros à false. **PENSEZ A LA METTRE A TRUE AU DEBUT DE L'INTE**
-
-3 - Supprimer les volumes si ce n'es pas déjà fait 
-
-#### 3 (ROOT)
-
-1 - Se connecter à la db pour mettre admin les personnes que l'on veut
-
-
 ## Contribuer
 
 ### Lancer en développement
@@ -80,13 +59,48 @@ bun --dev run dev
 - Les utilisateurs travaillant sur le projet avant l'intégration seront
   considérés comme 1A par Churros. En effet, la mise à jour est tardive. Pour
   résoudre ce problème, mettre la variable d'environnement dans le `.env`
-  `PUBLIC_1ATo2AChurros` à `false` temporairement. PENSEZ A LA METTRE A TRUE AU DEBUT DE L'INTE
+  `PUBLIC_1ATo2AChurros` à `false` **temporairement**.
 
 - L'ajout des clubs est faite lorsqu'un membre concerné par ce dernier se
   connecte. Si lorsque vous lancez le projet en prod, vous ne voyez pas tous
   les clubs, c'est normal.
 
-- Si on whipe la db les cookie reste sur le site ( car son sur le navigateur ) donc peut arriver probleme de connexion, pensez donc à les supprimer en même temps.
+- Si vous effectuez des modifications et le site se bloque. Pensez à supprimer
+  les cookies.
+
+- Si on whipe la db les cookie reste sur le site donc peut arriver probleme de
+  connexion, pensez donc à les supprimer en même temps.
+
+- Dans formatCheck changer l'année des groups d'inté
+
+### Mise en production
+
+La mise en production se fait par l'ajout de tags avec gitlab CI/CD.
+
+Voir le [**wiki**](https://wiki.inpt.fr/fr/inp-net/adminsys/kubernetes). Vous
+devez être root.
+
+1. Crée un tag :
+
+```
+git tag v<major>.<medium>.<minor>
+```
+
+Example
+
+```
+git tag v1.0.1
+```
+
+2. Attendre la fin du runner.
+
+3. Update la version pour Kubernetes :
+
+Aller sur le dépôt [fluxcd](https://git.inpt.fr/inp-net/fluxcd/-/tree/master/apps/crop/defis).
+
+Changer le paramètre `image` dans le fichier `deployment.yaml` avec la nouvelle image.
+
+4. \[Root\] Se connecter à la DB et modifier manuellement les admins.
 
 ## Stack technique
 
