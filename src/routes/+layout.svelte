@@ -23,6 +23,11 @@
 <!-- 	<link rel="icon" href={favicon} /> -->
 <!-- </svelte:head> -->
 
+<svelte:head>
+	<title>Site des défis</title>
+	<meta name="description" content="Proposez et réalisez des défis." />
+</svelte:head>
+
 <div class="container">
     {@render children?.()}
     <Footer isDarkTheme={darkMode} />
