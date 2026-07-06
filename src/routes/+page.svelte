@@ -9,7 +9,7 @@
 
     // composants
     import { Flex, Stack, Button } from "azucar-ui";
-    import { MapPin, UsersRound, Trophy, LogIn } from "@lucide/svelte";
+    import { MapPin, UsersRound, Trophy, LogIn, Files } from "@lucide/svelte";
     import Header from "$lib/components/Header.svelte";
     import FrameChallenge from "$lib/components/FrameChallenge.svelte";
     import AddChallenge from "$lib/components/AddChallenge.svelte";
@@ -222,6 +222,7 @@
             {/if}
         </Flex>
         <Flex gap="xs" align="center" ><UsersRound size="15px" /> {challenge.groupName} </Flex>
+        <Flex gap="xs" align="center" ><Files size="15px" /> {challenge.type} </Flex>
         <Flex gap="xs" align="center" ><MapPin size="15px" /> {challenge.locationName} </Flex>
     {/snippet}
 
