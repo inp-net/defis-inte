@@ -920,8 +920,7 @@ export type GroupClubScalarFieldEnum = (typeof GroupClubScalarFieldEnum)[keyof t
 export const GroupInteScalarFieldEnum = {
   groupId: 'groupId',
   name: 'name',
-  pictureURL: 'pictureURL',
-  points: 'points'
+  pictureURL: 'pictureURL'
 } as const
 
 export type GroupInteScalarFieldEnum = (typeof GroupInteScalarFieldEnum)[keyof typeof GroupInteScalarFieldEnum]
