@@ -149,6 +149,8 @@ export async function newProof(body: ProofInput) {
 }
 
 /** Accepter une preuve. 
+ * Met à jour les point du user 
+ * met à jour le challenge pour le groupe d'inté de l'utilisateur
 * @param proofId identifiant de la preuve
 * @param userId identifiant de l'utilisateur ayant valider la preuve
 */
@@ -162,6 +164,10 @@ export async function approveProof(proofId: number, userId: string) {
             validatorId: userId
         }
     });
+
+    // Mise à jour des points de l'utilisateur et du challenge
+    const updatePoint = await pointsUpdate(proofId)
+    const updateChallenge = await addChallengeSucced(userId, proofId);
 
     return updatedProof;
 }
@@ -228,7 +234,7 @@ export async function addChallengeSucced(userId: string, proofId: number) {
             challengeId: true
         }
     });
-    const userUpdate = await prisma.user.findUnique({
+    const userGroupId = await prisma.user.findUnique({
         where: { id: userId },
         select: {
             groupInteId: true
@@ -242,7 +248,7 @@ export async function addChallengeSucced(userId: string, proofId: number) {
         data: {
             groupInteSucceed: {
                 connect: {
-                    id: userUpdate.groupInteId
+                    groupId: userGroupId.groupInteId
                 }
             }
         }
