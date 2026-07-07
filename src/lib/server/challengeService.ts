@@ -108,7 +108,10 @@ export async function saveChallenge(body: ChallengeInput) {
     if (targetId > 0) {
         return await prisma.challenge.update({
             where: { challengeId: targetId },
-            data: coreData
+            data: {
+                ...coreData,
+                userId: userId
+            }
         });
     } else {
         return await prisma.challenge.create({
