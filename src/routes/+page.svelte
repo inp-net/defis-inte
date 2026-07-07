@@ -5,7 +5,9 @@
     import { signIn } from "@auth/sveltekit/client";
     import { Churros1ATo2A } from "$lib/env";
     import { Toaster, toast } from "svelte-sonner";
-    import { invalidateAll } from '$app/navigation';
+    import { invalidateAll } from '$app/navigation';    
+    import { UploadType } from "$lib/types/types.d";
+
 
     // composants
     import { Flex, Stack, Button } from "azucar-ui";
@@ -210,8 +212,11 @@
 
     <!-- Snippet pour afficher les métadonnées d'un challenge -->
     {#snippet challengeDetails(challenge)}
+        <Flex gap="xs" align="center" ><UsersRound size="15px" /> {challenge.groupName} </Flex>
+        <Flex gap="xs" align="center" ><MapPin size="15px" /> {challenge.locationName} </Flex>
+        <Flex gap="xs" align="center" ><Files size="15px" /><p>Type de preuve attendu :</p>{UploadType[challenge.type as keyof typeof UploadType]}</Flex>
+        {#if challenge.groupInteSucceedName.length > 0}
         <Flex gap="xs" direction="column">            
-            {#if challenge.groupInteSucceedName.length > 0}
             <Flex gap="xs" align="center">
                 <Trophy size="15px" />
                 <p>Défi réussi par :</p>
@@ -226,10 +231,8 @@
                         <p>- {name}</p>
                     {/each}
                 </Flex>
-            {/if}
         </Flex>
-        <Flex gap="xs" align="center" ><UsersRound size="15px" /> {challenge.groupName} </Flex>
-        <Flex gap="xs" align="center" ><MapPin size="15px" /> {challenge.locationName} </Flex>
+        {/if}
     {/snippet}
 
     <!-- Liste des défis -->

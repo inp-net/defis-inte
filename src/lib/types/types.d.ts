@@ -5,7 +5,6 @@ import type {
     Proof,
     Challenge,
     Location,
-    UploadType,
 } from '../../../prisma/generated/prisma/client';
 
 export type UserChurros = {
@@ -65,6 +64,12 @@ export enum Status {
     PENDING = 'PENDING',
     VALID = 'VALID',
     DENIED = 'DENIED'
+}
+
+export enum UploadType {
+    PHOTO = "photo",
+    VIDEO = "video",
+    TEXT = "texte"
 }
 
 // Type GroupLeaderboard utilisé pour l'affichage du classement

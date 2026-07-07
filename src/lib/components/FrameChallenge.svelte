@@ -109,10 +109,7 @@
                             ><TextAlignStart size="15px" /><b>Description :</b>
                             {desc}</Flex
                         >
-                        <Flex gap="xs" align="center"
-                            ><Files size="15px" /><b>Type de preuve attendu :</b>
-                            {type}</Flex
-                        >
+                        
                     </Flex>
                     {#if isEnabled && Churros1ATo2A && is1A}
                         <UploadProof
