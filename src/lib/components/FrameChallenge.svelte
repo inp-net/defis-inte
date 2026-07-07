@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { TextAlignStart, } from "@lucide/svelte";
+    import { TextAlignStart,Files } from "@lucide/svelte";
     import { Frame, Flex } from "azucar-ui";
     import UploadProof from "./UploadProof.svelte";
     import { Churros1ATo2A } from "$lib/env";
@@ -109,6 +109,10 @@
                             ><TextAlignStart size="15px" /><b>Description :</b>
                             {desc}</Flex
                         >
+                        <Flex gap="xs" align="center"
+                            ><Files size="15px" /><b>Type de preuve attendu :</b>
+                            {type}</Flex
+                        >
                     </Flex>
                     {#if isEnabled && Churros1ATo2A && is1A}
                         <UploadProof
@@ -118,7 +122,7 @@
                             {onSave}
                             {defaultTVn7}
                         ></UploadProof>
-                    {:else}
+                    {:else if !isEnabled}
                         <span>Connectez-vous pour réaliser le défi</span>
                     {/if}
                 </Flex>

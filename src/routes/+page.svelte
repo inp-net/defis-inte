@@ -24,7 +24,6 @@
     const user = $derived(data?.user);
 
     // Recherche de défis
-
     let searchValue: string = $state("");
     let searchedItems = $derived(
         challenges.filter((a) => {
@@ -40,6 +39,14 @@
 
     let isSending = $state(false);
 
+    /** Fonction pour gérer l'envoie d'une preuve de défi
+     * @param fichiers - Les fichiers à envoyer (peut être null)
+     * @param textePreuve - Le texte de la preuve (peut être vide)
+     * @param type - Le type de preuve (texte ou fichier)
+     * @param isOkTVn7 - Indique si l'utilisateur est OK avec TVn7
+     * @param challengeId - L'ID du défi
+     * @returns void
+    */
     async function handleSave(
         fichiers: FileList | null,
         textePreuve: string,
@@ -201,14 +208,14 @@
         </Stack>
     {/if}
 
-    <!-- Snippet pour afficher les métadonnées -->
+    <!-- Snippet pour afficher les métadonnées d'un challenge -->
     {#snippet challengeDetails(challenge)}
-        <Flex gap="xs" direction="column">
+        <Flex gap="xs" direction="column">            
+            {#if challenge.groupInteSucceedName.length > 0}
             <Flex gap="xs" align="center">
                 <Trophy size="15px" />
                 <p>Défi réussi par :</p>
             </Flex>
-            {#if challenge.groupInteSucceedName.length > 0}
                 <Flex
                     direction="column"
                     gap="xxs"
@@ -222,7 +229,6 @@
             {/if}
         </Flex>
         <Flex gap="xs" align="center" ><UsersRound size="15px" /> {challenge.groupName} </Flex>
-        <Flex gap="xs" align="center" ><Files size="15px" /> {challenge.type} </Flex>
         <Flex gap="xs" align="center" ><MapPin size="15px" /> {challenge.locationName} </Flex>
     {/snippet}
 
