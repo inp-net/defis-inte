@@ -2,7 +2,7 @@ import type { PageServerLoad } from './$types';
 import type { Leaderboard, User } from '$lib/types/types.d';
 import { prisma } from "$lib/server/prisma";
 
-export const load: PageServerLoad = async ({ params }) => {
+export const load: PageServerLoad = async ({ params , locals}) => {
 
     // Pas encore type Leaderboard car manque propriété name
     const users: User[] = await prisma.user.findMany({
@@ -17,6 +17,21 @@ export const load: PageServerLoad = async ({ params }) => {
             lastName: true,
             profilePictureURL: true,
             points: true,
+        }
+    });
+
+    const user = await prisma.user.findUnique({
+        where: {
+            id: locals.user.id
+        },
+        select: {
+            firstName: true,
+            lastName: true,
+            groupInte: {
+                select: {
+                    name: true,
+                }
+            }
         }
     });
 
@@ -47,7 +62,8 @@ export const load: PageServerLoad = async ({ params }) => {
     return {
         posts: {
             groupLeaderboard,
-            users
+            users,
+            user // TODO - le name est inaccessible : {groupName : user.groupInte.name, id : user.id}
         }
     };
 };

@@ -1,11 +1,13 @@
 <script lang="ts">
     import { Avatar, Frame, Flex } from "azucar-ui";
+    import "azucar-ui/tokens.css";
 
     type RankGroup = {
         groupName: string;
         groupUrl?: string;
         points: string;
         rank: string;
+        highlight: boolean;
     };
 
     const {
@@ -13,16 +15,26 @@
         groupUrl = undefined,
         points = "0",
         rank = "0",
+        highlight = false
     }: RankGroup = $props();
+
+    //Couleur pour le Top3
+    const colorTop = $derived.by(() => {
+        if (parseInt(rank) === 1) return "oklch(89% 0.182 95.6 / 0.2)";
+        else if (parseInt(rank) === 2) return "oklch(80.8% 0 0 / 0.2)";
+        else if (parseInt(rank) === 3) return "oklch(66.6% 0.132 61.3 / 0.2)";
+        return null;
+    });
 </script>
 
 <!--
     @component
     Composant utilisé pour le classement. Met le nombre de points, le rang et
     les informations utilises pour un classement.
+    Thibault ou Claude ? This is the question
 -->
 
-<Frame style="border-radius: 50pt; max-width: 100%;">
+<Frame style="border-radius: 50pt; max-width: 100%;  background-color: {colorTop};"  border = {highlight}>
     <Flex
         justify="space-between"
         wrap={false}

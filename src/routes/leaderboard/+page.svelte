@@ -13,9 +13,13 @@
         ...user,
         name: `${user.firstName} ${user.lastName}`,
     }));
+    let user = $derived(data.posts.user);
+
 
     let isGroupSelected: boolean = $state(true);
     let leaderboard: Leaderboard[] = $derived(isGroupSelected ? groups : users);
+
+
 </script>
 
 <Flex direction="column" gap="xxl" margin="lg">
@@ -52,6 +56,7 @@
                     groupUrl={group.pictureURL}
                     points={group.points}
                     rank={(i + 1).toString()}
+                    highlight={user.groupInte?.name === group.name || `${user.firstName} ${user.lastName}` === group.name} // groupe et utilisateur
                 />
             {/each}
         </Flex>
