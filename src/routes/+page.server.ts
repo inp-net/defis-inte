@@ -125,7 +125,7 @@ export const actions: Actions = {
         try {
             // Si pas connecter 
             if (!locals.user) {
-                throw error(413, "Le nombre de fichier est limité à 10")
+                throw error(403, "Tu n'es pas connecter")
             }
 
 
