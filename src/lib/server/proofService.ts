@@ -57,6 +57,7 @@ async function canModifyProof(proofId: number, userId: string) {
 
 
 /** Ajout d'une nouvelle preuve à un défi par un 1A
+ * Vérifier que l'on est connecter avant d'appeler cette fonction
  * @param body information nécessaire (voire type ProofInput)
  * @returns ce qui à été crée en db 
  */

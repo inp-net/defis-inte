@@ -122,13 +122,19 @@ export const actions: Actions = {
         const isOkTVn7 = data.get('isOkTVn7') === "true";
         const userId = locals.user.id;
         const maxFiles: number = 15;
-
-        // Récupérer le groupe d'intégration de l'utilisateur actuel
-        const userGroupInteId = locals.user.groupInteId;
-
-        let content: String[] = [];
-
         try {
+            // Si pas connecter 
+            if (!locals.user) {
+                throw error(413, "Le nombre de fichier est limité à 10")
+            }
+
+
+            // Récupérer le groupe d'intégration de l'utilisateur actuel
+            const userGroupInteId = locals.user.groupInteId;
+
+            let content: String[] = [];
+
+
             if (textePreuve) {
                 content = [textePreuve]
             } else {
@@ -140,14 +146,14 @@ export const actions: Actions = {
                     content.push(url)
                 }
             }
-            
+
             const body: ProofInput = { challengeId, userId, type, content, isOkTVn7 }
-            
+
             // Vérifie si c'est un 1A 
             if (!(locals.user.is1A && Churros1ATo2A)) {
                 throw error(403, "Tu n'es pas un 1A")
             }
-            
+
             const proof = await newProof(body);
             return {
                 success: true,
