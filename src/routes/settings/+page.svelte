@@ -166,6 +166,12 @@
                     <h3>Board Admin</h3>
                 </Flex>
                 <p>Paramètres administrateurs.</p>
+                <Button
+                    icon={Power}
+                    variant="outline"
+                    onclick={() => recomputePoints()}>
+                    Recalculer les points
+                </Button>
             </Stack>
         </Frame>
     {/if}
