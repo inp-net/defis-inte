@@ -18,6 +18,8 @@
     import Sort from "$lib/components/Sort.svelte";
     import SearchBar from "$lib/components/SearchBar.svelte";
     import Category from "$lib/components/Category.svelte";
+    import Logo from "$lib/components/Logo.svelte";
+    import MediaQuery from "$lib/components/MediaQuery.svelte";
 
     let { data }: { data: PageData } = $props();
     let challenges: ChallengeRead[] = $derived(data.posts.challenges);
@@ -176,17 +178,7 @@
         });
     });
 </script>
-
-{#if !isConnected}
-    <Flex gap="xs" margin="lg" justify="right">
-        <Button
-            onclick={() => signIn("authentik", { callbackUrl: "/" })}
-            icon={LogIn}
-        >
-            Se connecter
-        </Button>
-    </Flex>
-{:else}
+{#if isConnected}
     <Header
         firstName={user?.firstName ?? null}
         lastName={user?.lastName ?? null}
@@ -197,10 +189,44 @@
         notificationsPreuves={data.posts.pendingProofCount}
     ></Header>
 {/if}
-<Flex direction="column" gap="xxl" margin="lg">
+<Flex direction="column" gap="xxl" margin="md">
+
+    {#if !isConnected}
+        <Stack>
+            <Flex gap="xs" justify="right">
+                <Button
+                    onclick={() => signIn("authentik", { callbackUrl: "/" })}
+                    icon={LogIn}
+                >
+                    Se connecter
+                </Button>
+            </Flex>
+        </Stack>
+    {/if}
+    
     <Stack>
-        <h1>Défis</h1>
-        <p>Défis d'intégration 2026 - 2027.</p>
+
+        <MediaQuery query="(max-width: 768px)">
+            {#snippet children(isMobile)}
+                {#if isMobile}
+                    <Flex gap="md" align="center" wrap={false}>
+                        <Logo colored={false} size="9vh" />
+                        <Flex direction="column" gap="xxs">
+                            <h2>Défis</h2>
+                            <p>Défis d'intégration 2026 - 2027.</p>
+                        </Flex>
+                    </Flex>
+                {:else}
+                    <Flex gap="lg" align="center">
+                        <Logo colored={false} size="12vh" />
+                        <Flex direction="column" gap="xxs">
+                            <h1>Défis</h1>
+                            <p>Défis d'intégration 2026 - 2027.</p>
+                        </Flex>
+                    </Flex>
+                {/if}
+            {/snippet}
+        </MediaQuery>
     </Stack>
 
     <!-- A afficher que pour les membres 2A de groupes et plus -->
