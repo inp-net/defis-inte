@@ -61,7 +61,7 @@ async function canModifyProof(proofId: number, userId: string) {
  * @param body information nécessaire (voire type ProofInput)
  * @returns ce qui à été crée en db 
  */
- export async function newProof(body: ProofInput) {
+export async function newProof(body: ProofInput) {
     const { challengeId, userId, type, content, isOkTVn7 } = body;
 
     const challenge = await prisma.challenge.findFirst({
@@ -91,33 +91,37 @@ async function canModifyProof(proofId: number, userId: string) {
         throw error(403, "Tu n'es pas un 1A");
     }
 
+    // Si pas de groupe d'inté on ne peut pas soumettre de preuve
+    if (!user.groupInteId) {
+        throw error(403, "Tu n'appartiens à aucun groupe d'intégration");
+    }
+    
     // Vérifier si son groupe d'inté a déjà fait le défi
-    if (user.groupInteId) {
-        const existingProofFromGroup = await prisma.proof.findFirst({
-            where: {
-                challengeId: challengeId,
-                status: { in: ["PENDING", "VALID"] },
-                user: {
-                    groupInteId: user.groupInteId
-                }
-            },
-            select: {
-                status: true,
-                user: {
-                    select: { firstName: true, lastName: true }
-                }
+    const existingProofFromGroup = await prisma.proof.findFirst({
+        where: {
+            challengeId: challengeId,
+            status: { in: ["PENDING", "VALID"] },
+            user: {
+                groupInteId: user.groupInteId
             }
-        });
-
-        if (existingProofFromGroup) {
-            const author = `${existingProofFromGroup.user.firstName} ${existingProofFromGroup.user.lastName}`;
-            if (existingProofFromGroup.status === "PENDING") {
-                throw error(400, `Une preuve a déjà été soumise par ${author} et attend validation.`);
-            } else {
-                throw error(400, `Votre groupe a déjà validé ce défi (validé par ${author}).`);
+        },
+        select: {
+            status: true,
+            user: {
+                select: { firstName: true, lastName: true }
             }
         }
+    });
+
+    if (existingProofFromGroup) {
+        const author = `${existingProofFromGroup.user.firstName} ${existingProofFromGroup.user.lastName}`;
+        if (existingProofFromGroup.status === "PENDING") {
+            throw error(400, `Une preuve a déjà été soumise par ${author} et attend validation.`);
+        } else {
+            throw error(400, `Votre groupe a déjà validé ce défi (validé par ${author}).`);
+        }
     }
+
 
     const coreData = {
         user: {
