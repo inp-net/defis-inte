@@ -19,13 +19,10 @@
     });
 </script>
 
-<!-- <svelte:head> -->
-<!-- 	<link rel="icon" href={favicon} /> -->
-<!-- </svelte:head> -->
-
 <svelte:head>
 	<title>Site des défis</title>
 	<meta name="description" content="Proposez et réalisez des défis." />
+    <link rel="icon" type="image/svg" href='favicon.svg' />
 </svelte:head>
 
 <div class="container">
