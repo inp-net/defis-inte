@@ -66,7 +66,7 @@
             {#each rankedLeaderboard as group}
                 <Rank
                     groupName={group.name}
-                    groupUrl={group.pictureURL}
+                    groupUrl={isGroupSelected ? group.pictureURL : group.profilePictureURL}
                     points={group.points}
                     rank={group.rank.toString()}
                     highlight={user.groupInte?.name === group.name || `${user.firstName} ${user.lastName}` === group.name} // groupe et utilisateur
