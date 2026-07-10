@@ -1,7 +1,6 @@
 <script lang="ts">
     import { Avatar, Frame, Flex } from "azucar-ui";
-    import "azucar-ui/tokens.css";
-
+    
     type RankGroup = {
         groupName: string;
         groupUrl?: string;
