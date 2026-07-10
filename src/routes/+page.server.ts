@@ -77,6 +77,7 @@ export const load: PageServerLoad = async ({ locals }) => {
     const pendingChallengeCount = !user ? 0 : await prisma.challenge.count({
         where: {
             defiAccepte: false,
+            isDeleted: false,
             group: user?.isAdmin ? {} : {
                 board: {
                     some: {
