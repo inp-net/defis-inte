@@ -15,9 +15,22 @@
     }));
     let user = $derived(data.posts.user);
 
-
     let isGroupSelected: boolean = $state(true);
     let leaderboard: Leaderboard[] = $derived(isGroupSelected ? groups : users);
+
+    function calculateRanks(data) {
+        let currentRank = 1;
+        
+        return data.map((item, index, arr) => {
+            if (index > 0 && item.points < arr[index - 1].points) {
+            currentRank = index + 1;
+            }
+            
+            return { ...item, rank: currentRank };
+        });
+    }
+
+    let rankedLeaderboard = $derived(calculateRanks(leaderboard));
 
 
 </script>
@@ -50,12 +63,12 @@
             direction="column"
             style="max-width: 100%;"
         >
-            {#each leaderboard as group, i}
+            {#each rankedLeaderboard as group}
                 <Rank
                     groupName={group.name}
                     groupUrl={group.pictureURL}
                     points={group.points}
-                    rank={(i + 1).toString()}
+                    rank={group.rank.toString()}
                     highlight={user.groupInte?.name === group.name || `${user.firstName} ${user.lastName}` === group.name} // groupe et utilisateur
                 />
             {/each}
