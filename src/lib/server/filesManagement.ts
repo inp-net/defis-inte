@@ -42,9 +42,12 @@ export function verifHash(data: object, hash: string): boolean {
 	return hashData(data) === hash;
 }
 
+//
+export const UPLOADS_PATH = "/usr/src/app/uploads" // c'esst pas propre faut le mettre dans env mais la flemme là
+
 // Dossier uploads à la racine du projet svelte
 export const baseUploadPath = join(dirname(fileURLToPath(import.meta.url)), '..', '..', '..');
-export const uploadsPath = join(baseUploadPath, 'uploads');
+export const uploadsPath = UPLOADS_PATH ?? join(baseUploadPath, 'uploads');
 
 //Table avec les magicByte
 //On comparer les bytes pour vérifier que c'est la bonne extension
