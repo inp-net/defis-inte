@@ -127,7 +127,11 @@ export const actions: Actions = {
             if (!locals.user) {
                 throw error(403, "Tu n'es pas connecter")
             }
-
+            
+            // Vérifie si c'est un 1A 
+            if (!(locals.user.is1A && Churros1ATo2A)) {
+                throw error(403, "Tu n'es pas un 1A")
+            }
 
             // Récupérer le groupe d'intégration de l'utilisateur actuel
             const userGroupInteId = locals.user.groupInteId;
@@ -149,10 +153,7 @@ export const actions: Actions = {
 
             const body: ProofInput = { challengeId, userId, type, content, isOkTVn7 }
 
-            // Vérifie si c'est un 1A 
-            if (!(locals.user.is1A && Churros1ATo2A)) {
-                throw error(403, "Tu n'es pas un 1A")
-            }
+
 
             const proof = await newProof(body);
             return {
