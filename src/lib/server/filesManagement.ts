@@ -43,11 +43,11 @@ export function verifHash(data: object, hash: string): boolean {
 }
 
 //
-export const UPLOADS_PATH = "/usr/src/app/uploads" // c'esst pas propre faut le mettre dans env mais la flemme là
+const UPLOADS_PATH = env.UPLOADS_PATH ?? path.join(process.cwd(), 'uploads');
 
 // Dossier uploads à la racine du projet svelte
 export const baseUploadPath = join(dirname(fileURLToPath(import.meta.url)), '..', '..', '..');
-export const uploadsPath = UPLOADS_PATH ?? join(baseUploadPath, 'uploads');
+export const uploadsPath = UPLOADS_PATH // ?? join(baseUploadPath, 'uploads');
 
 //Table avec les magicByte
 //On comparer les bytes pour vérifier que c'est la bonne extension
@@ -91,7 +91,7 @@ function validateMagicBytes(buffer: Buffer, ext: string): boolean {
  * Upload un fichier sur le serveur dans un répertoire spécifique à l'utilisateur.
  * @param file Le fichier qu'on veut uploader
  * @param userId L'id de l'utilisateur qui upload le fichier
- * @param maxSize Taille max du fichier en bit (5 Mo par défaut)
+ * @param maxSize Taille max du fichier en bit (200 Mo par défaut)
  * @returns Le chemin absolu du fichier uploadé
  * @throws {Error} FILE_TOO_LARGE Lance une erreur si le fichier dépasse la taille maximale autorisée
  */
@@ -130,6 +130,6 @@ export async function uploadUserFile(
 
 	writeFileSync(targetPath, buffer);
 
-	return targetPath.slice(baseUploadPath.length);
+	return targetPath;
 }
 

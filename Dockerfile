@@ -36,7 +36,7 @@ COPY prisma.config.ts ./prisma.config.ts
 COPY entrypoint.sh ./entrypoint.sh
 RUN chmod +x ./entrypoint.sh
 
-
+RUN mkdir -p /usr/src/app/uploads && chown -R bun:bun /usr/src/app/uploads
 USER bun
 
 EXPOSE 3000/tcp

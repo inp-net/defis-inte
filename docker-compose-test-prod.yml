@@ -11,8 +11,11 @@ services:
       - "5555:5555" # Prisma Studio
     env_file:
       - .env.docker
+    environment:
+      - UPLOADS_PATH=${UPLOADS_PATH}
+      - BODY_SIZE_LIMIT=524288000 
     volumes:
-      - uploads:/app/uploads
+      - uploads:/usr/src/app/uploads
     restart: unless-stopped
 
   db:
