@@ -280,8 +280,8 @@
                         type={challenge.type}
                         onSave={handleSave}
                         defaultTVn7={user?.isOkTVn7}
-                        is1A={user?.is1A}
-                        isEnabled={isConnected && !challenge.isDone && !isSending}
+                        isConnected={isConnected}
+                        isEnabled={isConnected && !challenge.isDone && !isSending && (Churros1ATo2A && user?.is1A)}
                     >
                         {@render challengeDetails(challenge)}
                     </FrameChallenge>
