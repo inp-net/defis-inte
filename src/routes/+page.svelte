@@ -5,9 +5,9 @@
     import { signIn } from "@auth/sveltekit/client";
     import { Churros1ATo2A } from "$lib/env";
     import { Toaster, toast } from "svelte-sonner";
-    import { invalidateAll } from '$app/navigation';    
+    import { invalidateAll } from "$app/navigation";
     import { UploadType } from "$lib/types/types.d";
-
+    import { deserialize } from '$app/forms';
 
     // composants
     import { Flex, Stack, Button } from "azucar-ui";
@@ -41,25 +41,27 @@
 
     let isSending = $state(false);
 
-    /** Fonction pour gérer l'envoie d'une preuve de défi
+    /** Fonction pour gérer l'envoie d'une preuve
      * @param fichiers - Les fichiers à envoyer (peut être null)
      * @param textePreuve - Le texte de la preuve (peut être vide)
      * @param type - Le type de preuve (texte ou fichier)
      * @param isOkTVn7 - Indique si l'utilisateur est OK avec TVn7
      * @param challengeId - L'ID du défi
      * @returns void
-    */
+     */
     async function handleSave(
         fichiers: FileList | null,
         textePreuve: string,
         type: string,
         isOkTVn7: boolean = false,
         challengeId: number,
-    ){
+    ) {
         if (isSending) return;
 
         // Vérifie que le groupe n'a pas déjà fait le défi
-        const currentChallenge = challenges.find(c => c.challengeId === challengeId);
+        const currentChallenge = challenges.find(
+            (c) => c.challengeId === challengeId,
+        );
         if (currentChallenge?.isDone) {
             toast.error("Votre groupe a déjà validé ce défi !");
             return;
@@ -89,15 +91,19 @@
                 body: formData,
             });
             if (response.ok) {
-                const result = await response.json();
+                const resultNoReadable = await response.text();
+                const result = deserialize(resultNoReadable);
 
                 if (result.type === "success") {
                     toast.success("Preuve ajouté avec succès");
                     invalidateAll();
                 }
-
-                if (result.type === "failure")
-                    toast.error("Impossible d'envoyer la preuve. Vérifier sa présence dans la page profil.")
+                if (result.type === "failure") {
+                    const message = result.data?.message ?? result.data ?? "" ;
+                    toast.error(
+                        `Impossible d'envoyer la preuve. ${message}`
+                    );
+                }
             }
         } catch (err) {
             toast.error("Erreur dans l'envoie du défi : " + err);
@@ -132,26 +138,43 @@
         switch (sortBind) {
             case "Points":
                 return items.sort(
-                    (a, b) => sortByDone(a, b) || sortByPoints(a, b) || sortByClub(a, b),
+                    (a, b) =>
+                        sortByDone(a, b) ||
+                        sortByPoints(a, b) ||
+                        sortByClub(a, b),
                 );
             case "Clubs":
                 return items.sort(
-                    (a, b) => sortByDone(a, b) || sortByClub(a, b) || sortByPoints(a, b),
+                    (a, b) =>
+                        sortByDone(a, b) ||
+                        sortByClub(a, b) ||
+                        sortByPoints(a, b),
                 );
             case "Lieux":
                 return items.sort(
                     (a, b) =>
                         sortByDone(a, b) ||
-                        flip * (b.locationName || "").localeCompare( a.locationName || "",) ||
+                        flip *
+                            (b.locationName || "").localeCompare(
+                                a.locationName || "",
+                            ) ||
                         secondarySort(a, b),
                 );
             case "Date":
                 return items.sort(
-                    (a, b) => sortByDone(a, b) || flip * (b.challengeId - a.challengeId) || secondarySort(a, b),
+                    (a, b) =>
+                        sortByDone(a, b) ||
+                        flip * (b.challengeId - a.challengeId) ||
+                        secondarySort(a, b),
                 );
             case "Tendance":
                 return items.sort(
-                    (a, b) => sortByDone(a, b) || flip * (b.groupInteSucceedName.length - a.groupInteSucceedName.length) || secondarySort(a, b),
+                    (a, b) =>
+                        sortByDone(a, b) ||
+                        flip *
+                            (b.groupInteSucceedName.length -
+                                a.groupInteSucceedName.length) ||
+                        secondarySort(a, b),
                 );
             default:
                 return items.sort(secondarySort);
@@ -212,15 +235,23 @@
 
     <!-- Snippet pour afficher les métadonnées d'un challenge -->
     {#snippet challengeDetails(challenge)}
-        <Flex gap="xs" align="center" ><UsersRound size="15px" /> {challenge.groupName} </Flex>
-        <Flex gap="xs" align="center" ><MapPin size="15px" /> {challenge.locationName} </Flex>
-        <Flex gap="xs" align="center" ><Files size="15px" /><p>Type de preuve attendu :</p>{UploadType[challenge.type as keyof typeof UploadType]}</Flex>
+        <Flex gap="xs" align="center"
+            ><UsersRound size="15px" /> {challenge.groupName}
+        </Flex>
+        <Flex gap="xs" align="center"
+            ><MapPin size="15px" /> {challenge.locationName}
+        </Flex>
+        <Flex gap="xs" align="center"
+            ><Files size="15px" />
+            <p>Type de preuve attendu :</p>
+            {UploadType[challenge.type as keyof typeof UploadType]}</Flex
+        >
         {#if challenge.groupInteSucceedName.length > 0}
-        <Flex gap="xs" direction="column">            
-            <Flex gap="xs" align="center">
-                <Trophy size="15px" />
-                <p>Défi réussi par :</p>
-            </Flex>
+            <Flex gap="xs" direction="column">
+                <Flex gap="xs" align="center">
+                    <Trophy size="15px" />
+                    <p>Défi réussi par :</p>
+                </Flex>
                 <Flex
                     direction="column"
                     gap="xxs"
@@ -231,7 +262,7 @@
                         <p>- {name}</p>
                     {/each}
                 </Flex>
-        </Flex>
+            </Flex>
         {/if}
     {/snippet}
 
@@ -254,11 +285,11 @@
             {#each processedChallenges() as challenge (challenge.challengeId)}
                 {@const isDone = challenge.isDone}
                 {@const isPending = challenge.isPending}
-                {@const challengeTitle = isDone 
-                    ? `✔ ${challenge.name}` 
-                    : isPending 
-                        ? `⏳ ${challenge.name} (En attente)` 
-                        : challenge.name}
+                {@const challengeTitle = isDone
+                    ? `✔ ${challenge.name}`
+                    : isPending
+                      ? `⏳ ${challenge.name} (En attente)`
+                      : challenge.name}
 
                 {#if challenge.showCategory}
                     <Category
@@ -267,7 +298,7 @@
                         src={challenge.groupUrl}
                     />
                 {/if}
-                {#if !challenge.is_hidden || sortBind!=="Clubs"}
+                {#if !challenge.is_hidden || sortBind !== "Clubs"}
                     <FrameChallenge
                         challengeId={challenge.challengeId}
                         name={challengeTitle}
@@ -280,8 +311,12 @@
                         type={challenge.type}
                         onSave={handleSave}
                         defaultTVn7={user?.isOkTVn7}
-                        isConnected={isConnected}
-                        isEnabled={isConnected && !challenge.isDone && !isSending && (Churros1ATo2A && user?.is1A)}
+                        {isConnected}
+                        isEnabled={isConnected &&
+                            !challenge.isDone &&
+                            !isSending &&
+                            Churros1ATo2A &&
+                            user?.is1A}
                     >
                         {@render challengeDetails(challenge)}
                     </FrameChallenge>

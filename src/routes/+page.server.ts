@@ -127,12 +127,12 @@ export const actions: Actions = {
         try {
             // Si pas connecter 
             if (!locals.user) {
-                throw error(403, "Tu n'es pas connecter")
+                return fail(403, "Tu n'es pas connecter")
             }
 
             // Vérifie si c'est un 1A 
             if (!(locals.user.is1A && Churros1ATo2A)) {
-                throw error(403, "Tu n'es pas un 1A")
+                return fail(403, "Tu n'es pas un 1A")
             }
 
             // Récupérer le groupe d'intégration de l'utilisateur actuel
@@ -142,10 +142,10 @@ export const actions: Actions = {
             for (const file of files) {
                 const fileType = extname(file.name).slice(1).toLowerCase()
                 if (type === "PHOTO" && !typePhotoFile.find((elt : string) => elt === fileType)) { 
-                    throw error (413, 'On veut des photos' )
+                    return fail (413, 'On veut des photos' )
                 }
                 if (type === "VIDEO" && !typeVideoFile.find((elt : string) => elt === fileType)) {
-                    throw error (413, 'on veut des vidéos')
+                    return fail (413, 'on veut des vidéos')
                 }
             }
 
@@ -157,7 +157,7 @@ export const actions: Actions = {
                 content = [textePreuve]
             } else {
                 if (files.length > maxFiles) {
-                    throw error(413, "Le nombre de fichier est limité à 10")
+                    return fail(413, "Le nombre de fichier est limité à 10")
                 }
                 try {
                     for (const file of files) {
@@ -167,13 +167,13 @@ export const actions: Actions = {
                 } catch (err: any) {
                     console.error(err);
                     if (err.message === 'FILE_TOO_LARGE') {
-                        throw error(413, "Le fichier est trop lourd (max 200 Mo pour les images et 500 Mo pour les vidéos)")
+                        return fail(413, "Le fichier est trop lourd (max 200 Mo / image | 500 Mo / vidéos)")
                     } else if (err.message === 'EXTENSION_NOT_ALLOWED') {
-                        throw error(415, "L'extension du fichier n'est pas autorisée")
+                        return fail(415, "L'extension du fichier n'est pas autorisée")
                     } else if (err.message === 'INVALID_FILE_CONTENT') {
-                        throw error(415, "Le contenu du fichier ne correspond pas à son extension")
+                        return fail(415, "Le contenu du fichier ne correspond pas à son extension")
                     } else {
-                        throw error(500, "Erreur lors de l'upload du fichier")
+                        return fail(500, "Erreur lors de l'upload du fichier, retente")
                     }
                 }
             }
@@ -188,9 +188,10 @@ export const actions: Actions = {
                 proof: proof
             };
         } catch (error: any) {
-            if (error.status && error.message) {
+            if (error.status && error.body.message) {
+                console.error('Action Error:', error);
                 return fail(error.status, {
-                    message: error.message,
+                    message: error.body.message,
                 });
             }
             console.error('Action Error:', error);
