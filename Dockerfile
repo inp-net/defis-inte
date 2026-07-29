@@ -15,7 +15,7 @@ RUN mkdir -p /temp/prod
 COPY package.json bun.lock /temp/prod/
 RUN cd /temp/prod && bun install --frozen-lockfile --production
 
-# bulde de l'application
+# builde de l'application
 FROM base AS builder
 COPY --from=install /temp/dev/node_modules node_modules
 COPY . .
@@ -25,7 +25,7 @@ RUN bun run build
 
 # On fait tout propre pour avoir une image légere image finale 
 FROM base AS release
-RUN apt-get update && apt-get install -y --no-install-recommends openssl \
+RUN apt-get update && apt-get install -y --no-install-recommends openssl ffmpeg \
     && rm -rf /var/lib/apt/lists/*
 
 COPY --from=install-prod /temp/prod/node_modules node_modules
@@ -42,6 +42,3 @@ USER bun
 EXPOSE 3000/tcp
 
 ENTRYPOINT ["./entrypoint.sh"]
-
-
-

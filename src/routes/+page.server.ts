@@ -1,10 +1,11 @@
 import type { PageServerLoad } from './$types';
-import type { ProofInput, ChallengeRead } from '$lib/types/types.d';
+import { type ProofInput, type ChallengeRead, UploadType } from '$lib/types/types.d';
 import { newProof } from '$lib/server/proofService';
 import { prisma } from "$lib/server/prisma";
 import { error, fail, type Actions } from '@sveltejs/kit';
-import { uploadUserFile } from '$lib/server/filesManagement';
+import { uploadUserFile, typeVideoFile, typePhotoFile } from '$lib/server/filesManagement';
 import { Churros1ATo2A } from '$lib/env';
+import path, { extname } from 'path';
 
 
 export const load: PageServerLoad = async ({ locals }) => {
@@ -126,16 +127,28 @@ export const actions: Actions = {
         try {
             // Si pas connecter 
             if (!locals.user) {
-                throw error(403, "Tu n'es pas connecter")
+                return fail(403, "Tu n'es pas connecter")
             }
-            
+
             // Vérifie si c'est un 1A 
             if (!(locals.user.is1A && Churros1ATo2A)) {
-                throw error(403, "Tu n'es pas un 1A")
+                return fail(403, "Tu n'es pas un 1A")
             }
 
             // Récupérer le groupe d'intégration de l'utilisateur actuel
             const userGroupInteId = locals.user.groupInteId;
+
+            // VERIFIE QUE C'est bien le bon type
+            for (const file of files) {
+                const fileType = extname(file.name).slice(1).toLowerCase()
+                if (type === "PHOTO" && !typePhotoFile.find((elt : string) => elt === fileType)) { 
+                    return fail (413, 'On veut des photos' )
+                }
+                if (type === "VIDEO" && !typeVideoFile.find((elt : string) => elt === fileType)) {
+                    return fail (413, 'on veut des vidéos')
+                }
+            }
+
 
             let content: String[] = [];
 
@@ -144,11 +157,24 @@ export const actions: Actions = {
                 content = [textePreuve]
             } else {
                 if (files.length > maxFiles) {
-                    throw error(413, "Le nombre de fichier est limité à 10")
+                    return fail(413, "Le nombre de fichier est limité à 10")
                 }
-                for (const file of files) {
-                    const url = await uploadUserFile(file, userId);
-                    content.push(url)
+                try {
+                    for (const file of files) {
+                        const url = await uploadUserFile(file, userId);
+                        content.push(url)
+                    }
+                } catch (err: any) {
+                    console.error(err);
+                    if (err.message === 'FILE_TOO_LARGE') {
+                        return fail(413, "Le fichier est trop lourd (max 200 Mo / image | 500 Mo / vidéos)")
+                    } else if (err.message === 'EXTENSION_NOT_ALLOWED') {
+                        return fail(415, "L'extension du fichier n'est pas autorisée")
+                    } else if (err.message === 'INVALID_FILE_CONTENT') {
+                        return fail(415, "Le contenu du fichier ne correspond pas à son extension")
+                    } else {
+                        return fail(500, "Erreur lors de l'upload du fichier, retente")
+                    }
                 }
             }
 
@@ -162,9 +188,10 @@ export const actions: Actions = {
                 proof: proof
             };
         } catch (error: any) {
-            if (error.status && error.message) {
+            if (error.status && error.body.message) {
+                console.error('Action Error:', error);
                 return fail(error.status, {
-                    message: error.message,
+                    message: error.body.message,
                 });
             }
             console.error('Action Error:', error);

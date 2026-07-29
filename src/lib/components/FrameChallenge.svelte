@@ -23,7 +23,7 @@
         ) => void;
         defaultTVn7: boolean;
         isEnabled: boolean;
-        is1A: boolean;
+        isConnected: boolean;
         children?: import("svelte").Snippet;
     };
 
@@ -37,7 +37,7 @@
         type,
         onSave,
         defaultTVn7 = false,
-        is1A = false,
+        isConnected = false,
         isEnabled,
         children,
     }: Prop = $props();
@@ -111,7 +111,7 @@
                         >
                         
                     </Flex>
-                    {#if isEnabled && Churros1ATo2A && is1A}
+                    {#if isEnabled }
                         <UploadProof
                             {challengeId}
                             {desc}
@@ -119,7 +119,7 @@
                             {onSave}
                             {defaultTVn7}
                         ></UploadProof>
-                    {:else if !isEnabled}
+                    {:else if !isConnected}
                         <span>Connectez-vous pour réaliser le défi</span>
                     {/if}
                 </Flex>
