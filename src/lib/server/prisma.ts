@@ -101,8 +101,7 @@ async function formatUserForPrisma(userChurros: UserChurros): Promise<{
         is1A: userChurros.yearTier === 1 ? true : false,
         group: { connect: (group || []).map(g => ({ groupId: g.uid })) },
         groupBoard: { connect: (groupBoard || []).map(g => ({ groupId: g.uid })) },
-        groupInteId: groupInteId,
-        isAdmin: false
+        groupInteId: groupInteId
     };
 
     const create: Prisma.UserCreateInput = {
