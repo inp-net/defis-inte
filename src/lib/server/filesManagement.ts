@@ -7,10 +7,16 @@ import { dirname, join } from 'path';
 import { fileURLToPath } from 'node:url';
 import type { GroupClub } from '~generated//client';
 import { env } from '$env/dynamic/private';
+import { convertToWebp, convertToWebVideo } from './conversion';
+
+//types  fichier pris en compte
+export const typePhotoFile = ['jpg', 'jpeg', 'png', 'heic', 'heif', 'webp', 'bmp', 'tiff', 'tif', 'avif'];
+export const typeVideoFile = ['mp4', 'mov', 'webm', 'avi'];
+
 
 // ENREGISTREMENT DE FICHIER
 
-const SECRET : string = env.BETTER_AUTH_SECRET!;
+const SECRET: string = env.BETTER_AUTH_SECRET!;
 
 export function avatarFromName(name: string): string {
 	return `https://ui-avatars.com/api/?name=${encodeURIComponent(name).replace(/%20/g, '+')}&background=random`;
@@ -111,7 +117,7 @@ export async function uploadUserFile(
 		throw new Error('FILE_TOO_LARGE');
 	}
 
-	const extension = extname(file.name).toLowerCase();
+	let extension = extname(file.name).toLowerCase();
 
 	// Verifie si l'extension est prise en compte
 	if (!(extension in ALLOWED_TYPES)) {
@@ -125,10 +131,25 @@ export async function uploadUserFile(
 		throw new Error('INVALID_FILE_CONTENT');
 	}
 
-	const filename = `${Date.now()}${extension}`;
-	const targetPath = path.join(userDir, filename);
+	//	const filename = `${Date.now()}${extension}`;
+	//	const targetPath = path.join(userDir, filename);
 
-	writeFileSync(targetPath, buffer);
+	let targetPath: string;
+	// convertion et ecriture des fichier en mémoire 
+	// tout est converti pourquoi ? : on autorise d'envoyer des fichier lourd donc on les convertit pour que l'affichage soit okay après
+
+	if (extension === '.heic' || extension === '.heif' || extension === '.avif' || extension === '.tiff' || extension === '.tif' || extension === '.jpeg' || extension === '.jpg' || extension === '.png') {
+		const filename = `${Date.now()}${".webp"}`;
+		targetPath = path.join(userDir, filename);
+		await convertToWebp(buffer, extension, targetPath);
+	} else if (extension === '.mov' || extension === '.webm' || extension === '.mp4' || extension === '.gif' || extension === '.avi') {
+		const filename = `${Date.now()}${".mp4"}`;
+		targetPath = path.join(userDir, filename);
+		await convertToWebVideo(buffer, extension, targetPath);
+
+	} else {
+		throw new Error('EXTENSION_NOT_ALLOWED');
+	}
 
 	return targetPath;
 }
