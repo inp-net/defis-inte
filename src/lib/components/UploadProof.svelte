@@ -58,6 +58,7 @@
                     bind:files={fichiers}
                     accept=".png, .jpeg, .jpg, .mp4, .tif, .tiff, .avif, .heif, .heic, .webm, .mov, .webp, .gif"
                     style="width: 100%; cursor: pointer;"
+                    multiple 
                 />
             </Flex>
         </Frame>
