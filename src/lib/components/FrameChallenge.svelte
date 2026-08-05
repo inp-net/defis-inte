@@ -4,8 +4,6 @@
     import UploadProof from "./UploadProof.svelte";
     import { Churros1ATo2A } from "$lib/env";
 
-    import { slide } from "svelte/transition";
-
     type Prop = {
         challengeId: number;
         name: string;
@@ -41,57 +39,51 @@
         isEnabled,
         children,
     }: Prop = $props();
-
-    let isUnfolded = $state(false);
 </script>
 
 <!--
     @component
-    Composant FrameChallenge est le composant qui permet de lire et d'envoyer les challenges.
-    Il est présent dans la page d'acceuil.
-    Il peut être unfold.
+    Composant FrameChallenge est le composant qui permet de lire
+    et d'envoyer les challenges. Il est présent dans la page
+    d'acceuil. Il peut être unfold.
 -->
 
 <Frame
     border={true}
     style="padding: 6px 10px; display: flex; align-content: center; flex-direction: column;"
 >
-    <button
-        class="no-style"
-        style="width: 100%;"
-        onclick={() => (isUnfolded = !isUnfolded)}
-    >
-        <!-- Forcer max-width et min-width permet de ne pas dépasser de l'écran et de laisser le nom avoir un scroll -->
-        <Flex
-            justify="space-between"
-            align="center"
-            gap="sm"
-            wrap={false}
-            style="max-width: 100%; min-width: 0; overflow: hidden; flex-grow: 1;"
-        >
-            {#if clubUrl}
-                <img src={clubUrl} alt={clubName} />
-            {:else}
-                <!-- espacement vertical qui remplace l'image -->
-                <span style="display: inline-block; height: 2.5em;"></span>
-            {/if}
-            <!-- Le nom peut être scroll horizontalement si il y a pas de places -->
-            <div class="scrollable" style="min-width: 0;">
-                <p>{name}</p>
-            </div>
-            <!-- Le margin left permet de mettre à droite le nombre de points -->
-            <!-- Le flex-shrink à 0 permet d'empêcher le nombre de points de diminuer de taille pour forcer le horizontal scroll du nom -->
+    <details class="challenge-details">
+        <summary class="no-style clickable-header" style="width: 100%;">
+            <!-- Forcer max-width et min-width permet de ne pas dépasser de l'écran et de laisser le nom avoir un scroll -->
             <Flex
-                style="flex-shrink: 0; margin-between: auto; margin-left: auto;"
-                align="baseline"
+                justify="space-between"
+                align="center"
+                gap="sm"
+                wrap={false}
+                style="max-width: 100%; min-width: 0; overflow: hidden; flex-grow: 1;"
             >
-                <p><b>{nbPoints} pts</b></p>
+                {#if clubUrl}
+                    <img src={clubUrl} alt={clubName} />
+                {:else}
+                    <!-- espacement vertical qui remplace l'image -->
+                    <span style="display: inline-block; height: 2.5em;"></span>
+                {/if}
+                <!-- Le nom peut être scroll horizontalement si il y a pas de places -->
+                <div class="scrollable" style="min-width: 0;">
+                    <p>{name}</p>
+                </div>
+                <!-- Le margin left permet de mettre à droite le nombre de points -->
+                <!-- Le flex-shrink à 0 permet d'empêcher le nombre de points de diminuer de taille pour forcer le horizontal scroll du nom -->
+                <Flex
+                    style="flex-shrink: 0; margin-between: auto; margin-left: auto;"
+                    align="baseline"
+                >
+                    <p><b>{nbPoints} pts</b></p>
+                </Flex>
             </Flex>
-        </Flex>
-    </button>
+        </summary>
 
-    {#if isUnfolded}
-        <div transition:slide={{ duration: 200 }} class="animated-panel">
+        <div class="panel-content">
             <div style="border-top: 1px solid #eaeaea; width: 95%;">
                 <Flex direction="column" gap="md">
                     <Flex gap="xs" direction="column">
@@ -105,13 +97,12 @@
                                 {@render children()}
                             </Flex>
                         {/if}
-                        <Flex gap="xs" align="center"
-                            ><TextAlignStart size="15px" /><b>Description :</b>
-                            {desc}</Flex
-                        >
-                        
+                        <Flex gap="xs" align="center">
+                            <TextAlignStart size="15px" /><b>Description :</b>
+                            {desc}
+                        </Flex>
                     </Flex>
-                    {#if isEnabled }
+                    {#if isEnabled}
                         <UploadProof
                             {challengeId}
                             {desc}
@@ -125,13 +116,17 @@
                 </Flex>
             </div>
         </div>
-    {/if}
+    </details>
 </Frame>
 
 <style>
-    .animated-panel {
-        will-change: height;
-        contain: content;
+    .challenge-details summary::-webkit-details-marker,
+    .challenge-details summary::marker {
+        display: none;
+        content: "";
+    }
+
+    .panel-content {
         padding: 10px 0 10px 10px;
     }
 
@@ -152,6 +147,7 @@
     .scrollable p {
         white-space: nowrap;
         margin: 0;
+        text-align: left;
     }
 
     .scrollable::-webkit-scrollbar {
@@ -159,7 +155,8 @@
     }
 
     .no-style {
-        background: none;
+        position: relative;
+        display: block;
         color: inherit;
         border: none;
         padding: 0;
@@ -167,9 +164,25 @@
         cursor: pointer;
         outline: inherit;
         flex-grow: 1;
+        -webkit-tap-highlight-color: transparent;
+        background-color: transparent !important;
+        touch-action: manipulation;
+        list-style: none;
     }
 
-    .scrollable p {
-        text-align: left;
+    .no-style:focus,
+    .no-style:active {
+        background-color: transparent !important;
+        outline: none;
+    }
+
+    .clickable-header::before {
+        content: "";
+        position: absolute;
+        top: -12px;
+        bottom: -12px;
+        left: -12px;
+        right: -12px;
+        z-index: 1;
     }
 </style>
