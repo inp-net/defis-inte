@@ -154,6 +154,9 @@
                     </Flex>
                 </AcceptableCard>
             {/each}
+            {#if proofs.length == 0}
+                <p><i>(rien pour le moment)</i></p>
+            {/if}
         </Flex>
     </Stack>
 </Flex>
