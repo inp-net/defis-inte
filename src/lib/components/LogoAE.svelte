@@ -1,7 +1,7 @@
 <script lang="ts">
 
     interface Props {
-        size?: number;
+        size?: number | string; // utile d'enter un string css
         top?: number;
         left?: number;
     }
@@ -12,9 +12,14 @@
         left = 0
     }: Props = $props();
 
+    let sizeStyle = $derived(typeof size === 'number' ? `${size}px` : size);
+
 </script>
 
-<div class="container" style="--container-size: {size}px; --top: {top}px; --left: {left}px">
+<div 
+    class="container" 
+    style="--container-size: {sizeStyle}; --top: {top}px; --left: {left}px"
+>
     <svg
        width="210mm"
        height="297mm"
@@ -663,12 +668,18 @@
     .container {
         width: var(--container-size);
         height: var(--container-size);
+        flex-shrink: 1;
         display: inline-flex;
         align-items: center;
         justify-content: center;
         position: relative;
         top: var(--top);
         left: var(--left);
+    }
+
+    svg {
+        width: 100%;
+        height: 100%;
     }
 
 </style>
