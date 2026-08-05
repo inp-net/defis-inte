@@ -5,6 +5,7 @@
     import Filters from "$lib/components/Filters.svelte";
     import ChallengesToAccept from "$lib/components/ChallengesToAccept.svelte";
     import BackButton from "$lib/components/BackButton.svelte";
+    import Category from "$lib/components/Category.svelte";
 
     let { data }: { data: PageData } = $props();
     let groupChallenge: GroupChallenge[] = $state(data.posts.challenges);
@@ -102,6 +103,10 @@
             console.error("Erreur lors de l'envoi du form : ", err);
         }
     }
+
+    /** Nom des clubs qui sont cachés dans la page. */
+    let hiddenClubs: string[] = $state([]);
+
 </script>
 
 <Flex direction="column" gap="xxl" margin="lg">
@@ -125,14 +130,24 @@
         <Filters filters={filterNames} bind:activeIndexes />
         <Flex gap="md" direction="column" style="max-width: 100%; width: 100%;">
             {#each activeGroups as group}
-                <ChallengesToAccept
-                    groupName={group.name}
-                    groupURL={group.pictureURL}
-                    challenges={group.challenges}
-                    bind:hideDone
-                    onChallengeApprouved={approuveChallenge}
-                    onChallengeDeleted={deleteChallenge}
-                />
+                <Flex direction="column" gap="xs" style="max-width: 100%; width: 100%;">
+                    <Category
+                        name={group.name}
+                        bind:list={hiddenClubs}
+                        src={group.pictureURL}
+                    />
+                    <ChallengesToAccept
+                        groupName={group.name}
+                        groupURL={group.pictureURL}
+                        challenges={group.challenges}
+                        bind:hideDone
+                        onChallengeApprouved={approuveChallenge}
+                        onChallengeDeleted={deleteChallenge}
+                    />
+                    {#if group.challenges.length == 0 && !hiddenClubs.includes(group.name)}
+                        <p><i>( aucun challenge(s) à accepter )</i></p>
+                    {/if}
+                </Flex>
             {/each}
         </Flex>
     </Stack>
