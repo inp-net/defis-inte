@@ -35,7 +35,7 @@
 
 <style>
     :root {
-        --base-color: oklch(0.63 0.331 285.4);
+        --base-color: oklch(0.6311 0.1994 302.4)
     }
 
     .container {
