@@ -109,7 +109,8 @@ export async function uploadUserFile(
 ) {
 
 	//Cree un dossier pour l'utilisateur, si existe deja ne fait rien 
-	const userDir = path.join(uploadsPath, hashData({ id: userId }).slice(1, 10));
+	const dirName : string = hashData({ id: userId }).slice(1, 10)
+	const userDir : string = path.join(uploadsPath, dirName);
 	mkdirSync(userDir, { recursive: true });
 
 	//Taille max pour les images et les vidéos
@@ -117,7 +118,7 @@ export async function uploadUserFile(
 		throw new Error('FILE_TOO_LARGE');
 	}
 
-	let extension = extname(file.name).toLowerCase();
+	let extension : string = extname(file.name).toLowerCase();
 
 	// Verifie si l'extension est prise en compte
 	if (!(extension in ALLOWED_TYPES)) {
@@ -149,6 +150,6 @@ export async function uploadUserFile(
 		throw new Error('EXTENSION_NOT_ALLOWED');
 	}
 
-	return `/uploads/${userDir}/${filename}`;
+	return `/uploads/${dirName}/${filename}`;
 }
 
