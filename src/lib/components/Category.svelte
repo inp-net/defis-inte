@@ -43,7 +43,7 @@
     et cache la liste des défis si folded.
 -->
 
-<button onclick={() => flipFlopAddList()} style="margin: 2em 0">
+<button onclick={() => flipFlopAddList()} style="margin-bottom: var(--size-lg)">
     <Flex justify="space-between" align="center" margin="xs" wrap={false}>
         <Flex align="center" gap="md" wrap={false}>
             {#if src}

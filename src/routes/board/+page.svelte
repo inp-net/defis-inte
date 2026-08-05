@@ -119,7 +119,6 @@
         {#each group.challenges as challenge (challenge.challengeId)}
             {@const defiApprouved = challenge.defiAccepte}
             {@const defiDeleted = challenge.isDeleted}
-            
 
             {#if !(hideDone && (defiDeleted || defiApprouved))}
                 <ChallengeCard
@@ -163,7 +162,7 @@
         {/each}
 {/snippet}
 
-<Flex direction="column" gap="xxl" margin="lg">
+<Flex direction="column" gap="xl" margin="lg">
     <Stack align="baseline">
         <BackButton />
         <h2>Board admin</h2>
@@ -171,17 +170,20 @@
     </Stack>
 
     <Stack>
-        <Frame>
+        <Frame border={true}>
             <Flex direction="column">
                 <Switch bind:checked={hideDone}
                     >Masquer les défis validés</Switch
                 >
+                <Flex gap="xs" wrap={false} align="center">
+                    <span style="padding-right: 10px;">Filtre</span>
+                    <Filters filters={filterNames} bind:activeIndexes />
+                </Flex>
             </Flex>
         </Frame>
     </Stack>
 
     <Stack style="max-width: 100%; min-width: 0; overflow: hidden;">
-        <Filters filters={filterNames} bind:activeIndexes />
         <Flex gap="md" direction="column" style="max-width: 100%; width: 100%;">
             {#each activeGroups as group}
                 <Flex direction="column" gap="xs" style="max-width: 100%; width: 100%;">
