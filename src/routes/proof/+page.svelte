@@ -1,12 +1,13 @@
 <script lang="ts">
+    import { invalidateAll } from '$app/navigation';
     import type { PageData } from "../$types";
     import { Flex, Stack, Button, Frame } from "azucar-ui";
-    import { User, Clock, TextAlignStart } from "@lucide/svelte";
-    import BackButton from "$lib/components/BackButton.svelte";
+    import { User, Clock, XIcon, Check } from "@lucide/svelte";
     import type { Proof } from "$lib/types/types.d";
     import { Status } from "$lib/types/types.d";
     import AcceptableCard from "$lib/components/AcceptableCard.svelte";
-    import { invalidateAll } from '$app/navigation';
+    import BackButton from "$lib/components/BackButton.svelte";
+    import ChallengeCard from "$lib/components/ChallengeCard.svelte";
 
     let { data }: { data: PageData } = $props();
     let proofs: Proof[] = $state(data.posts.proofs);
@@ -103,76 +104,6 @@
         <p>Validation des preuves</p>
     </Stack>
 
-
-    {#snippet proofDetails(proof)}
-        <Flex direction="column" gap="lg">
-            <Flex
-                direction="column"
-                gap="xs"
-                style="max-width: 100%; width: 100%; min-width: 0;"
-            >
-                <Flex wrap={false} gap="xs" align="center">
-                    <User size="15px" />
-                    <p>
-                        {proof.user.firstName}
-                        {proof.user.lastName}
-                    </p>
-                </Flex>
-                <Flex wrap={false} gap="xs" align="center">
-                    <Clock size="15px" />
-                    <p>{formatDateTime(proof.date)}</p>
-                </Flex>
-                <Flex wrap={false} gap="xs" align="center">
-                    <TextAlignStart size="15px" />
-                    <p>{proof.challenge.description}</p>
-                </Flex>
-            </Flex>
-            <div class="proof-media-list">
-                {#each proof.content as content, index}
-                    {#if proof.type == "TEXT"}
-                        <div class="text-response">
-                            <p> <b>Réponse {proof.content.length > 1 ? index + 1 : ""} :</b> {content} </p>
-                        </div>
-                    {:else if proof.type == "VIDEO"}
-                        <div class="media-container video-container" >
-                            <video controls preload="metadata">
-                                <!-- Le navigateur tente d'abord le mov (Apple de mrd) -->
-                                <source
-                                    src={content}
-                                    type="video/mov"
-                                />
-                                <!-- Le navigateur tente d'abord le WebM (optimisé web) -->
-                                <source
-                                    src={content}
-                                    type="video/webm"
-                                />
-                                <!-- S'il échoue, il se rabat sur le MP4 (universel) -->
-                                <source
-                                    src={content}
-                                    type="video/mp4"
-                                />
-                                <p>
-                                    Votre navigateur ne supporte pas
-                                    la vidéo
-                                </p>
-                            </video>
-                        </div>
-                    {:else}
-                        <div
-                            class="media-container image-container"
-                        >
-                            <img
-                                src={content}
-                                alt={`Preuve image ${index + 1}`}
-                                loading="lazy"
-                            />
-                        </div>
-                    {/if}
-                {/each}
-            </div>
-        </Flex>
-    {/snippet}
-
     <Stack
         style="max-width: 100%; width: 100%; min-width: 0; display: flex; flex-direction: column;"
     >
@@ -182,69 +113,60 @@
             style="display: flex; flex-direction: column; width: 100%; min-width: 0;"
         >
             {#each proofs as proof}
-                <AcceptableCard
-                    id={proof.proofId}
-                    name={"Défi : " + proof.challenge.name}
-                    isModifiable={false}
-                    onAccepted={() => handleAccept(proof.proofId)}
-                    onDeleted={() => handleDeny(proof.proofId)}
-                    isApprouved={proof.status === Status.VALID}
-                    isDisabled={proof.status === Status.DENIED}
+                <!-- <AcceptableCard -->
+                <!--     id={proof.proofId} -->
+                <!--     name={"Défi : " + proof.challenge.name} -->
+                <!--     isModifiable={false} -->
+                <!--     onAccepted={() => } -->
+                <!--     onDeleted={() => } -->
+                <!--     isApprouved={proof.status === Status.VALID} -->
+                <!--     isDisabled={proof.status === Status.DENIED} -->
+                <!-- > -->
+                <!--     {@render proofDetails(proof)} -->
+                <!-- </AcceptableCard> -->
+                <ChallengeCard
+                    title={"Défi : " + proof.challenge.name}
+                    points={proof.challenge.nbPoints}
+                    badges={[
+                        { name: "Par", icon: User, values: [proof.user.firstName + " " + proof.user.lastName] },
+                        { name: "Date", icon: Clock, values: [formatDateTime(proof.date)] },
+                    ]}
                 >
-                    {@render proofDetails(proof)}
-                </AcceptableCard>
+                    {#snippet content()}
+                        <p><b>Description :</b> {proof.challenge.description}</p>
+                        <Flex direction="column" gap="xs">
+                            {#if proof.type !== "TEXT"}
+                                {#each proof.content as proofContent, index}
+                                    <a href={proofContent}>Média preuve {index}</a>
+                                {/each}
+                            {:else}
+                                <p><b>Réponse :</b> {proof.content}</p>
+                            {/if}
+                        </Flex>
+                    {/snippet}
+                    {#snippet actions()}
+                        <Flex gap="xs" style="margin-left: auto; flex-shrink: 0;">
+                            <Button
+                                icon={XIcon}
+                                class="danger"
+                                name="Delete"
+                                onclick={() => handleDeny(proof.proofId)}
+                            />
+                            <Button
+                                icon={Check}
+                                class="success"
+                                name="Success"
+                                onclick={() => handleAccept(proof.proofId)}
+                            />
+                        </Flex>
+                    {/snippet}
+                </ChallengeCard>
             {/each}
         </Flex>
     </Stack>
 </Flex>
 
 <style>
-    .proof-media-list {
-        display: flex;
-        flex-direction: column;
-        gap: var(--size-md);
-        width: 100%;
-        max-width: 100%;
-    }
-
-    .media-container {
-        width: 100%;
-        max-width: 100%;
-        border-radius: 8px;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        overflow: hidden;
-    }
-
-    .video-container {
-        background: #000;
-        min-height: 200px;
-    }
-
-    .image-container {
-        min-height: 100px;
-    }
-
-    .video-container video {
-        width: 100%;
-        height: auto;
-        max-width: 100%;
-        max-height: 300px;
-        aspect-ratio: 16 / 9;
-        object-fit: contain;
-        display: block;
-    }
-
-    .image-container img {
-        width: auto;
-        max-width: 100%;
-        max-height: 300px;
-        height: auto;
-        object-fit: contain;
-        display: block;
-    }
-
     .text-response {
         width: 100%;
         padding: var(--size-sm);

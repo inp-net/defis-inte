@@ -5,7 +5,6 @@
     import { MapPin, User, XIcon, Check } from "@lucide/svelte";
     import { invalidateAll } from '$app/navigation';
     import Filters from "$lib/components/Filters.svelte";
-    import ChallengesToAccept from "$lib/components/ChallengesToAccept.svelte";
     import BackButton from "$lib/components/BackButton.svelte";
     import Category from "$lib/components/Category.svelte";
     import ChallengeCard from "$lib/components/ChallengeCard.svelte";

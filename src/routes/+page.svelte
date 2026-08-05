@@ -13,7 +13,6 @@
     import { Flex, Stack, Button } from "azucar-ui";
     import { MapPin, UsersRound, Trophy, LogIn, Files, Paperclip } from "@lucide/svelte";
     import Header from "$lib/components/Header.svelte";
-    import FrameChallenge from "$lib/components/FrameChallenge.svelte";
     import AddChallenge from "$lib/components/AddChallenge.svelte";
     import Sort from "$lib/components/Sort.svelte";
     import SearchBar from "$lib/components/SearchBar.svelte";
