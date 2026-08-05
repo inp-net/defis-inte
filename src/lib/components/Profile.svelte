@@ -3,23 +3,21 @@
 
     type Props = {
         src?: string;
-        alt: string;
         size?: string;
         firstName: string;
         lastName: string;
         groupName: string;
-        hideName?: boolean; // Will hide the name on small screens
     };
 
     const {
         src,
-        alt = "Avatar",
         size = "xl",
         firstName,
         lastName,
         groupName,
-        hideName = false,
     }: Props = $props();
+
+    let name = $derived(firstName + " " + lastName);
 </script>
 
 <!--
@@ -27,10 +25,10 @@
     Composant Profile met l'avatar et le nom et prénom d'un utilisateur.
 -->
 
-<a href="/profile">
+<a href="/profile" class="profile-link">
     <Flex align="center" gap="md">
-        <Avatar {src} {alt} {size} />
-        <div class:hidden-mobile={hideName}>
+        <Avatar {src} alt={name} {size} />
+        <div class="info-container">
             <Flex direction="column" gap="xxs">
                 <h4 class={`title-${size}`}>{firstName}</h4>
                 <h4 class={`title-${size}`}>{lastName}</h4>
@@ -41,22 +39,36 @@
 </a>
 
 <style>
+    .profile-link {
+        text-decoration: none;
+        color: inherit;
+        display: block;
+        max-width: 100%;
+        overflow: hidden;
+        -webkit-tap-highlight-color: transparent;
+        outline: none;
+    }
+
+    .info-container {
+        text-decoration: none;
+        min-width: 0;
+        flex: 1;
+        overflow-x: auto;
+        overflow-y: hidden;
+        scrollbar-width: thin;
+    }
+
+    .info-container h4,
+    .info-container p {
+        white-space: nowrap;
+        margin: 0;
+    }
+
     .title-large {
         font-size: var(--size-lg);
     }
 
     .title-small {
         font-size: var(--size-md);
-    }
-
-    @media (max-width: 767px) {
-        .hidden-mobile {
-            display: none;
-        }
-    }
-
-    a {
-        text-decoration: none;
-        color: inherit;
     }
 </style>

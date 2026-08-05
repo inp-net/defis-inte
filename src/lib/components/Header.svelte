@@ -25,14 +25,16 @@
         notificationsDefis,
         notificationsPreuves,
     }: Props = $props();
-
-    // const username = $derived(user?.name ?? 'Invité');
-    // const [firstName, ...reste] = $derived(username.split(" "))
-    // const lastName = $derived(reste.join(" "))
 </script>
 
 <div class="sticky">
-    <Frame transparent={true} border={true} shadow={true}>
+    <!-- fix des paddings des frames pour être constant -->
+    <Frame
+        transparent={true}
+        border={true}
+        shadow={true}
+        style="padding: var(--size-md) var(--size-md);"
+    >
         <Flex justify="space-between" align="center" wrap={false}>
             <Flex align="center" gap="md">
                 <Profile {firstName} {lastName} {groupName} src={picture} hideName={false} size="xl" />
