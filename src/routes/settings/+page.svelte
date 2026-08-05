@@ -115,7 +115,7 @@
         <h2>Paramètres</h2>
     </Stack>
     <span style="height: 2em;"></span>
-    <Frame>
+    <Frame border={true}>
         <Stack align="baseline">
             <Flex wrap={false} gap="sm" align="center">
                 <Settings2 size="15px" />
@@ -139,7 +139,7 @@
             </Flex>
         </Stack>
     </Frame>
-    <Frame>
+    <Frame border={true}>
         <Stack align="baseline">
             <Flex wrap={false} gap="sm" align="center">
                 <UserRound size="15px" />

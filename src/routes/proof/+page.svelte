@@ -137,6 +137,9 @@
                         <Flex direction="column" gap="xs">
                             {#if proof.type !== "TEXT"}
                                 {#each proof.content as proofContent, index}
+                                    <!-- fait confiant au navigateur pour
+                                         ouvrir les fichiers car le gérer sur
+                                         le site est chiant -->
                                     <a href={proofContent}>Média preuve {index}</a>
                                 {/each}
                             {:else}
