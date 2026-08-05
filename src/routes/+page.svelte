@@ -18,6 +18,7 @@
     import Sort from "$lib/components/Sort.svelte";
     import SearchBar from "$lib/components/SearchBar.svelte";
     import Category from "$lib/components/Category.svelte";
+    import LogoAE from "$lib/components/LogoAE.svelte";
 
     let { data }: { data: PageData } = $props();
     let challenges: ChallengeRead[] = $derived(data.posts.challenges);
@@ -222,8 +223,16 @@
 {/if}
 <Flex direction="column" gap="xxl" margin="lg">
     <Stack>
-        <h1>Défis</h1>
-        <p>Défis d'intégration 2026 - 2027.</p>
+        <Flex align="center">
+            <LogoAE
+                top={10}
+                size={200}
+            />
+            <Flex direction="column" gap="xs">
+                <h1>Défis</h1>
+                <p>À l'AEBordage ! Hissez haut les couleurs de ton équipe t !</p>
+            </Flex>
+        </Flex>
     </Stack>
 
     <!-- A afficher que pour les membres 2A de groupes et plus -->
