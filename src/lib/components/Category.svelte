@@ -3,9 +3,13 @@
     import { ChevronDown, ChevronUp } from "@lucide/svelte";
 
     interface Props {
+        // Nom de la catégorie
         name: string;
+        // Liste général des catégories. Le nom sera écrit si ce composant est désactivé
         list: string[];
+        // Logo affiché dans la catégorie
         src?: string;
+        // La catégorie est masqué
         enabled: boolean;
     }
 
@@ -25,9 +29,16 @@
 
 <!--
     @component
+    Agit comme la balise `details` en HTML.
+
     Composant Category. Il permet à l'utilisateur de cliquer sur une catégorie
     pour l'activer ou la désactiver, ce qui met à jour une liste partagée avec
     le composant parent.
+
+    La list est une liste générale. Quand le composant est cliqué, son nom est
+    ajouté dans cette liste. Ceci permet à la page de savoir quels catégories
+    sont activés.
+
     Utilisé par exemple comme Header d'un club (net7) dans la liste des défis
     et cache la liste des défis si folded.
 -->

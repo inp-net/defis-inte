@@ -60,6 +60,12 @@
 -->
 
 <Flex gap="xs" direction="column">
+
+    <Category
+        name={groupName}
+        bind:list={hiddenClub}
+        src={challenge.groupUrl}
+    />
     <button class="no-style" onclick={() => (isHide = !isHide)}>
         <Frame transparent={true} border={true} shadow={true}>
             <Flex align="center">

@@ -290,6 +290,14 @@
                       ? `⏳ ${challenge.name} (En attente)`
                       : challenge.name}
 
+<!--
+    Cette section devrait être refactor. Du a une mauvaise
+    architecture de départ, fix fonctionne. Client side, les
+    challenges sont triés par clubs et quand il y a un changement
+    de club d'un challenge à l'autre, ce dernier à son terme
+    showCategory à true.
+-->
+
                 {#if challenge.showCategory}
                     <Category
                         name={challenge.groupName}
