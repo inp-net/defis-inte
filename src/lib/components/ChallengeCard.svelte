@@ -45,7 +45,7 @@
 
 <Frame
     border={true}
-    style="display: flex; align-content: center; flex-direction: column; max-width: 100%;"
+    style="padding: 15px; display: flex; align-content: center; flex-direction: column; max-width: 100%;"
 >
     <Flex direction="column" wrap={false} gap="md">
         <details class="challenge-details" open={isUnfolded} style="max-width: 100%;">
@@ -86,8 +86,12 @@
                                 {/if}
                                 <p>{badge.name} : </p>
                                 {#each badge.values as value}
-                                    <Badge>{value}</Badge>
+                                    <Badge variant="outline">{value}</Badge>
                                 {/each}
+                                <!-- fallback si aucune valeur est entrée -->
+                                {#if badge.values.length == 0}
+                                    <p><i>(aucun)</i></p>
+                                {/if}
                             </Flex>
                         {/each}
                     </Flex>

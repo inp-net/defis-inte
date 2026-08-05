@@ -112,25 +112,56 @@
     /** Nom des clubs qui sont cachés dans la page. */
     let hiddenClubs: string[] = $state([]);
 
-    // const visibleChallenges = $derived(
-    //     challenges
-    //         .filter((challenge) => {
-    //             if (!hideDone) return true;
-    //             if (isHide) return false;
-    //
-    //             const isApproved = challenge.defiAccepte;
-    //             const isDeleted = challenge.isDeleted;
-    //
-    //             if (isDeleted) return false;
-    //             if (hideDone && isApproved) return false;
-    //
-    //             return true;
-    //         })
-    //         .sort((a, b) => Number(a.chellengeId) - Number(b.challengeId)),
-    // );
-
-
 </script>
+
+<!-- fonction qui affiche la liste de challenge pour le groupe -->
+{#snippet showChallenges(group)}
+        {#each group.challenges as challenge (challenge.challengeId)}
+            {@const defiApprouved = challenge.defiAccepte}
+            {@const defiDeleted = challenge.isDeleted}
+            
+
+            {#if !(hideDone && (defiDeleted || defiApprouved))}
+                <ChallengeCard
+                    title={challenge.name}
+                    points={challenge.nbPoints}
+                    isUnfolded={false}
+                    badges={[
+                        { name: "Lieu", icon: MapPin, values: [challenge.locationName]},
+                        { name: "Par", icon: User, values: [challenge.userName]},
+                    ]}
+                >
+                    {#snippet content()}
+                        <p><b>Description: </b>{"\ " + challenge.description}</p>
+                    {/snippet}
+                    {#snippet actions()}
+                        <Flex gap="xs" style="margin-left: auto; flex-shrink: 0;">
+                            <Button
+                                variant="outline"
+                                disabled={defiDeleted}
+                            >
+                                Modifier
+                            </Button>
+                            <Button
+                                icon={XIcon}
+                                class="danger"
+                                name="Delete"
+                                disabled={defiDeleted}
+                                onclick={() => deleteChallenge(challenge.challengeId)}
+                            />
+                            <Button
+                                icon={Check}
+                                class="success"
+                                name="Success"
+                                disabled={defiApprouved || defiDeleted}
+                                onclick={() => approuveChallenge(challenge.challengeId)}
+                            />
+                        </Flex>
+                    {/snippet}
+                </ChallengeCard>
+            {/if}
+        {/each}
+{/snippet}
 
 <Flex direction="column" gap="xxl" margin="lg">
     <Stack align="baseline">
@@ -148,55 +179,6 @@
             </Flex>
         </Frame>
     </Stack>
-
-    <!-- fonction qui affiche la liste de challenge pour le groupe -->
-    {#snippet showChallenges(group)}
-            {#each group.challenges as challenge (challenge.challengeId)}
-                {@const defiApprouved = challenge.defiAccepte}
-                {@const defiDeleted = challenge.isDeleted}
-                
-
-                {#if !(hideDone && (defiDeleted || defiApprouved))}
-                    <ChallengeCard
-                        title={challenge.name}
-                        points={challenge.nbPoints}
-                        isUnfolded={false}
-                        badges={[
-                            { name: "Lieu", icon: MapPin, values: [challenge.locationName]},
-                            { name: "Par", icon: User, values: [challenge.userName]},
-                        ]}
-                    >
-                        {#snippet content()}
-                            <p><b>Description: </b>{"\ " + challenge.description}</p>
-                        {/snippet}
-                        {#snippet actions()}
-                            <Flex gap="xs" style="margin-left: auto; flex-shrink: 0;">
-                                <Button
-                                    variant="outline"
-                                    disabled={defiDeleted}
-                                >
-                                    Modifier
-                                </Button>
-                                <Button
-                                    icon={XIcon}
-                                    class="danger"
-                                    name="Delete"
-                                    disabled={defiDeleted}
-                                    onclick={() => deleteChallenge(challenge.challengeId)}
-                                />
-                                <Button
-                                    icon={Check}
-                                    class="success"
-                                    name="Success"
-                                    disabled={defiApprouved || defiDeleted}
-                                    onclick={() => approuveChallenge(challenge.challengeId)}
-                                />
-                            </Flex>
-                        {/snippet}
-                    </ChallengeCard>
-                {/if}
-            {/each}
-    {/snippet}
 
     <Stack style="max-width: 100%; min-width: 0; overflow: hidden;">
         <Filters filters={filterNames} bind:activeIndexes />
