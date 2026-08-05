@@ -109,7 +109,8 @@ export async function uploadUserFile(
 ) {
 
 	//Cree un dossier pour l'utilisateur, si existe deja ne fait rien 
-	const userDir = path.join(uploadsPath, hashData({ id: userId }).slice(1, 10));
+	const dirName : string = hashData({ id: userId }).slice(1, 10)
+	const userDir : string = path.join(uploadsPath, dirName);
 	mkdirSync(userDir, { recursive: true });
 
 	//Taille max pour les images et les vidéos
@@ -117,7 +118,7 @@ export async function uploadUserFile(
 		throw new Error('FILE_TOO_LARGE');
 	}
 
-	let extension = extname(file.name).toLowerCase();
+	let extension : string = extname(file.name).toLowerCase();
 
 	// Verifie si l'extension est prise en compte
 	if (!(extension in ALLOWED_TYPES)) {
@@ -131,19 +132,17 @@ export async function uploadUserFile(
 		throw new Error('INVALID_FILE_CONTENT');
 	}
 
-	//	const filename = `${Date.now()}${extension}`;
-	//	const targetPath = path.join(userDir, filename);
-
-	let targetPath: string;
+	let targetPath : string;
+	let filename : string;
 	// convertion et ecriture des fichier en mémoire 
 	// tout est converti pourquoi ? : on autorise d'envoyer des fichier lourd donc on les convertit pour que l'affichage soit okay après
 
 	if (extension === '.heic' || extension === '.heif' || extension === '.avif' || extension === '.tiff' || extension === '.tif' || extension === '.jpeg' || extension === '.jpg' || extension === '.png') {
-		const filename = `${Date.now()}${".webp"}`;
+		filename = `${Date.now()}${".webp"}`;
 		targetPath = path.join(userDir, filename);
 		await convertToWebp(buffer, extension, targetPath);
 	} else if (extension === '.mov' || extension === '.webm' || extension === '.mp4' || extension === '.gif' || extension === '.avi') {
-		const filename = `${Date.now()}${".mp4"}`;
+		filename = `${Date.now()}${".mp4"}`;
 		targetPath = path.join(userDir, filename);
 		await convertToWebVideo(buffer, extension, targetPath);
 
@@ -151,6 +150,6 @@ export async function uploadUserFile(
 		throw new Error('EXTENSION_NOT_ALLOWED');
 	}
 
-	return targetPath;
+	return `/uploads/${dirName}/${filename}`;
 }
 
