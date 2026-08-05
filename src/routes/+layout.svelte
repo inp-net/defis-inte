@@ -64,13 +64,13 @@
         pointer-events: none;
         
         background-image: 
-            radial-gradient(circle 2200px at 0% 250px, color-mix(in oklch, var(--base-color) 12%, transparent) 0%, transparent 65%),
-            radial-gradient(circle 1100px at 100% 850px, color-mix(in oklch, var(--base-color) 10%, transparent) 0%, transparent 70%),
-            radial-gradient(circle 1600px at 0% 1400px, color-mix(in oklch, var(--base-color) 11%, transparent) 0%, transparent 65%),
+            radial-gradient(circle 2200px at 0% 250px, color-mix(in oklch, var(--base-color) 6%, transparent) 0%, transparent 65%),
+            radial-gradient(circle 1100px at 100% 850px, color-mix(in oklch, var(--base-color) 5%, transparent) 0%, transparent 70%),
+            radial-gradient(circle 1600px at 0% 1400px, color-mix(in oklch, var(--base-color) 6%, transparent) 0%, transparent 65%),
 
-            radial-gradient(circle 900px at 100% 400px, color-mix(in oklch, var(--base-color) 10%, transparent) 0%, transparent 70%),
-            radial-gradient(circle 1800px at 0% 1350px, color-mix(in oklch, var(--base-color) 12.5%, transparent) 0%, transparent 65%),
-            radial-gradient(circle 2000px at 100% 2100px, color-mix(in oklch, var(--base-color) 10.5%, transparent) 0%, transparent 70%);
+            radial-gradient(circle 900px at 100% 400px, color-mix(in oklch, var(--base-color) 5%, transparent) 0%, transparent 70%),
+            radial-gradient(circle 1800px at 0% 1350px, color-mix(in oklch, var(--base-color) 6%, transparent) 0%, transparent 65%),
+            radial-gradient(circle 2000px at 100% 2100px, color-mix(in oklch, var(--base-color) 5%, transparent) 0%, transparent 70%);
 
         background-size: 
             100% 1600px,

@@ -65,6 +65,8 @@
             <Flex align="center">
                 <Avatar src={groupURL} alt={groupName} size="lg" />
                 <p>{groupName}</p>
+                <p>-</p>
+                <p>{visibleChallenges.length} challenge(s)</p>
                 <Button
                     variant="outline"
                     icon={isHide ? ChevronUp : ChevronDown}
