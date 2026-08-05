@@ -60,8 +60,8 @@
     accepté peuvent être masqué. Ce composant gère le masquage.
 -->
 
-<Flex gap="xs" direction="column">
-    <Flex gap="xs" direction="column">
+<Flex gap="xs" direction="column" style="max-width: 100%">
+    <Flex gap="xs" direction="column" style="max-width: 100%">
         <!-- ne pas afficher les Challenges dones si hideDone est true -->
         {#each visibleChallenges as challenge (challenge.challengeId)}
             {@const defiApprouved = challenge.defiAccepte}
@@ -72,7 +72,7 @@
             <ChallengeCard
                 title={challenge.name}
                 points={challenge.nbPoints}
-                isUnfolded={true}
+                isUnfolded={false}
                 badges={[
                     { name: "Lieu", icon: MapPin, values: [challenge.locationName]},
                     { name: "Créateur", icon: User, values: [challenge.userName]},

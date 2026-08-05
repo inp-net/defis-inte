@@ -45,12 +45,12 @@
 
 <Frame
     border={true}
-    style="display: flex; align-content: center; flex-direction: column;"
+    style="display: flex; align-content: center; flex-direction: column; max-width: 100%;"
 >
     <Flex direction="column" wrap={false} gap="md">
-        <details class="challenge-details" open={isUnfolded}>
+        <details class="challenge-details" open={isUnfolded} style="max-width: 100%;">
             <!-- le clique de ce composant est étendue pour plus de confort -->
-            <summary class="no-style clickable-header" style="width: 100%;">
+            <summary class="no-style clickable-header" style="width: 100%; max-width: 100;">
                 <Flex
                     justify="space-between"
                     align="center"
@@ -112,11 +112,6 @@
         width: 100%;
     }
 
-    .challenge-details {
-        position: relative;
-        overflow: visible;
-    }
-
     .challenge-details summary::-webkit-details-marker,
     .challenge-details summary::marker {
         display: none;
@@ -152,7 +147,27 @@
         bottom: -16px;
         left: -16px;
         right: -16px;
-        z-index: 10;
+        z-index: 1;
         pointer-events: auto;
+    }
+
+    .scrollable {
+        width: 100%;
+        flex: 1;
+        overflow-x: auto;
+        overflow-y: hidden;
+        scrollbar-width: thin;
+        position: relative;
+        z-index: 2;
+    }
+
+    .scrollable p {
+        white-space: nowrap;
+        margin: 0;
+        text-align: left;
+    }
+
+    .scrollable::-webkit-scrollbar {
+        display: none;
     }
 </style>
