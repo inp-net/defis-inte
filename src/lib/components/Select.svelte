@@ -1,5 +1,4 @@
 <script lang="ts">
-    import type { Icon } from "@lucide/svelte";
     import type {
         HTMLSelectAttributes,
         HTMLInputAttributes,
@@ -8,7 +7,6 @@
 
     type Props = (HTMLSelectAttributes & HTMLInputAttributes) & {
         options: string[];
-        icon?: typeof Icon;
         value: string;
         placeholder?: string;
         disabled?: boolean;
@@ -20,7 +18,6 @@
     let {
         options = [],
         value = $bindable(),
-        icon,
         children,
         placeholder,
         disabled = false,
@@ -31,17 +28,34 @@
         ...rest
     }: Props = $props();
 
+    let selectRef: HTMLSelectElement | null = $state(null);
+
     const datalistId = $derived(id);
 
     const classes = $derived(
-        ["text-input", icon && "text-input-has-icon", outline && "text-outline", className]
+        ["text-input", outline && "text-outline", className]
             .filter(Boolean)
             .join(" "),
     );
+
+    function handleWrapperClick(e: MouseEvent) {
+        if (disabled || type === "datalist") return;
+        
+        // If user clicks the outer padding/pseudo-element rather than directly on <select>
+        if (e.target !== selectRef && selectRef) {
+            selectRef.focus();
+            if ("showPicker" in selectRef) {
+                selectRef.showPicker();
+            }
+        }
+    }
 </script>
 
 <!--
     @component
+    Composant généré par IA pour suivre la librairie d'UI Azucar UI rapidement.
+    Ce composant sera retravaillé pour être intégré à la librairie de
+    componsants.
     Composant pour rechercher parmi une liste déjà prédéfinie. Utilisé par
     exemple pour la séléction d'un club parmi tous les clubs.
     Ce composant peut agit comme :
@@ -59,14 +73,11 @@
         </span>
     {/if}
 
-    <div class="input-wrapper" data-disabled={disabled}>
-        {#if icon}
-            {@const Icon = icon}
-            <span class="text-input-icon">
-                <Icon size="1rem" aria-hidden="true" />
-            </span>
-        {/if}
-
+    <div 
+        class="input-wrapper" 
+        data-disabled={disabled}
+        onclick={handleWrapperClick}
+    >
         {#if type === "datalist"}
             <input
                 type="text"
@@ -82,7 +93,7 @@
                 {/each}
             </datalist>
         {:else}
-            <select bind:value {disabled} {...rest}>
+            <select bind:this={selectRef} bind:value {disabled} {...rest}>
                 {#if placeholder}
                     <option value="" disabled selected>{placeholder}</option>
                 {/if}
@@ -119,7 +130,6 @@
         position: relative;
         display: flex;
         align-items: center;
-        gap: var(--gap-icon);
         color: var(--color-fg-low);
         line-height: 1.25;
         font: inherit;
@@ -130,13 +140,18 @@
         transition:
             opacity 0.2s ease,
             box-shadow 0.2s ease;
+        cursor: pointer;
     }
 
-    .text-input-icon {
-        display: inline-flex;
-        align-items: center;
-        pointer-events: none;
-        color: var(--color-border-subtle);
+    /* Invisible 12px tap boundary extension outside the visual box */
+    .input-wrapper::before {
+        content: "";
+        position: absolute;
+        top: -12px;
+        bottom: -12px;
+        left: -12px;
+        right: -12px;
+        pointer-events: auto;
     }
 
     :global(.input-wrapper .select-chevron) {
@@ -145,7 +160,20 @@
         pointer-events: none;
     }
 
-    .input-wrapper select,
+    .input-wrapper select {
+        width: 100%;
+        appearance: none;
+        background: transparent;
+        border: none;
+        font: inherit;
+        color: inherit;
+        outline: none;
+        cursor: pointer;
+        padding-right: 2em; /* Leave space for ChevronDown */
+        position: relative;
+        z-index: 1;
+    }
+
     .input-wrapper input {
         flex-grow: 1;
         appearance: none;
@@ -154,16 +182,10 @@
         font: inherit;
         color: inherit;
         outline: none;
-        cursor: pointer;
-        width: 100%;
-    }
-
-    .input-wrapper input {
         cursor: text;
-    }
-
-    .text-input-has-icon .input-wrapper {
-        padding-left: var(--padding-x-icon);
+        width: 100%;
+        position: relative;
+        z-index: 1;
     }
 
     .input-wrapper:has(select:focus-visible, input:focus-visible):not(
@@ -226,5 +248,4 @@
         background: var(--color-bg);
         cursor: not-allowed;
     }
-
 </style>
