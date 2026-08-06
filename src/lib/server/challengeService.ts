@@ -2,7 +2,6 @@ import { prisma } from '$lib/server/prisma';
 import { error } from '@sveltejs/kit';
 import type { ChallengeInput } from '$lib/types/types.d';
 import { UploadType } from '../../../prisma/generated/prisma/enums'
-import type { Status, ProofInput } from '$lib/types/types.d';
 import { Churros1ATo2A } from '$lib/env';
 
 
@@ -17,7 +16,7 @@ import { Churros1ATo2A } from '$lib/env';
  * @userId identifiant de l'utilisateur qui modifie (accepte/refuse) une preuve
  * @deleted pour pouvoir delet meme si le defi à déjà était accepter
  */
-export async function canModifyChallenge(challengeIdRaw: any, userId: string, deleted: boolean = false) {
+export async function canModifyChallenge(challengeIdRaw: any, userId: string) {
     const challengeId = parseInt(challengeIdRaw, 10);
     const challenge = await prisma.challenge.findUnique({
         where: { challengeId: challengeId },
@@ -51,8 +50,12 @@ export async function canModifyChallenge(challengeIdRaw: any, userId: string, de
         }
     });
 
+    if (!userAutorisation || !userAutorisation.groupBoard) {
+        throw error(404, "utilisateur introuvable");
+    }
+
     if (!userAutorisation.groupBoard.some(board => board.groupId === challenge.groupId) && !userAutorisation.isAdmin) {
-        throw error(403, "tu ne fais pas partie du bureau du club")
+        throw error(403, "tu ne fais pas partie du bureau du club");
     }
     return true
 
@@ -66,8 +69,8 @@ export async function saveChallenge(body: ChallengeInput) {
     const { userId, challengeId, name, description, groupName, locationName, type, nbPoints } = body;
 
     // Champs minimal à remplire
-    if (!name || !groupName || !locationName) {
-        throw error(400, 'Champs requis manquants : name, groupName ou locationName.');
+    if (!name || !groupName || !locationName || !userId) {
+        throw error(400, 'Champs requis manquants : name, userId, groupName ou locationName.');
     }
 
     // refusée les 1A
@@ -152,10 +155,9 @@ export async function acceptChallenge(challengeIdRaw: any, userId: string) {
 /** Gestion refus d'un challenge 
  * garde en db pour avoir l'historique mais le mets en refusée on ne peux plus y toucher 
  * @param challengeIdRaw challenge id mais stocké en bizzar tkt
- * @param userId uid de l'utilisateur
  * @returns challenge mise à jour
  */
-export async function deleteChallenge(challengeIdRaw: any, userId: string) {
+export async function deleteChallenge(challengeIdRaw: any) {
     if (!challengeIdRaw || isNaN(Number(challengeIdRaw))) {
         throw { status: 400, message: 'challengeId invalide' };
     }
