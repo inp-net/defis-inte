@@ -1,7 +1,7 @@
 //Nécéssite ffmpeg installé sur le serveur
 import { spawn } from "child_process";
 import { createWriteStream } from 'fs';
-import convert from 'heic-convert'; // les types ne marches pas car c'est du js (si j'ai bien capter)
+import convert from 'heic-convert';
 
 
 /**
