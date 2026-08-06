@@ -71,7 +71,7 @@ export async function convertToWebp(
 
     proc.on('error', (err) => reject(err));
 
-    proc.stdin.on('error', (err) => {
+    proc.stdin.on('error', () => {
     });
 
     proc.on('close', (code) => {

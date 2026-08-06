@@ -1,11 +1,8 @@
-import { existsSync, mkdirSync, unlinkSync, writeFileSync } from 'fs';
+import { mkdirSync } from 'fs';
 import path, { extname } from 'path';
-import type { Status } from '../../../prisma/generated/prisma/enums';
-import { prisma } from './prisma'
 import * as crypto from 'node:crypto';
 import { dirname, join } from 'path';
 import { fileURLToPath } from 'node:url';
-import type { GroupClub } from '~generated//client';
 import { env } from '$env/dynamic/private';
 import { convertToWebp, convertToWebVideo } from './conversion';
 
