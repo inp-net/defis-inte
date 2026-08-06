@@ -7,6 +7,21 @@ import type {
     Location,
 } from '../../../prisma/generated/prisma/client';
 
+export enum Status {
+    PENDING = 'PENDING',
+    VALID = 'VALID',
+    DENIED = 'DENIED'
+}
+
+import type { UploadType as PrismaUploadType } from '../../../prisma/generated/prisma/client';
+
+export type UploadType = PrismaUploadType;
+export const UploadType = {
+    PHOTO: "PHOTO",
+    VIDEO: "VIDEO",
+    TEXT: "TEXT"
+} as const;
+
 export type UserChurros = {
     uid: string;
     firstName: string;
@@ -31,7 +46,6 @@ export type ClubInfo = {
 export type {
     Challenge,
     Proof,
-    UploadType,
     User
 }
 
@@ -58,18 +72,6 @@ export type ChallengeInput = {
     locationName: string;
     type?: string | null;
     nbPoints?: string | number | null;
-}
-
-export enum Status {
-    PENDING = 'PENDING',
-    VALID = 'VALID',
-    DENIED = 'DENIED'
-}
-
-export enum UploadType {
-    PHOTO = "photo",
-    VIDEO = "video",
-    TEXT = "texte"
 }
 
 // Type GroupLeaderboard utilisé pour l'affichage du classement
