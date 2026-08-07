@@ -75,6 +75,8 @@ bun --dev run dev
 
 ### Mise en production
 
+Avant de mettre en prod tester en local si tout marche correctement avec l'image docker quand elle est build. Faire ``` docker compose --profile prod-test up --build ``` pour le tester.
+
 La mise en production se fait par l'ajout de tags avec GitLab CI/CD.
 
 Voir le [**wiki**](https://wiki.inpt.fr/fr/inp-net/adminsys/kubernetes). Vous
