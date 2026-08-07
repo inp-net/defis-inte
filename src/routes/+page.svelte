@@ -11,7 +11,7 @@
 
     // composants
     import { Flex, Stack, Button } from "azucar-ui";
-    import { MapPin, UsersRound, Trophy, LogIn, Files, Paperclip } from "@lucide/svelte";
+    import { MapPin, UsersRound, Trophy, LogIn, Paperclip } from "@lucide/svelte";
     import Header from "$lib/components/Header.svelte";
     import AddChallenge from "$lib/components/AddChallenge.svelte";
     import Sort from "$lib/components/Sort.svelte";
@@ -307,7 +307,7 @@
                     challengeId={challenge.challengeId}
                     type={challenge.type}
                     onSave={handleSave}
-                    defaultTVn7={user?.isOkTVn7}
+                    defaultTVn7={user?.isOkTVn7 ?? undefined}
                 />
             {/if}
         {/snippet}
