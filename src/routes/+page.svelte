@@ -8,6 +8,7 @@
     import { invalidateAll } from "$app/navigation";
     import { UploadType } from "$lib/types/types.d";
     import { deserialize } from '$app/forms';
+    
 
     // composants
     import { Flex, Stack, Button } from "azucar-ui";
@@ -292,7 +293,9 @@
             { name: "Club", icon: UsersRound, values: [ challenge.groupName ] },
             { name: "Lieu", icon: MapPin, values: [ challenge.locationName ] },
             { name: "Type de preuve", icon: Paperclip, values: [ UploadType[challenge.type as keyof typeof UploadType]] },
-            { name: "Défi réussi par", icon: Trophy, values: challenge.groupInteSucceedName }
+            ...(challenge.groupInteSucceedName?.length
+            ? [{ name: "Défi réussi par", icon: Trophy, values: challenge.groupInteSucceedName}]
+            : [])
         ]}
     >
         {#snippet header()}
@@ -302,7 +305,7 @@
         {/snippet}
         {#snippet content()}
             <p><b>Description :</b> {challenge.description}</p>
-            {#if user && user.is1A}
+            {#if user && (user.is1A && Churros1ATo2A) && !isDone && !isPending}
                 <UploadProof
                     challengeId={challenge.challengeId}
                     type={challenge.type}
