@@ -1,9 +1,12 @@
 <script lang="ts">
-    import { Flex, Stack, Avatar, Frame } from "azucar-ui";
+    import type { ComponentProps } from "svelte";
+    import { Flex, Avatar } from "azucar-ui";
+    type Size = ComponentProps<typeof Avatar>["size"];
+    // import type { Size } from "azucar-ui/types";
 
     type Props = {
         src?: string;
-        size?: string;
+        size?: Size;
         firstName: string;
         lastName: string;
         groupName: string;

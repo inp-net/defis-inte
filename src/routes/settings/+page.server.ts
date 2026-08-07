@@ -1,5 +1,5 @@
 import type { PageServerLoad } from './$types';
-import { fail, type Actions } from '@sveltejs/kit';
+import { error, fail, type Actions } from '@sveltejs/kit';
 import { canUseAdmin, recomptePoints } from '../../lib/server/adminCommand';
 import { switchMode, switchTVn7 } from '$lib/server/userService';
 
@@ -48,6 +48,11 @@ export const actions: Actions = {
 
     recomputePoints: async ({ locals }) => {
         try {
+
+            if (!locals.user) {
+                throw error(403, "utilisateur non connecté");
+            }
+
             const userId = locals.user.id;
             await canUseAdmin(userId);
             await recomptePoints();

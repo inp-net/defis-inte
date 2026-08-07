@@ -186,7 +186,7 @@
 
     // Précompute les endroits où il faut mettre une catégorie
     const processedChallenges = $derived(() => {
-        let currentClub = null;
+        let currentClub: string = "";
         return sortedSearchedChallenges.map((challenge) => {
             const showCategory =
                 sortBind === "Clubs" && challenge.groupName !== currentClub;
@@ -213,10 +213,10 @@
     </Flex>
 {:else}
     <Header
-        firstName={user?.firstName ?? null}
-        lastName={user?.lastName ?? null}
+        firstName={user?.firstName ?? undefined}
+        lastName={user?.lastName ?? undefined}
         groupName={user?.is1A ? user?.groupInte?.name : ""}
-        picture={user?.profilePictureURL ?? null}
+        picture={user?.profilePictureURL ?? undefined}
         accessAdmin={user?.isAdmin || user?.groupBoard.length > 0}
         notificationsDefis={data.posts.pendingChallengeCount}
         notificationsPreuves={data.posts.pendingProofCount}
@@ -261,7 +261,7 @@
                     <Category
                         name={challenge.groupName}
                         bind:list={hiddenClub}
-                        src={challenge.groupUrl}
+                        src={challenge.groupUrl ?? undefined}
                     />
                 {/if}
                 {#if !challenge.is_hidden || sortBind !== "Clubs"}
@@ -276,7 +276,7 @@
 </Flex>
 
 
-{#snippet card(challenge)}
+{#snippet card(challenge: ChallengeRead)}
     {@const isDone = challenge.isDone}
     {@const isPending = challenge.isPending}
     {@const challengeTitle = isDone
@@ -302,12 +302,14 @@
         {/snippet}
         {#snippet content()}
             <p><b>Description :</b> {challenge.description}</p>
-            <UploadProof
-                challengeId={challenge.challengeId}
-                type={challenge.type}
-                onSave={handleSave}
-                defaultTVn7={user?.isOkTVn7}
-            />
+            {#if user && user.is1A}
+                <UploadProof
+                    challengeId={challenge.challengeId}
+                    type={challenge.type}
+                    onSave={handleSave}
+                    defaultTVn7={user?.isOkTVn7}
+                />
+            {/if}
         {/snippet}
     </ChallengeCard>
 {/snippet}

@@ -1,10 +1,11 @@
 <script lang="ts">
 
+    import { type Component } from "svelte";
     import { Frame, Flex, Badge } from "azucar-ui";
     
     export interface MetadataItem {
         name: string;
-        icon?: Component;
+        icon?: Component<{ size?: number }>;
         values: string[];
     }
 
@@ -22,7 +23,7 @@
         // Affichage des métadonnées du challenge
         badges?: MetadataItem[];
         // Est par défaut unfold ?
-        isUnfolded: boolean;
+        isUnfolded?: boolean;
 	};
 
     let {

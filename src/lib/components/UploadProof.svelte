@@ -3,7 +3,6 @@
 
     type Prop = {
         challengeId: number;
-        desc: String;
         type: string;
         onSave: (
             fichiers: FileList | null,
@@ -12,7 +11,7 @@
             isOkTVn7: boolean,
             challengeId: number,
         ) => void;
-        defaultTVn7: boolean;
+        defaultTVn7?: boolean;
     };
 
     let fichiers = $state<FileList | null>(null);
@@ -32,13 +31,13 @@
 
     const {
         challengeId = 0,
-        desc = "",
         type = "TEXT",
         onSave,
-        defaultTVn7,
+        defaultTVn7 = false,
     }: Prop = $props();
 
-    let isOkTVn7: boolean = $state(defaultTVn7);
+    // Empecher la syncronisation
+    let isOkTVn7 = $state((() => defaultTVn7)());
 </script>
 
 <Flex direction="column" gap="md">

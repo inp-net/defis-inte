@@ -73,10 +73,12 @@
         </span>
     {/if}
 
-    <div 
-        class="input-wrapper" 
+    <button 
+        type="button"
+        class="input-wrapper nostyle" 
         data-disabled={disabled}
         onclick={handleWrapperClick}
+        {disabled}
     >
         {#if type === "datalist"}
             <input
@@ -104,7 +106,7 @@
 
             <ChevronDown size="1em" class="select-chevron" />
         {/if}
-    </div>
+    </button>
 </label>
 
 <style>
@@ -143,7 +145,6 @@
         cursor: pointer;
     }
 
-    /* Invisible 12px tap boundary extension outside the visual box */
     .input-wrapper::before {
         content: "";
         position: absolute;
@@ -156,34 +157,25 @@
 
     :global(.input-wrapper .select-chevron) {
         position: absolute;
-        right: 1em;
+        right: var(--size-md);
         pointer-events: none;
+        z-index: 2;
     }
 
-    .input-wrapper select {
-        width: 100%;
-        appearance: none;
-        background: transparent;
-        border: none;
-        font: inherit;
-        color: inherit;
-        outline: none;
-        cursor: pointer;
-        padding-right: 2em; /* Leave space for ChevronDown */
-        position: relative;
-        z-index: 1;
-    }
-
+    .input-wrapper select,
     .input-wrapper input {
-        flex-grow: 1;
+        width: 100%;
         appearance: none;
+        -webkit-appearance: none;
         background: transparent;
         border: none;
+        margin: 0;
+        padding: 0;
         font: inherit;
+        line-height: inherit;
         color: inherit;
         outline: none;
-        cursor: text;
-        width: 100%;
+        cursor: inherit;
         position: relative;
         z-index: 1;
     }
@@ -247,5 +239,25 @@
         color: var(--color-border-subtle);
         background: var(--color-bg);
         cursor: not-allowed;
+    }
+
+    .nostyle {
+        appearance: none;
+        -webkit-appearance: none;
+        background: transparent;
+        border: none;
+        margin: 0;
+        font: inherit;
+        color: inherit;
+        text-align: left;
+    }
+
+    .nostyle:disabled,
+    .nostyle[data-disabled="true"] {
+        cursor: not-allowed;
+    }
+
+    .nostyle:focus-visible {
+        outline: none;
     }
 </style>

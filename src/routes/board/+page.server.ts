@@ -1,5 +1,4 @@
 import type { PageServerLoad } from './$types';
-import type { GroupChallenge } from '$lib/types/types.d.ts';
 import { fail, error, type Actions } from '@sveltejs/kit';
 import { acceptChallenge, deleteChallenge, canModifyChallenge } from '$lib/server/challengeService';
 import { prisma } from "$lib/server/prisma";
@@ -81,6 +80,10 @@ export const actions: Actions = {
         const data = await request.formData();
         const challengeId = data.get('challengeId');
 
+        if (!locals.user) {
+            throw error(403, "utilisateur non connecté");
+        }
+
         const canModify = await canModifyChallenge(challengeId, locals.user.id);
         if (canModify) {
             try {
@@ -108,10 +111,15 @@ export const actions: Actions = {
     delete: async ({ request, locals }) => {
         const data = await request.formData();
         const challengeId = data.get('challengeId');
+
+        if (!locals.user) {
+            throw error(403, "utilisateur non connecté");
+        }
+
         const canModify = await canModifyChallenge(challengeId, locals.user.id);
         if (canModify) {
             try {
-                const updatedChallenge = canModify ? await deleteChallenge(challengeId, locals.user.id) : false;
+                if (canModify) await deleteChallenge(challengeId);
                 return { success: true, };
             } catch (error: any) {
                 if (error.status && error.message) {

@@ -4,22 +4,20 @@
     import Profile from "$lib/components/Profile.svelte";
     import ButtonNotification from "$lib/components/ButtonNotification.svelte";
 
-    const dotSize = "15px";
-
     type Props = {
-        firstName: string;
-        lastName: string;
+        firstName?: string;
+        lastName?: string;
         groupName: string;
-        picture: string;
+        picture?: string;
         accessAdmin: boolean;
         notificationsDefis?: number;
         notificationsPreuves?: number;
     };
 
     const {
-        firstName,
-        lastName,
-        groupName,
+        firstName = "",
+        lastName = "",
+        groupName = "",
         picture,
         accessAdmin,
         notificationsDefis,
@@ -37,7 +35,7 @@
     >
         <Flex justify="space-between" align="center" wrap={false}>
             <Flex align="center" gap="md">
-                <Profile {firstName} {lastName} {groupName} src={picture} hideName={false} size="xl" />
+                <Profile {firstName} {lastName} {groupName} src={picture} size="xl" />
             </Flex>
             <Flex wrap={false} gap="xs" align="center">
                 <Button href="/leaderboard" icon={Trophy}>
@@ -47,14 +45,14 @@
                     <ButtonNotification
                         href="/board"
                         icon={Wrench}
-                        variant="outline"
                         notifications={notificationsDefis}
+                        disabled={false}
                     ></ButtonNotification>
                     <ButtonNotification
                         href="/proof"
                         icon={ImageUp}
-                        variant="outline"
                         notifications={notificationsPreuves}
+                        disabled={false}
                     ></ButtonNotification>
                 {/if}
                 <Button href="/settings" icon={Settings} variant="outline"

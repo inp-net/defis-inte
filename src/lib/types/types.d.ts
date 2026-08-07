@@ -7,6 +7,10 @@ import type {
     Location,
 } from '../../../prisma/generated/prisma/client';
 
+export type {
+    GroupClub, Location
+}
+
 export enum Status {
     PENDING = 'PENDING',
     VALID = 'VALID',
@@ -78,15 +82,16 @@ export type ChallengeInput = {
 export type GroupLeaderboard = Pick<GroupInte, "name" | "pictureURL" | "points"> | null;
 export type UserLeaderboard = Pick<User, "firstName" | "lastName" | "points" | "profilePictureURL"> | null;
 export type Leaderboard = {
-    name: string,
-    pictureURL?: string
-    points: number,
-}
+    name: string;
+    pictureURL?: string | null;
+    points: number;
+    groupName?: string | null;
+};
 
 // Type Challenge Read utilisé uniquement pour l'affichage UI du challenge
 export type ChallengeRead = Pick<
     Challenge, "challengeId" | "name" | "description" | "type" | "nbPoints" | "locationName" | "defiAccepte" | "isDeleted"
-> & { groupName: string; groupUrl: string | null; } & { userName: string } & { groupInteSuccedName: string[] } & { isDone?: boolean, isPending?: boolean }
+> & { groupName: string; groupUrl: string | null; } & { userName?: string } & { groupInteSucceedName: string[] } & { isDone?: boolean, isPending?: boolean }
 
 // Type Group Challenge réunit les ChallengeRead dans des groupes
 export type GroupChallenge = Pick<GroupClub, "name" | "pictureURL"> & { challenges: ChallengeRead[] };

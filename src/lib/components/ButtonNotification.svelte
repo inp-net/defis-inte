@@ -11,17 +11,16 @@
         variant?: "default" | "outline" | "ghost";
         icon?: typeof Icon;
         notifications?: number;
+        href: string
+        disabled?: boolean;
     };
 
     let {
         variant = "default",
-        disabled = false,
-        href,
         icon,
-        class: className,
-        children,
         notifications = 0,
-        ...rest
+        href,
+        disabled = false,
     }: Props = $props();
 </script>
 

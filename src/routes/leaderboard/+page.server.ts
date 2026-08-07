@@ -1,11 +1,12 @@
 import type { PageServerLoad } from './$types';
-import type { Leaderboard, User } from '$lib/types/types.d';
+import type { Leaderboard, UserLeaderboard } from '$lib/types/types.d';
 import { prisma } from "$lib/server/prisma";
+import { error } from '@sveltejs/kit';
 
-export const load: PageServerLoad = async ({ params , locals}) => {
+export const load: PageServerLoad = async ({ locals}) => {
 
     // Pas encore type Leaderboard car manque propriété name
-    const users: User[] = await prisma.user.findMany({
+    const users: UserLeaderboard[] = await prisma.user.findMany({
         orderBy: {
             points: 'desc',
         },
@@ -19,6 +20,11 @@ export const load: PageServerLoad = async ({ params , locals}) => {
             points: true,
         }
     });
+
+
+    if (!locals.user) {
+        throw error(403, "utilisateur non connecté");
+    }
 
     const user = await prisma.user.findUnique({
         where: {
@@ -34,6 +40,10 @@ export const load: PageServerLoad = async ({ params , locals}) => {
             }
         }
     });
+
+    if (!user) {
+        throw error(404, "utilisateur introuvable");
+    }
 
     const groups = await prisma.groupInte.findMany({
         select: {
@@ -54,16 +64,19 @@ export const load: PageServerLoad = async ({ params , locals}) => {
             name: group.name,
             pictureURL: group.pictureURL,
             points: totalPoints,
+            groupName: user.groupInte?.name ?? null
         };
     }).sort((a, b) => b.points - a.points);
-
-
 
     return {
         posts: {
             groupLeaderboard,
             users,
-            user // TODO - le name est inaccessible : {groupName : user.groupInte.name, id : user.id}
+            user: user ? {
+                firstName: user.firstName,
+                lastName: user.lastName,
+                groupName: user.groupInte?.name ?? null
+            } : null
         }
     };
 };

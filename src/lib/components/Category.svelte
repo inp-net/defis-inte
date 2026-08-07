@@ -10,7 +10,7 @@
         // Logo affiché dans la catégorie
         src?: string;
         // La catégorie est masqué
-        enabled: boolean;
+        enabled?: boolean;
     }
 
     let { name, list = $bindable(), src, enabled = false }: Props = $props();
