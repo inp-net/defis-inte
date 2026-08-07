@@ -2,7 +2,7 @@
     import type { PageData } from "../$types";
     import type { GroupChallenge } from "$lib/types/types.d";
     import { Flex, Stack, Frame, Switch, Button } from "azucar-ui";
-    import { MapPin, User, XIcon, Check } from "@lucide/svelte";
+    import { MapPin, User, XIcon, Check, Paperclip } from "@lucide/svelte";
     import { invalidateAll } from '$app/navigation';
     import Filters from "$lib/components/Filters.svelte";
     import BackButton from "$lib/components/BackButton.svelte";
@@ -127,6 +127,7 @@
                     badges={[
                         { name: "Lieu", icon: MapPin, values: [challenge.locationName]},
                         { name: "Par", icon: User, values: [challenge.userName]},
+                        { name: "Type", icon: Paperclip, values: [challenge.type]}
                     ]}
                 >
                     {#snippet content()}
@@ -137,6 +138,7 @@
                             <Button
                                 variant="outline"
                                 disabled={defiDeleted}
+                                href = {`challenge/${challenge.challengeId}`}
                             >
                                 Modifier
                             </Button>
