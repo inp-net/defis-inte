@@ -7,7 +7,7 @@ export const load: PageServerLoad = async ({ locals }) => {
     return {
         user: locals.user
     };
-}
+};
 
 export const actions: Actions = {
     modifyDarkMode: async ({ request, locals }) => {
@@ -19,11 +19,11 @@ export const actions: Actions = {
         try {
             await switchMode(darkMode, locals.user.id);
             return { success: true };
-        } catch (error: any) {
-            if (error.status && error.message) {
-                return fail(error.status, { message: error.message });
+        } catch (err: any) {
+            if (err.status && err.message) {
+                return fail(err.status, { message: err.message });
             }
-            console.error('Action Error:', error);
+            console.error('Action Error:', err);
             return fail(500, { message: 'Impossible de modifier le paramètre' });
         }
     },
@@ -37,36 +37,31 @@ export const actions: Actions = {
         try {
             await switchTVn7(okTVn7, locals.user.id);
             return { success: true };
-        } catch (error: any) {
-            if (error.status && error.message) {
-                return fail(error.status, { message: error.message });
+        } catch (err: any) {
+            if (err.status && err.message) {
+                return fail(err.status, { message: err.message });
             }
-            console.error('Action Error:', error);
+            console.error('Action Error:', err);
             return fail(500, { message: 'Impossible de modifier le paramètre' });
         }
     },
 
     recomputePoints: async ({ locals }) => {
         try {
-
             if (!locals.user) {
-                throw error(403, "utilisateur non connecté");
+                throw error(403, "Utilisateur non connecté");
             }
 
             const userId = locals.user.id;
             await canUseAdmin(userId);
             await recomptePoints();
             return { success: true };
-        } catch (error: any) {
-            if (error.status && error.message) {
-                return fail(error.status, {
-                    message: error.message,
-                });
+        } catch (err: any) {
+            if (err.status && err.message) {
+                return fail(err.status, { message: err.message });
             }
-            console.error('Action Error:', error);
-            return fail(500, {
-                message: 'Impossible de recalculer les points'
-            });
+            console.error('Action Error:', err);
+            return fail(500, { message: 'Impossible de recalculer les points' });
         }
     }
-}
+};

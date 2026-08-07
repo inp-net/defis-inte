@@ -1,22 +1,17 @@
 <script lang="ts">
+    import type { PageData } from "../$types";
     import { Flex, Stack, Button, Switch, Frame } from "azucar-ui";
-    import {
-        Power,
-        Settings2,
-        UserRound,
-        Wrench,
-        Recycle,
-    } from "@lucide/svelte";
+    import { Power, Settings2, UserRound, Wrench, } from "@lucide/svelte";
     import { signOut } from "@auth/sveltekit/client";
     import { Toaster, toast } from "svelte-sonner";
     import { invalidateAll } from "$app/navigation";
     import { deserialize } from "$app/forms";
     import BackButton from "$lib/components/BackButton.svelte";
 
-    let { data } = $props();
+    let { data }: { data: PageData } = $props();
 
-    let darkMode = $state(data.user?.darkMode ?? false);
-    let okTVn7 = $state(data.user?.isOkTVn7 ?? false);
+    let darkMode = $derived(data.user?.darkMode ?? false);
+    let okTVn7 = $derived(data.user?.isOkTVn7 ?? false);
 
     const user = $derived(data.user);
 
@@ -36,7 +31,7 @@
             if (result.type === "success") {
                 await invalidateAll();
             } else if (result.type === "failure") {
-                toast.error(result.data?.message || "Une erreur est survenue");
+                toast.error(result.data?.message ?? "inconnu");
                 // Revert UI switch state if it failed
                 darkMode = data.user?.darkMode ?? false;
             }
@@ -69,11 +64,6 @@
             console.error("Erreur lors de l'envoi du form : ", err);
         }
     }
-
-    $effect(() => {
-        darkMode = data.user?.darkMode ?? false;
-        okTVn7 = data.user?.isOkTVn7 ?? false;
-    });
 
     $effect(() => {
         if (darkMode) {
@@ -158,7 +148,7 @@
         </Stack>
     </Frame>
 
-    {#if user.isAdmin}
+    {#if user && user.isAdmin}
         <Frame>
             <Stack align="baseline">
                 <Flex wrap={false} gap="sm" align="center">
