@@ -40,10 +40,8 @@ export const load: PageServerLoad = async ({ locals }) => {
     });
 
     return {
-        posts: {
-            proofs,
-            proofCount
-        }
+        proofs,
+        proofCount
     };
 };
 

@@ -8,10 +8,7 @@
     import ChallengeCard from "$lib/components/ChallengeCard.svelte";
 
     let { data }: { data: PageData } = $props();
-    let proofs: Proof[] = $state(data.posts.proofs);
-    $effect(() => {
-        proofs = data.posts.proofs;
-    });
+    let proofs: Proof[] = $derived(data.proofs);
 
     async function approveProof(id: number): Promise<void> {
         try {

@@ -135,6 +135,7 @@
                     {#snippet actions()}
                         <Flex gap="xs" style="margin-left: auto; flex-shrink: 0;">
                             <Button
+                                href={`challenge/${challenge.challengeId}`}
                                 variant="outline"
                                 disabled={defiDeleted}
                             >
