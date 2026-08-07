@@ -45,12 +45,14 @@
                     <ButtonNotification
                         href="/board"
                         icon={Wrench}
+                        variant="outline"
                         notifications={notificationsDefis}
                         disabled={false}
                     ></ButtonNotification>
                     <ButtonNotification
                         href="/proof"
                         icon={ImageUp}
+                        variant="outline"
                         notifications={notificationsPreuves}
                         disabled={false}
                     ></ButtonNotification>

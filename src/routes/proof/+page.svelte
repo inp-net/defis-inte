@@ -1,11 +1,9 @@
 <script lang="ts">
     import { invalidateAll } from '$app/navigation';
     import type { PageData } from "../$types";
-    import { Flex, Stack, Button, Frame } from "azucar-ui";
+    import { Flex, Stack, Button } from "azucar-ui";
     import { User, Clock, XIcon, Check } from "@lucide/svelte";
     import type { Proof } from "$lib/types/types.d";
-    import { Status } from "$lib/types/types.d";
-    import AcceptableCard from "$lib/components/AcceptableCard.svelte";
     import BackButton from "$lib/components/BackButton.svelte";
     import ChallengeCard from "$lib/components/ChallengeCard.svelte";
 
