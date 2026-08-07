@@ -1,7 +1,7 @@
 import { saveChallenge } from '$lib/server/challengeService';
 import type { Actions } from './$types';
 import type { Location, GroupClub } from '$lib/types/types.d';
-import { error, fail } from '@sveltejs/kit';
+import { error } from '@sveltejs/kit';
 import type { PageServerLoad } from "./$types";
 import { prisma } from "$lib/server/prisma";
 
@@ -48,6 +48,11 @@ export const actions: Actions = {
     // Action pour crée ou modifier : upsert
     upsert: async ({ request, locals }) => {
         try {
+
+            if (!locals.user) {
+                throw error(403, "utilisateur non connecté");
+            }
+
             const body = await request.json();
             body.userId = locals.user.id
 

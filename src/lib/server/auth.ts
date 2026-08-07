@@ -41,14 +41,13 @@ if (ENABLE_MOCK_AUTH) {
                     uid: "fake-user-id",
                     firstName: "Fake",
                     lastName: "User",
-                    email: "fake.user@churros.fr",
                     pictureURL: "https://picsum.photos/200",
                     yearTier: 1,
                     churrosGroups: [
-                        {
-                            // Ajouter les faux groupes ici
-                            // group: { groupId: "bde", name: "BDE", ... },
-                        }
+                        // {
+                        //     // Ajouter les faux groupes ici
+                        //     // group: { groupId: "bde", name: "BDE", ... },
+                        // }
                     ],
                 };
 
@@ -86,7 +85,7 @@ export const { handle, signIn, signOut } = SvelteKitAuth({
         warn: (code, ...message) => { console.warn('[Auth Warn]', code, ...message); },
     },
     callbacks: {
-        async signIn({ profile, user, account }) {
+        async signIn({ profile, account }) {
             // si c'est le mock
             if (account?.provider === 'credentials') {
                 return true; 

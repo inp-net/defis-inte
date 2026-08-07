@@ -50,8 +50,25 @@ export const load: PageServerLoad = async ({ locals }) => {
 export const actions: Actions = {
     approve: async ({ request, locals }) => {
         // si pas du bureau ou admin il est redirigée
-        if (!locals.user.groupBoard && !locals.user.isAdmin) {
-            throw error(403, "tu ne fais pas partie du bureau d'un club")
+
+        if (!locals.user) {
+            throw error(403, "utilisateur non connecté");
+        }
+
+        if (!locals.user.isAdmin) {
+            const isBoardMember = await prisma.groupClub.findFirst({
+                where: {
+                    board: {
+                        some: {
+                            id: locals.user.id
+                        }
+                    }
+                }
+            });
+
+            if (!isBoardMember) {
+                throw error(403, "tu ne fais pas partie du bureau d'un club");
+            }
         }
 
         const data = await request.formData();
@@ -81,6 +98,27 @@ export const actions: Actions = {
         }
     },
     deny: async ({ request, locals }) => {
+
+        if (!locals.user) {
+            throw error(403, "utilisateur non connecté");
+        }
+
+        if (!locals.user.isAdmin) {
+            const isBoardMember = await prisma.groupClub.findFirst({
+                where: {
+                    board: {
+                        some: {
+                            id: locals.user.id
+                        }
+                    }
+                }
+            });
+
+            if (!isBoardMember) {
+                throw error(403, "tu ne fais pas partie du bureau d'un club");
+            }
+        }
+
         const data = await request.formData();
         const proofIdString = data.get('proofId');
 

@@ -1,10 +1,13 @@
 <script lang="ts">
     import type { PageData } from "../$types";
     import type { GroupChallenge } from "$lib/types/types.d";
-    import { Flex, Stack, Frame, Switch } from "azucar-ui";
+    import { Flex, Stack, Frame, Switch, Button } from "azucar-ui";
+    import { MapPin, User, XIcon, Check, Paperclip } from "@lucide/svelte";
+    import { invalidateAll } from '$app/navigation';
     import Filters from "$lib/components/Filters.svelte";
-    import ChallengesToAccept from "$lib/components/ChallengesToAccept.svelte";
     import BackButton from "$lib/components/BackButton.svelte";
+    import Category from "$lib/components/Category.svelte";
+    import ChallengeCard from "$lib/components/ChallengeCard.svelte";
 
     let { data }: { data: PageData } = $props();
     let groupChallenge: GroupChallenge[] = $state(data.posts.challenges);
@@ -70,6 +73,7 @@
         } catch (err) {
             console.error("Erreur lors de l'envoi du form : ", err);
         }
+        invalidateAll();
     }
 
     async function deleteChallenge(id: number): Promise<void> {
@@ -101,10 +105,65 @@
         } catch (err) {
             console.error("Erreur lors de l'envoi du form : ", err);
         }
+        invalidateAll();
     }
+
+    /** Nom des clubs qui sont cachés dans la page. */
+    let hiddenClubs: string[] = $state([]);
+
 </script>
 
-<Flex direction="column" gap="xxl" margin="lg">
+<!-- fonction qui affiche la liste de challenge pour le groupe -->
+{#snippet showChallenges(group)}
+        {#each group.challenges as challenge (challenge.challengeId)}
+            {@const defiApprouved = challenge.defiAccepte}
+            {@const defiDeleted = challenge.isDeleted}
+
+            {#if !(hideDone && (defiDeleted || defiApprouved))}
+                <ChallengeCard
+                    title={challenge.name}
+                    points={challenge.nbPoints}
+                    isUnfolded={false}
+                    badges={[
+                        { name: "Lieu", icon: MapPin, values: [challenge.locationName]},
+                        { name: "Par", icon: User, values: [challenge.userName]},
+                        { name: "Type", icon: Paperclip, values: [challenge.type]}
+                    ]}
+                >
+                    {#snippet content()}
+                        <p><b>Description: </b>{"\ " + challenge.description}</p>
+                    {/snippet}
+                    {#snippet actions()}
+                        <Flex gap="xs" style="margin-left: auto; flex-shrink: 0;">
+                            <Button
+                                variant="outline"
+                                disabled={defiDeleted}
+                                href = {`challenge/${challenge.challengeId}`}
+                            >
+                                Modifier
+                            </Button>
+                            <Button
+                                icon={XIcon}
+                                class="danger"
+                                name="Delete"
+                                disabled={defiDeleted}
+                                onclick={() => deleteChallenge(challenge.challengeId)}
+                            />
+                            <Button
+                                icon={Check}
+                                class="success"
+                                name="Success"
+                                disabled={defiApprouved || defiDeleted}
+                                onclick={() => approuveChallenge(challenge.challengeId)}
+                            />
+                        </Flex>
+                    {/snippet}
+                </ChallengeCard>
+            {/if}
+        {/each}
+{/snippet}
+
+<Flex direction="column" gap="xl" margin="lg">
     <Stack align="baseline">
         <BackButton />
         <h2>Board admin</h2>
@@ -112,28 +171,43 @@
     </Stack>
 
     <Stack>
-        <Frame>
+        <Frame border={true}>
             <Flex direction="column">
                 <Switch bind:checked={hideDone}
                     >Masquer les défis validés</Switch
                 >
+                <Flex gap="xs" wrap={false} align="center">
+                    <span style="padding-right: 10px;">Filtre</span>
+                    <Filters filters={filterNames} bind:activeIndexes />
+                </Flex>
             </Flex>
         </Frame>
     </Stack>
 
     <Stack style="max-width: 100%; min-width: 0; overflow: hidden;">
-        <Filters filters={filterNames} bind:activeIndexes />
         <Flex gap="md" direction="column" style="max-width: 100%; width: 100%;">
             {#each activeGroups as group}
-                <ChallengesToAccept
-                    groupName={group.name}
-                    groupURL={group.pictureURL}
-                    challenges={group.challenges}
-                    bind:hideDone
-                    onChallengeApprouved={approuveChallenge}
-                    onChallengeDeleted={deleteChallenge}
-                />
+                <Flex direction="column" gap="xs" style="max-width: 100%; width: 100%;">
+                    <Category
+                        name={group.name}
+                        bind:list={hiddenClubs}
+                        src={group.pictureURL}
+                    />
+
+                    <Flex gap="xs" direction="column" style="max-width: 100%">
+                        {#if !hiddenClubs.includes(group.name)}
+                            {@render showChallenges(group)}
+                        {/if}
+                    </Flex>
+
+                    {#if group.challenges.length == 0 && !hiddenClubs.includes(group.name)}
+                        <p><i>( aucun challenge à accepter )</i></p>
+                    {/if}
+                </Flex>
             {/each}
         </Flex>
+    </Stack>
+
+    <Stack>
     </Stack>
 </Flex>

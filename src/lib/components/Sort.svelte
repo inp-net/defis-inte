@@ -45,12 +45,14 @@
 -->
 
 <Flex wrap={false} gap="xxs" style="flex-grow: 1;">
+    <!-- bouton sélection du trie -->
     <Select
         options={capitalizedOptions}
         bind:value={bind}
         outline={true}
         id="sort-select"
     />
+    <!-- bouton pour tirer dans l'ordre croissant ou décroissant -->
     <Button
         variant="outline"
         icon={isDesc ? ArrowUp : ArrowDown}

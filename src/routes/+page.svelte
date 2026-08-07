@@ -8,16 +8,19 @@
     import { invalidateAll } from "$app/navigation";
     import { UploadType } from "$lib/types/types.d";
     import { deserialize } from '$app/forms';
+    
 
     // composants
     import { Flex, Stack, Button } from "azucar-ui";
-    import { MapPin, UsersRound, Trophy, LogIn, Files } from "@lucide/svelte";
+    import { MapPin, UsersRound, Trophy, LogIn, Paperclip } from "@lucide/svelte";
     import Header from "$lib/components/Header.svelte";
-    import FrameChallenge from "$lib/components/FrameChallenge.svelte";
     import AddChallenge from "$lib/components/AddChallenge.svelte";
     import Sort from "$lib/components/Sort.svelte";
     import SearchBar from "$lib/components/SearchBar.svelte";
     import Category from "$lib/components/Category.svelte";
+    import HomepageTitle from "$lib/components/HomepageTitle.svelte";
+    import ChallengeCard from "$lib/components/ChallengeCard.svelte";
+    import UploadProof from "$lib/components/UploadProof.svelte";
 
     let { data }: { data: PageData } = $props();
     let challenges: ChallengeRead[] = $derived(data.posts.challenges);
@@ -184,7 +187,7 @@
 
     // Précompute les endroits où il faut mettre une catégorie
     const processedChallenges = $derived(() => {
-        let currentClub = null;
+        let currentClub: string = "";
         return sortedSearchedChallenges.map((challenge) => {
             const showCategory =
                 sortBind === "Clubs" && challenge.groupName !== currentClub;
@@ -211,20 +214,18 @@
     </Flex>
 {:else}
     <Header
-        firstName={user?.firstName ?? null}
-        lastName={user?.lastName ?? null}
+        firstName={user?.firstName ?? undefined}
+        lastName={user?.lastName ?? undefined}
         groupName={user?.is1A ? user?.groupInte?.name : ""}
-        picture={user?.profilePictureURL ?? null}
+        picture={user?.profilePictureURL ?? undefined}
         accessAdmin={user?.isAdmin || user?.groupBoard.length > 0}
         notificationsDefis={data.posts.pendingChallengeCount}
         notificationsPreuves={data.posts.pendingProofCount}
     ></Header>
 {/if}
 <Flex direction="column" gap="xxl" margin="lg">
-    <Stack>
-        <h1>Défis</h1>
-        <p>Défis d'intégration 2026 - 2027.</p>
-    </Stack>
+
+    <HomepageTitle />
 
     <!-- A afficher que pour les membres 2A de groupes et plus -->
     {#if user && !(user.is1A === Churros1ATo2A)}
@@ -232,39 +233,6 @@
             <AddChallenge />
         </Stack>
     {/if}
-
-    <!-- Snippet pour afficher les métadonnées d'un challenge -->
-    {#snippet challengeDetails(challenge)}
-        <Flex gap="xs" align="center"
-            ><UsersRound size="15px" /> {challenge.groupName}
-        </Flex>
-        <Flex gap="xs" align="center"
-            ><MapPin size="15px" /> {challenge.locationName}
-        </Flex>
-        <Flex gap="xs" align="center"
-            ><Files size="15px" />
-            <p>Type de preuve attendu :</p>
-            {UploadType[challenge.type as keyof typeof UploadType]}</Flex
-        >
-        {#if challenge.groupInteSucceedName.length > 0}
-            <Flex gap="xs" direction="column">
-                <Flex gap="xs" align="center">
-                    <Trophy size="15px" />
-                    <p>Défi réussi par :</p>
-                </Flex>
-                <Flex
-                    direction="column"
-                    gap="xxs"
-                    wrap={false}
-                    style="max-height: 100px; overflow: scroll; margin-left: 10px;"
-                >
-                    {#each challenge.groupInteSucceedName as name}
-                        <p>- {name}</p>
-                    {/each}
-                </Flex>
-            </Flex>
-        {/if}
-    {/snippet}
 
     <!-- Liste des défis -->
     <Stack style="max-width: 100%; min-width: 0; overflow: hidden;">
@@ -283,47 +251,77 @@
             wrap={false}
         >
             {#each processedChallenges() as challenge (challenge.challengeId)}
-                {@const isDone = challenge.isDone}
-                {@const isPending = challenge.isPending}
-                {@const challengeTitle = isDone
-                    ? `✔ ${challenge.name}`
-                    : isPending
-                      ? `⏳ ${challenge.name} (En attente)`
-                      : challenge.name}
-
                 {#if challenge.showCategory}
+                    <!--
+                        Cette section devrait être refactor. Du a une mauvaise
+                        architecture de départ, fix fonctionne. Client side, les
+                        challenges sont triés par clubs et quand il y a un changement
+                        de club d'un challenge à l'autre, ce dernier à son terme
+                        showCategory à true.
+                    -->
                     <Category
                         name={challenge.groupName}
                         bind:list={hiddenClub}
-                        src={challenge.groupUrl}
+                        src={challenge.groupUrl ?? undefined}
                     />
                 {/if}
                 {#if !challenge.is_hidden || sortBind !== "Clubs"}
-                    <FrameChallenge
-                        challengeId={challenge.challengeId}
-                        name={challengeTitle}
-                        nbPoints={challenge.nbPoints}
-                        isText={challenge.type === "TEXT"}
-                        location={challenge.locationName}
-                        clubName={challenge.groupName}
-                        clubUrl={sortBind === "Clubs" ? "" : challenge.groupUrl}
-                        desc={challenge.description}
-                        type={challenge.type}
-                        onSave={handleSave}
-                        defaultTVn7={user?.isOkTVn7}
-                        {isConnected}
-                        isEnabled={isConnected &&
-                            !challenge.isDone &&
-                            !isSending &&
-                            Churros1ATo2A &&
-                            user?.is1A}
-                    >
-                        {@render challengeDetails(challenge)}
-                    </FrameChallenge>
+                    {@render card(challenge)}
                 {/if}
+
             {/each}
         </Flex>
     </Stack>
 
     <Toaster />
 </Flex>
+
+
+{#snippet card(challenge: ChallengeRead)}
+    {@const isDone = challenge.isDone}
+    {@const isPending = challenge.isPending}
+    {@const challengeTitle = isDone
+        ? `✔ ${challenge.name}`
+        : isPending
+          ? `⏳ ${challenge.name} (En attente)`
+          : challenge.name}
+
+    <ChallengeCard
+        title={challengeTitle}
+        points={challenge.nbPoints}
+        badges={[
+            { name: "Club", icon: UsersRound, values: [ challenge.groupName ] },
+            { name: "Lieu", icon: MapPin, values: [ challenge.locationName ] },
+            { name: "Type de preuve", icon: Paperclip, values: [ UploadType[challenge.type as keyof typeof UploadType]] },
+            ...(challenge.groupInteSucceedName?.length
+            ? [{ name: "Défi réussi par", icon: Trophy, values: challenge.groupInteSucceedName}]
+            : [])
+        ]}
+    >
+        {#snippet header()}
+            {#if challenge.groupUrl && !(sortBind === "Clubs")}
+                <img src={challenge.groupUrl} alt={challenge.groupName} />
+            {/if}
+        {/snippet}
+        {#snippet content()}
+            <p><b>Description :</b> {challenge.description}</p>
+            {#if user && (user.is1A && Churros1ATo2A) && !isDone && !isPending}
+                <UploadProof
+                    challengeId={challenge.challengeId}
+                    type={challenge.type}
+                    onSave={handleSave}
+                    defaultTVn7={user?.isOkTVn7 ?? undefined}
+                />
+            {/if}
+        {/snippet}
+    </ChallengeCard>
+{/snippet}
+
+<style>
+    img {
+        width: var(--size-md);
+        height: var(--size-md);
+        border-radius: var(--size-xl);
+        object-fit: cover;
+    }
+</style>

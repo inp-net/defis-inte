@@ -1,10 +1,15 @@
 import type { PageServerLoad } from './$types';
 import { prisma } from "$lib/server/prisma";
 import { type ProofRead, Status, type Proof } from "$lib/types/types.d";
+import { error } from '@sveltejs/kit';
 
 export const load: PageServerLoad = async ({ locals }) => {
 
     const user = locals.user;
+
+    if (!user) {
+        throw error(403, "utilisateur non connecté");
+    }
 
     const userGroupInteId = user.groupInteId || (await prisma.user.findUnique({
         where: { id: user.id },
@@ -43,17 +48,17 @@ export const load: PageServerLoad = async ({ locals }) => {
     // Statistiques
     //
 
-    const proofByUser : Proof[] = await prisma.proof.findMany({
+    const proofByUser: Pick<Proof, 'status'>[] = await prisma.proof.findMany({
         where: {
             userId: user.id
         },
         select: {
             status: true
         }
-    })
+    });
 
     const proofCount = proofByUser.length;
-    const proofDoneCount = proofByUser.filter(p => p.status === Status.Done).length;
+    const proofDoneCount = proofByUser.filter(p => p.status === Status.VALID).length;
 
     return {
         posts: {

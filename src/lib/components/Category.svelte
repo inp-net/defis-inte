@@ -3,10 +3,14 @@
     import { ChevronDown, ChevronUp } from "@lucide/svelte";
 
     interface Props {
+        // Nom de la catégorie
         name: string;
+        // Liste général des catégories. Le nom sera écrit si ce composant est désactivé
         list: string[];
+        // Logo affiché dans la catégorie
         src?: string;
-        enabled: boolean;
+        // La catégorie est masqué
+        enabled?: boolean;
     }
 
     let { name, list = $bindable(), src, enabled = false }: Props = $props();
@@ -25,14 +29,21 @@
 
 <!--
     @component
+    Agit comme la balise `details` en HTML.
+
     Composant Category. Il permet à l'utilisateur de cliquer sur une catégorie
     pour l'activer ou la désactiver, ce qui met à jour une liste partagée avec
     le composant parent.
+
+    La list est une liste générale. Quand le composant est cliqué, son nom est
+    ajouté dans cette liste. Ceci permet à la page de savoir quels catégories
+    sont activés.
+
     Utilisé par exemple comme Header d'un club (net7) dans la liste des défis
     et cache la liste des défis si folded.
 -->
 
-<button onclick={() => flipFlopAddList()} style="margin: 2em 0">
+<button onclick={() => flipFlopAddList()} style="margin-bottom: var(--size-lg)">
     <Flex justify="space-between" align="center" margin="xs" wrap={false}>
         <Flex align="center" gap="md" wrap={false}>
             {#if src}

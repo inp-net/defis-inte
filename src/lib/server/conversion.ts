@@ -1,7 +1,11 @@
 //Nécéssite ffmpeg installé sur le serveur
 import { spawn } from "child_process";
+import { writeFile, unlink } from 'fs/promises';
 import { createWriteStream } from 'fs';
-import convert from 'heic-convert'; // les types ne marches pas car c'est du js (si j'ai bien capter)
+import { tmpdir } from 'os';
+import { join } from 'path';
+import { randomUUID } from 'crypto';
+import convert from 'heic-convert';
 
 
 /**
@@ -71,7 +75,7 @@ export async function convertToWebp(
 
     proc.on('error', (err) => reject(err));
 
-    proc.stdin.on('error', (err) => {
+    proc.stdin.on('error', () => {
     });
 
     proc.on('close', (code) => {
@@ -99,18 +103,21 @@ export async function convertToWebp(
  * @param quality - Qualité de conversion  18-23 = bonne qualité pour le web, 28+ = plus compressé/moins net
  * @returns Une Promise qui résout une fois le fichier écrit sur disque
  */
-export function convertToWebVideo(
+export async function convertToWebVideo(
   buffer: Buffer,
   inputFormat: string,
   outputPath: string,
   quality: number = 20
 ): Promise<void> {
-
   const typeFile = toFfmpegInputFormat(inputFormat);
+
+  // Fichier temporaire pour l'entrée : évite les problèmes de seek sur pipe
+  const tmpInputPath = join(tmpdir(), `${randomUUID()}.${inputFormat.replace(/^\./, '')}`);
+  await writeFile(tmpInputPath, buffer);
 
   const args = [
     '-f', typeFile,        // Format d'entrée explicite
-    '-i', 'pipe:0',           // Lecture du buffer d'entrée depuis stdin
+    '-i', tmpInputPath,           // Lecture du buffer d'entrée depuis stdin
 
     // --- Vidéo ---
     '-c:v', 'libx264',        // Codec H.264 
@@ -130,7 +137,6 @@ export function convertToWebVideo(
     'pipe:1',                 // Écriture du résultat vers stdout
   ];
 
-
   return new Promise((resolve, reject) => {
     const proc = spawn('ffmpeg', args);
 
@@ -142,7 +148,8 @@ export function convertToWebVideo(
 
     proc.on('error', (err) => reject(err));
 
-    proc.on('close', (code) => {
+    proc.on('close', async (code) => {
+      await unlink(tmpInputPath).catch(() => {});
       if (code === 0) {
         resolve();
       } else {
@@ -151,11 +158,9 @@ export function convertToWebVideo(
         );
       }
     });
-
-    proc.stdin.write(buffer);
-    proc.stdin.end();
   });
 }
+
 
 
 

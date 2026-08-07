@@ -1,11 +1,10 @@
 <script lang="ts">
     import { Flex, Stack, Frame, Switch, Button } from "azucar-ui";
-    import { Clock, UserRound, UserStar, Route } from "@lucide/svelte";
+    import { Clock, UserRound, UserStar, Route, User } from "@lucide/svelte";
+    import { type ProofRead, Status } from "$lib/types/types.d";
     import BackButton from "$lib/components/BackButton.svelte";
     import Profile from "$lib/components/Profile.svelte";
-    import PopUpVerification from "$lib/components/PopUpVerification.svelte";
-    import AcceptableCard from "$lib/components/AcceptableCard.svelte";
-    import { type ProofRead, Status } from "$lib/types/types.d";
+    import ChallengeCard from "$lib/components/ChallengeCard.svelte";
 
     let { data }: { data: PageData } = $props();
 
@@ -139,21 +138,33 @@
         <h3>Preuves de votre groupe</h3>
         <Flex direction="column" gap="xs">
             {#each proofs as proof}
-                <AcceptableCard
-                    id={proof.proofId}
-                    isApprouved={proof.status === 'VALID'}
-                    isDisabled={proof.status === 'DENIED'}
-                    name={proof.challenge.name}
+                <ChallengeCard
+                    title={"Défi : " + proof.challenge.name}
                     points={proof.challenge.nbPoints}
-                    isModifiable={false}
-                    modifiableURL=""
-                    hideButtons={true}
+                    badges={[
+                        { name: "Par", icon: User, values: [proof.user.firstName + " " + proof.user.lastName] },
+                        { name: "Date", icon: Clock, values: [formatDateTime(proof.date)] },
+                    ]}
                 >
-                    <Flex direction="column" gap="lg">
-                        {@render proofRender(proof)}
-                    </Flex>
-                </AcceptableCard>
+                    {#snippet content()}
+                        <Flex direction="column" gap="xs">
+                            {#if proof.type !== "TEXT"}
+                                {#each proof.content as proofContent, index}
+                                    <!-- fait confiant au navigateur pour
+                                         ouvrir les fichiers car le gérer sur
+                                         le site est chiant -->
+                                    <a href={proofContent}>Média preuve {index}</a>
+                                {/each}
+                            {:else}
+                                <p><b>Réponse :</b> {proof.content}</p>
+                            {/if}
+                        </Flex>
+                    {/snippet}
+                </ChallengeCard>
             {/each}
+            {#if proofs.length == 0}
+                <p><i>(rien pour le moment)</i></p>
+            {/if}
         </Flex>
     </Stack>
 </Flex>

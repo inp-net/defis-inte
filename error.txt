@@ -1,0 +1,1309 @@
+Loading svelte-check in workspace: /home/bilele/Code/defis-integration-2026-2027
+Getting Svelte diagnostics...
+
+
+/home/bilele/Code/defis-integration-2026-2027/src/lib/server/auth.ts:48:25
+Error: Type '{}' is missing the following properties from type 'ChurrosGroups': group, secretary, president, vicePresident, treasurer 
+                    churrosGroups: [
+                        {
+                            // Ajouter les faux groupes ici
+                            // group: { groupId: "bde", name: "BDE", ... },
+                        }
+                    ],
+
+/home/bilele/Code/defis-integration-2026-2027/src/hooks.server.ts:26:69
+Error: 'user' is possibly 'null'. 
+
+            console.log(`[Churros Auth] Utilisateur synchronisé : ${user.id}`);
+
+/home/bilele/Code/defis-integration-2026-2027/src/hooks.server.ts:32:83
+Error: 'user' is possibly 'null'. 
+            const protectedRoutes = ['/proof', '/board'];
+            if (protectedRoutes.some(route => currentPath.startsWith(route)) && (!user.groupBoard && !user.isAdmin)) {
+                throw error(403, 'Accès interdit');
+
+/home/bilele/Code/defis-integration-2026-2027/src/hooks.server.ts:32:103
+Error: 'user' is possibly 'null'. 
+            const protectedRoutes = ['/proof', '/board'];
+            if (protectedRoutes.some(route => currentPath.startsWith(route)) && (!user.groupBoard && !user.isAdmin)) {
+                throw error(403, 'Accès interdit');
+
+/home/bilele/Code/defis-integration-2026-2027/src/routes/+page.server.ts:2:47
+Error: 'UploadType' resolves to a type-only declaration and must be imported using a type-only import when 'verbatimModuleSyntax' is enabled. 
+import type { PageServerLoad } from './$types';
+import { type ProofInput, type ChallengeRead, UploadType } from '$lib/types/types.d';
+import { newProof } from '$lib/server/proofService';
+
+/home/bilele/Code/defis-integration-2026-2027/src/routes/+page.server.ts:75:11
+Error: Type '{ groupName: string; groupUrl: string; groupInteSucceedName: string[]; isDone: boolean; isPending: boolean; name: string; type: UploadType; challengeId: number; description: string | null; defiAccepte: boolean; nbPoints: number; locationName: string; isDeleted: boolean; }[]' is not assignable to type 'ChallengeRead[]'.
+  Type '{ groupName: string; groupUrl: string; groupInteSucceedName: string[]; isDone: boolean; isPending: boolean; name: string; type: UploadType; challengeId: number; description: string | null; defiAccepte: boolean; nbPoints: number; locationName: string; isDeleted: boolean; }' is not assignable to type 'ChallengeRead'.
+    Property 'userName' is missing in type '{ groupName: string; groupUrl: string; groupInteSucceedName: string[]; isDone: boolean; isPending: boolean; name: string; type: UploadType; challengeId: number; description: string | null; defiAccepte: boolean; nbPoints: number; locationName: string; isDeleted: boolean; }' but required in type '{ userName: string; }'. 
+    // Challenges sont les challenges acceptés par un admin
+    const challenges: ChallengeRead[] = allChallenges.filter((a) => a.defiAccepte);
+
+/home/bilele/Code/defis-integration-2026-2027/src/routes/+page.server.ts:123:15
+Error: Type 'FormDataEntryValue[]' is not assignable to type 'File[]'.
+  Type 'FormDataEntryValue' is not assignable to type 'File'.
+    Type 'string' is not assignable to type 'File'. 
+        const textePreuve = data.get('textePreuve') as string;
+        const files: File[] = data.getAll('file');
+        const isOkTVn7 = data.get('isOkTVn7') === "true";
+
+/home/bilele/Code/defis-integration-2026-2027/src/routes/+page.server.ts:125:24
+Error: 'locals.user' is possibly 'null' or 'undefined'. 
+        const isOkTVn7 = data.get('isOkTVn7') === "true";
+        const userId = locals.user.id;
+        const maxFiles: number = 15;
+
+/home/bilele/Code/defis-integration-2026-2027/src/routes/+page.server.ts:181:61
+Error: Type 'string' is not assignable to type 'UploadType'. 
+
+            const body: ProofInput = { challengeId, userId, type, content, isOkTVn7 }
+
+/home/bilele/Code/defis-integration-2026-2027/src/routes/board/+page.server.ts:84:65
+Error: 'locals.user' is possibly 'null' or 'undefined'. 
+
+        const canModify = await canModifyChallenge(challengeId, locals.user.id);
+        if (canModify) {
+
+/home/bilele/Code/defis-integration-2026-2027/src/routes/board/+page.server.ts:87:89
+Error: 'locals.user' is possibly 'null' or 'undefined'. 
+            try {
+                const updatedChallenge = canModify ? await acceptChallenge(challengeId, locals.user.id) : false;
+                return {
+
+/home/bilele/Code/defis-integration-2026-2027/src/routes/board/+page.server.ts:111:65
+Error: 'locals.user' is possibly 'null' or 'undefined'. 
+        const challengeId = data.get('challengeId');
+        const canModify = await canModifyChallenge(challengeId, locals.user.id);
+        if (canModify) {
+
+/home/bilele/Code/defis-integration-2026-2027/src/routes/board/+page.server.ts:114:89
+Error: 'locals.user' is possibly 'null' or 'undefined'. 
+            try {
+                const updatedChallenge = canModify ? await deleteChallenge(challengeId, locals.user.id) : false;
+                return { success: true, };
+
+/home/bilele/Code/defis-integration-2026-2027/src/routes/challenge/[challengeId]/+page.server.ts:3:15
+Error: Module '"$lib/types/types.d"' declares 'Location' locally, but it is not exported. 
+import type { Actions } from './$types';
+import type { Location, GroupClub } from '$lib/types/types.d';
+import { error, fail } from '@sveltejs/kit';
+
+/home/bilele/Code/defis-integration-2026-2027/src/routes/challenge/[challengeId]/+page.server.ts:3:25
+Error: Module '"$lib/types/types.d"' declares 'GroupClub' locally, but it is not exported. 
+import type { Actions } from './$types';
+import type { Location, GroupClub } from '$lib/types/types.d';
+import { error, fail } from '@sveltejs/kit';
+
+/home/bilele/Code/defis-integration-2026-2027/src/routes/challenge/[challengeId]/+page.server.ts:52:27
+Error: 'locals.user' is possibly 'null' or 'undefined'. 
+            const body = await request.json();
+            body.userId = locals.user.id
+
+/home/bilele/Code/defis-integration-2026-2027/src/routes/leaderboard/+page.server.ts:8:11
+Error: Type '{ firstName: string; lastName: string; profilePictureURL: string | null; points: number; }[]' is not assignable to type '{ id: string; firstName: string; lastName: string; is1A: boolean; profilePictureURL: string | null; groupInteId: string | null; points: number; darkMode: boolean; isOkTVn7: boolean; isAdmin: boolean; }[]'.
+  Type '{ firstName: string; lastName: string; profilePictureURL: string | null; points: number; }' is missing the following properties from type '{ id: string; firstName: string; lastName: string; is1A: boolean; profilePictureURL: string | null; groupInteId: string | null; points: number; darkMode: boolean; isOkTVn7: boolean; isAdmin: boolean; }': id, is1A, groupInteId, darkMode, and 2 more. 
+    // Pas encore type Leaderboard car manque propriété name
+    const users: User[] = await prisma.user.findMany({
+        orderBy: {
+
+/home/bilele/Code/defis-integration-2026-2027/src/routes/leaderboard/+page.server.ts:25:17
+Error: 'locals.user' is possibly 'null' or 'undefined'. 
+        where: {
+            id: locals.user.id
+        },
+
+/home/bilele/Code/defis-integration-2026-2027/src/routes/leaderboard/+page.server.ts:51:11
+Error: Type '{ name: string; pictureURL: string | null; points: number; }[]' is not assignable to type 'Leaderboard[]'.
+  Type '{ name: string; pictureURL: string | null; points: number; }' is not assignable to type 'Leaderboard'.
+    Types of property 'pictureURL' are incompatible.
+      Type 'string | null' is not assignable to type 'string | undefined'.
+        Type 'null' is not assignable to type 'string | undefined'. 
+    // Calcul le total de point de chaque groupe à partir des points de ses utilisateurs et order by desc 
+    const groupLeaderboard: Leaderboard[] = groups.map((group) => {
+        const totalPoints = group.usersInte.reduce((sum : number, user) => sum + user.points, 0);
+
+/home/bilele/Code/defis-integration-2026-2027/src/routes/profile/+page.server.ts:9:29
+Error: 'user' is possibly 'null' or 'undefined'. 
+
+    const userGroupInteId = user.groupInteId || (await prisma.user.findUnique({
+        where: { id: user.id },
+
+/home/bilele/Code/defis-integration-2026-2027/src/routes/profile/+page.server.ts:10:22
+Error: 'user' is possibly 'null' or 'undefined'. 
+    const userGroupInteId = user.groupInteId || (await prisma.user.findUnique({
+        where: { id: user.id },
+        select: { groupInteId: true }
+
+/home/bilele/Code/defis-integration-2026-2027/src/routes/profile/+page.server.ts:46:11
+Error: Type '{ status: Status; }[]' is not assignable to type '{ isOkTVn7: boolean; proofId: number; userId: string; type: UploadType; content: string[]; date: Date; challengeId: number | null; validatorId: string | null; status: Status; }[]'.
+  Type '{ status: Status; }' is missing the following properties from type '{ isOkTVn7: boolean; proofId: number; userId: string; type: UploadType; content: string[]; date: Date; challengeId: number | null; validatorId: string | null; status: Status; }': isOkTVn7, proofId, userId, type, and 4 more. 
+
+    const proofByUser : Proof[] = await prisma.proof.findMany({
+        where: {
+
+/home/bilele/Code/defis-integration-2026-2027/src/routes/profile/+page.server.ts:48:21
+Error: 'user' is possibly 'null' or 'undefined'. 
+        where: {
+            userId: user.id
+        },
+
+/home/bilele/Code/defis-integration-2026-2027/src/routes/profile/+page.server.ts:56:72
+Error: Property 'Done' does not exist on type 'typeof Status'. 
+    const proofCount = proofByUser.length;
+    const proofDoneCount = proofByUser.filter(p => p.status === Status.Done).length;
+
+/home/bilele/Code/defis-integration-2026-2027/src/routes/proof/+page.server.ts:53:14
+Error: 'locals.user' is possibly 'null' or 'undefined'. 
+        // si pas du bureau ou admin il est redirigée
+        if (!locals.user.groupBoard && !locals.user.isAdmin) {
+            throw error(403, "tu ne fais pas partie du bureau d'un club")
+
+/home/bilele/Code/defis-integration-2026-2027/src/routes/proof/+page.server.ts:53:26
+Error: Property 'groupBoard' does not exist on type '{ id: string; firstName: string; lastName: string; is1A: boolean; profilePictureURL: string | null; groupInteId: string | null; points: number; darkMode: boolean; isOkTVn7: boolean; isAdmin: boolean; }'. 
+        // si pas du bureau ou admin il est redirigée
+        if (!locals.user.groupBoard && !locals.user.isAdmin) {
+            throw error(403, "tu ne fais pas partie du bureau d'un club")
+
+/home/bilele/Code/defis-integration-2026-2027/src/routes/proof/+page.server.ts:53:41
+Error: 'locals.user' is possibly 'null' or 'undefined'. 
+        // si pas du bureau ou admin il est redirigée
+        if (!locals.user.groupBoard && !locals.user.isAdmin) {
+            throw error(403, "tu ne fais pas partie du bureau d'un club")
+
+/home/bilele/Code/defis-integration-2026-2027/src/routes/proof/+page.server.ts:65:62
+Error: 'locals.user' is possibly 'null' or 'undefined'. 
+        try {
+            const updatedProof = await approveProof(proofId, locals.user.id);
+            return {
+
+/home/bilele/Code/defis-integration-2026-2027/src/routes/proof/+page.server.ts:92:36
+Error: 'locals.user' is possibly 'null' or 'undefined'. 
+        try {
+            const fallbackUserId = locals.user.id;
+            await denyProof(proofId, fallbackUserId);
+
+/home/bilele/Code/defis-integration-2026-2027/src/routes/settings/+page.server.ts:51:28
+Error: 'locals.user' is possibly 'null' or 'undefined'. 
+        try {
+            const userId = locals.user.id;
+            await canUseAdmin(userId);
+
+/home/bilele/Code/defis-integration-2026-2027/src/lib/components/ChallengeCard.svelte:7:16
+Error: Cannot find name 'Component'. (ts)
+        name: string;
+        icon?: Component;
+        values: string[];
+
+/home/bilele/Code/defis-integration-2026-2027/src/lib/components/Profile.svelte:30:35
+Error: Type 'string' is not assignable to type 'Size | undefined'. (ts)
+    <Flex align="center" gap="md">
+        <Avatar {src} alt={name} {size} />
+        <div class="info-container">
+
+/home/bilele/Code/defis-integration-2026-2027/src/lib/components/Header.svelte:40:75
+Error: Object literal may only specify known properties, and '"hideName"' does not exist in type 'Props'. (ts)
+            <Flex align="center" gap="md">
+                <Profile {firstName} {lastName} {groupName} src={picture} hideName={false} size="xl" />
+            </Flex>
+
+/home/bilele/Code/defis-integration-2026-2027/src/lib/components/Header.svelte:47:39
+Error: Type '{ href: string; icon: Component<LucideProps, {}, "">; variant: "outline"; notifications: number | undefined; }' is not assignable to type 'Props | undefined'.
+  Type '{ href: string; icon: Component<LucideProps, {}, "">; variant: "outline"; notifications: number | undefined; }' is not assignable to type 'HTMLAnchorAttributes & { href: string; disabled: boolean; } & { variant?: "default" | "outline" | "ghost" | undefined; icon?: Component<LucideProps, {}, ""> | undefined; notifications?: number | undefined; }'.
+    Property 'disabled' is missing in type '{ href: string; icon: Component<LucideProps, {}, "">; variant: "outline"; notifications: number | undefined; }' but required in type '{ href: string; disabled: boolean; }'. (ts)
+                {#if accessAdmin}
+                    <ButtonNotification
+                        href="/board"
+
+/home/bilele/Code/defis-integration-2026-2027/src/lib/components/Header.svelte:53:39
+Error: Type '{ href: string; icon: Component<LucideProps, {}, "">; variant: "outline"; notifications: number | undefined; }' is not assignable to type 'Props | undefined'.
+  Type '{ href: string; icon: Component<LucideProps, {}, "">; variant: "outline"; notifications: number | undefined; }' is not assignable to type 'HTMLAnchorAttributes & { href: string; disabled: boolean; } & { variant?: "default" | "outline" | "ghost" | undefined; icon?: Component<LucideProps, {}, ""> | undefined; notifications?: number | undefined; }'.
+    Property 'disabled' is missing in type '{ href: string; icon: Component<LucideProps, {}, "">; variant: "outline"; notifications: number | undefined; }' but required in type '{ href: string; disabled: boolean; }'. (ts)
+                    ></ButtonNotification>
+                    <ButtonNotification
+                        href="/proof"
+
+/home/bilele/Code/defis-integration-2026-2027/src/lib/components/LogoAE.svelte:30:8
+Warn: Attributes should not contain ':' characters to prevent ambiguity with Svelte directives
+https://svelte.dev/e/attribute_illegal_colon (svelte)
+       xml:space="preserve"
+       inkscape:version="1.4.4 (dcaf3e7, 2026-05-05)"
+       sodipodi:docname="LOGO AEBORDAGE.svg"
+
+/home/bilele/Code/defis-integration-2026-2027/src/lib/components/LogoAE.svelte:31:8
+Warn: Attributes should not contain ':' characters to prevent ambiguity with Svelte directives
+https://svelte.dev/e/attribute_illegal_colon (svelte)
+       inkscape:version="1.4.4 (dcaf3e7, 2026-05-05)"
+       sodipodi:docname="LOGO AEBORDAGE.svg"
+       inkscape:export-filename="LOGO AE FINAL TRANSPARENT LOIS.svg"
+
+/home/bilele/Code/defis-integration-2026-2027/src/lib/components/LogoAE.svelte:32:8
+Warn: Attributes should not contain ':' characters to prevent ambiguity with Svelte directives
+https://svelte.dev/e/attribute_illegal_colon (svelte)
+       sodipodi:docname="LOGO AEBORDAGE.svg"
+       inkscape:export-filename="LOGO AE FINAL TRANSPARENT LOIS.svg"
+       inkscape:export-xdpi="500"
+
+/home/bilele/Code/defis-integration-2026-2027/src/lib/components/LogoAE.svelte:33:8
+Warn: Attributes should not contain ':' characters to prevent ambiguity with Svelte directives
+https://svelte.dev/e/attribute_illegal_colon (svelte)
+       inkscape:export-filename="LOGO AE FINAL TRANSPARENT LOIS.svg"
+       inkscape:export-xdpi="500"
+       inkscape:export-ydpi="500"
+
+/home/bilele/Code/defis-integration-2026-2027/src/lib/components/LogoAE.svelte:34:8
+Warn: Attributes should not contain ':' characters to prevent ambiguity with Svelte directives
+https://svelte.dev/e/attribute_illegal_colon (svelte)
+       inkscape:export-xdpi="500"
+       inkscape:export-ydpi="500"
+       xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+
+/home/bilele/Code/defis-integration-2026-2027/src/lib/components/LogoAE.svelte:44:10
+Warn: Attributes should not contain ':' characters to prevent ambiguity with Svelte directives
+https://svelte.dev/e/attribute_illegal_colon (svelte)
+         borderopacity="0.25"
+         inkscape:showpageshadow="2"
+         inkscape:pageopacity="0.0"
+
+/home/bilele/Code/defis-integration-2026-2027/src/lib/components/LogoAE.svelte:45:10
+Warn: Attributes should not contain ':' characters to prevent ambiguity with Svelte directives
+https://svelte.dev/e/attribute_illegal_colon (svelte)
+         inkscape:showpageshadow="2"
+         inkscape:pageopacity="0.0"
+         inkscape:pagecheckerboard="0"
+
+/home/bilele/Code/defis-integration-2026-2027/src/lib/components/LogoAE.svelte:46:10
+Warn: Attributes should not contain ':' characters to prevent ambiguity with Svelte directives
+https://svelte.dev/e/attribute_illegal_colon (svelte)
+         inkscape:pageopacity="0.0"
+         inkscape:pagecheckerboard="0"
+         inkscape:deskcolor="#d1d1d1"
+
+/home/bilele/Code/defis-integration-2026-2027/src/lib/components/LogoAE.svelte:47:10
+Warn: Attributes should not contain ':' characters to prevent ambiguity with Svelte directives
+https://svelte.dev/e/attribute_illegal_colon (svelte)
+         inkscape:pagecheckerboard="0"
+         inkscape:deskcolor="#d1d1d1"
+         inkscape:document-units="mm"
+
+/home/bilele/Code/defis-integration-2026-2027/src/lib/components/LogoAE.svelte:48:10
+Warn: Attributes should not contain ':' characters to prevent ambiguity with Svelte directives
+https://svelte.dev/e/attribute_illegal_colon (svelte)
+         inkscape:deskcolor="#d1d1d1"
+         inkscape:document-units="mm"
+         inkscape:zoom="0.36418625"
+
+/home/bilele/Code/defis-integration-2026-2027/src/lib/components/LogoAE.svelte:49:10
+Warn: Attributes should not contain ':' characters to prevent ambiguity with Svelte directives
+https://svelte.dev/e/attribute_illegal_colon (svelte)
+         inkscape:document-units="mm"
+         inkscape:zoom="0.36418625"
+         inkscape:cx="818.26264"
+
+/home/bilele/Code/defis-integration-2026-2027/src/lib/components/LogoAE.svelte:50:10
+Warn: Attributes should not contain ':' characters to prevent ambiguity with Svelte directives
+https://svelte.dev/e/attribute_illegal_colon (svelte)
+         inkscape:zoom="0.36418625"
+         inkscape:cx="818.26264"
+         inkscape:cy="543.67786"
+
+/home/bilele/Code/defis-integration-2026-2027/src/lib/components/LogoAE.svelte:51:10
+Warn: Attributes should not contain ':' characters to prevent ambiguity with Svelte directives
+https://svelte.dev/e/attribute_illegal_colon (svelte)
+         inkscape:cx="818.26264"
+         inkscape:cy="543.67786"
+         inkscape:window-width="1470"
+
+/home/bilele/Code/defis-integration-2026-2027/src/lib/components/LogoAE.svelte:52:10
+Warn: Attributes should not contain ':' characters to prevent ambiguity with Svelte directives
+https://svelte.dev/e/attribute_illegal_colon (svelte)
+         inkscape:cy="543.67786"
+         inkscape:window-width="1470"
+         inkscape:window-height="803"
+
+/home/bilele/Code/defis-integration-2026-2027/src/lib/components/LogoAE.svelte:53:10
+Warn: Attributes should not contain ':' characters to prevent ambiguity with Svelte directives
+https://svelte.dev/e/attribute_illegal_colon (svelte)
+         inkscape:window-width="1470"
+         inkscape:window-height="803"
+         inkscape:window-x="0"
+
+/home/bilele/Code/defis-integration-2026-2027/src/lib/components/LogoAE.svelte:54:10
+Warn: Attributes should not contain ':' characters to prevent ambiguity with Svelte directives
+https://svelte.dev/e/attribute_illegal_colon (svelte)
+         inkscape:window-height="803"
+         inkscape:window-x="0"
+         inkscape:window-y="37"
+
+/home/bilele/Code/defis-integration-2026-2027/src/lib/components/LogoAE.svelte:55:10
+Warn: Attributes should not contain ':' characters to prevent ambiguity with Svelte directives
+https://svelte.dev/e/attribute_illegal_colon (svelte)
+         inkscape:window-x="0"
+         inkscape:window-y="37"
+         inkscape:window-maximized="0"
+
+/home/bilele/Code/defis-integration-2026-2027/src/lib/components/LogoAE.svelte:56:10
+Warn: Attributes should not contain ':' characters to prevent ambiguity with Svelte directives
+https://svelte.dev/e/attribute_illegal_colon (svelte)
+         inkscape:window-y="37"
+         inkscape:window-maximized="0"
+         inkscape:current-layer="svg1"><inkscape:page
+
+/home/bilele/Code/defis-integration-2026-2027/src/lib/components/LogoAE.svelte:57:10
+Warn: Attributes should not contain ':' characters to prevent ambiguity with Svelte directives
+https://svelte.dev/e/attribute_illegal_colon (svelte)
+         inkscape:window-maximized="0"
+         inkscape:current-layer="svg1"><inkscape:page
+           x="0"
+
+/home/bilele/Code/defis-integration-2026-2027/src/lib/components/LogoAE.svelte:57:40
+Warn: Self-closing HTML tags for non-void elements are ambiguous — use `<inkscape:page ...></inkscape:page>` rather than `<inkscape:page ... />`
+https://svelte.dev/e/element_invalid_self_closing_tag (svelte)
+         inkscape:window-maximized="0"
+         inkscape:current-layer="svg1"><inkscape:page
+           x="0"
+           y="0"
+           width="210"
+           height="297"
+           id="page2"
+           margin="0"
+           bleed="0" /></sodipodi:namedview><defs
+         id="defs1"><clipPath
+
+/home/bilele/Code/defis-integration-2026-2027/src/lib/components/LogoAE.svelte:143:12
+Warn: Attributes should not contain ':' characters to prevent ambiguity with Svelte directives
+https://svelte.dev/e/attribute_illegal_colon (svelte)
+             id="path13-7-2-2-1-52" /></clipPath><pattern
+           inkscape:collect="always"
+           xlink:href="#Wave-3-8"
+
+/home/bilele/Code/defis-integration-2026-2027/src/lib/components/LogoAE.svelte:158:12
+Warn: Attributes should not contain ':' characters to prevent ambiguity with Svelte directives
+https://svelte.dev/e/attribute_illegal_colon (svelte)
+           y="0"
+           inkscape:collect="always"
+           inkscape:isstock="true"
+
+/home/bilele/Code/defis-integration-2026-2027/src/lib/components/LogoAE.svelte:159:12
+Warn: Attributes should not contain ':' characters to prevent ambiguity with Svelte directives
+https://svelte.dev/e/attribute_illegal_colon (svelte)
+           inkscape:collect="always"
+           inkscape:isstock="true"
+           inkscape:label="Onde"><g
+
+/home/bilele/Code/defis-integration-2026-2027/src/lib/components/LogoAE.svelte:160:12
+Warn: Attributes should not contain ':' characters to prevent ambiguity with Svelte directives
+https://svelte.dev/e/attribute_illegal_colon (svelte)
+           inkscape:isstock="true"
+           inkscape:label="Onde"><g
+             id="wave_g-9-0"
+
+/home/bilele/Code/defis-integration-2026-2027/src/lib/components/LogoAE.svelte:375:10
+Warn: Attributes should not contain ':' characters to prevent ambiguity with Svelte directives
+https://svelte.dev/e/attribute_illegal_colon (svelte)
+        </style></defs><g
+         inkscape:label="Exemple"
+         inkscape:groupmode="layer"
+
+/home/bilele/Code/defis-integration-2026-2027/src/lib/components/LogoAE.svelte:376:10
+Warn: Attributes should not contain ':' characters to prevent ambiguity with Svelte directives
+https://svelte.dev/e/attribute_illegal_colon (svelte)
+         inkscape:label="Exemple"
+         inkscape:groupmode="layer"
+         id="layer1"
+
+/home/bilele/Code/defis-integration-2026-2027/src/lib/components/LogoAE.svelte:387:10
+Warn: Attributes should not contain ':' characters to prevent ambiguity with Svelte directives
+https://svelte.dev/e/attribute_illegal_colon (svelte)
+           y="40.263634" /></g><g
+         inkscape:groupmode="layer"
+         id="layer3"
+
+/home/bilele/Code/defis-integration-2026-2027/src/lib/components/LogoAE.svelte:389:10
+Warn: Attributes should not contain ':' characters to prevent ambiguity with Svelte directives
+https://svelte.dev/e/attribute_illegal_colon (svelte)
+         id="layer3"
+         inkscape:label="fond"><rect
+           style="display:none;fill:#a569be;fill-opacity:1;stroke-width:0.229"
+
+/home/bilele/Code/defis-integration-2026-2027/src/lib/components/LogoAE.svelte:396:10
+Warn: Attributes should not contain ':' characters to prevent ambiguity with Svelte directives
+https://svelte.dev/e/attribute_illegal_colon (svelte)
+           y="-0.72462183" /></g><g
+         inkscape:groupmode="layer"
+         id="g51"
+
+/home/bilele/Code/defis-integration-2026-2027/src/lib/components/LogoAE.svelte:398:10
+Warn: Attributes should not contain ':' characters to prevent ambiguity with Svelte directives
+https://svelte.dev/e/attribute_illegal_colon (svelte)
+         id="g51"
+         inkscape:label="Remplissage motif"
+         style="display:inline"><g
+
+/home/bilele/Code/defis-integration-2026-2027/src/lib/components/LogoAE.svelte:400:12
+Warn: Attributes should not contain ':' characters to prevent ambiguity with Svelte directives
+https://svelte.dev/e/attribute_illegal_colon (svelte)
+         style="display:inline"><g
+           inkscape:groupmode="layer"
+           id="layer5"
+
+/home/bilele/Code/defis-integration-2026-2027/src/lib/components/LogoAE.svelte:402:12
+Warn: Attributes should not contain ':' characters to prevent ambiguity with Svelte directives
+https://svelte.dev/e/attribute_illegal_colon (svelte)
+           id="layer5"
+           inkscape:label="Coffre fermé"><path
+             style="fill:#a569be;fill-opacity:1;stroke:none;stroke-width:0.143399;stroke-opacity:1"
+
+/home/bilele/Code/defis-integration-2026-2027/src/lib/components/LogoAE.svelte:544:14
+Warn: Attributes should not contain ':' characters to prevent ambiguity with Svelte directives
+https://svelte.dev/e/attribute_illegal_colon (svelte)
+                   style="stroke-width:0.762799" /></g></g></g><path
+             sodipodi:type="star"
+             style="fill:#502000;fill-opacity:1;stroke:none;stroke-width:0.788144;stroke-dasharray:none;stroke-opacity:1"
+
+/home/bilele/Code/defis-integration-2026-2027/src/lib/components/LogoAE.svelte:547:14
+Warn: Attributes should not contain ':' characters to prevent ambiguity with Svelte directives
+https://svelte.dev/e/attribute_illegal_colon (svelte)
+             id="path180-1"
+             inkscape:flatsided="true"
+             sodipodi:sides="5"
+
+/home/bilele/Code/defis-integration-2026-2027/src/lib/components/LogoAE.svelte:548:14
+Warn: Attributes should not contain ':' characters to prevent ambiguity with Svelte directives
+https://svelte.dev/e/attribute_illegal_colon (svelte)
+             inkscape:flatsided="true"
+             sodipodi:sides="5"
+             sodipodi:cx="107.81254"
+
+/home/bilele/Code/defis-integration-2026-2027/src/lib/components/LogoAE.svelte:549:14
+Warn: Attributes should not contain ':' characters to prevent ambiguity with Svelte directives
+https://svelte.dev/e/attribute_illegal_colon (svelte)
+             sodipodi:sides="5"
+             sodipodi:cx="107.81254"
+             sodipodi:cy="114.6328"
+
+/home/bilele/Code/defis-integration-2026-2027/src/lib/components/LogoAE.svelte:550:14
+Warn: Attributes should not contain ':' characters to prevent ambiguity with Svelte directives
+https://svelte.dev/e/attribute_illegal_colon (svelte)
+             sodipodi:cx="107.81254"
+             sodipodi:cy="114.6328"
+             sodipodi:r1="3.4012616"
+
+/home/bilele/Code/defis-integration-2026-2027/src/lib/components/LogoAE.svelte:551:14
+Warn: Attributes should not contain ':' characters to prevent ambiguity with Svelte directives
+https://svelte.dev/e/attribute_illegal_colon (svelte)
+             sodipodi:cy="114.6328"
+             sodipodi:r1="3.4012616"
+             sodipodi:r2="0.53054857"
+
+/home/bilele/Code/defis-integration-2026-2027/src/lib/components/LogoAE.svelte:552:14
+Warn: Attributes should not contain ':' characters to prevent ambiguity with Svelte directives
+https://svelte.dev/e/attribute_illegal_colon (svelte)
+             sodipodi:r1="3.4012616"
+             sodipodi:r2="0.53054857"
+             sodipodi:arg1="0.97260227"
+
+/home/bilele/Code/defis-integration-2026-2027/src/lib/components/LogoAE.svelte:553:14
+Warn: Attributes should not contain ':' characters to prevent ambiguity with Svelte directives
+https://svelte.dev/e/attribute_illegal_colon (svelte)
+             sodipodi:r2="0.53054857"
+             sodipodi:arg1="0.97260227"
+             sodipodi:arg2="1.6009209"
+
+/home/bilele/Code/defis-integration-2026-2027/src/lib/components/LogoAE.svelte:554:14
+Warn: Attributes should not contain ':' characters to prevent ambiguity with Svelte directives
+https://svelte.dev/e/attribute_illegal_colon (svelte)
+             sodipodi:arg1="0.97260227"
+             sodipodi:arg2="1.6009209"
+             inkscape:rounded="0"
+
+/home/bilele/Code/defis-integration-2026-2027/src/lib/components/LogoAE.svelte:555:14
+Warn: Attributes should not contain ':' characters to prevent ambiguity with Svelte directives
+https://svelte.dev/e/attribute_illegal_colon (svelte)
+             sodipodi:arg2="1.6009209"
+             inkscape:rounded="0"
+             inkscape:randomized="0"
+
+/home/bilele/Code/defis-integration-2026-2027/src/lib/components/LogoAE.svelte:556:14
+Warn: Attributes should not contain ':' characters to prevent ambiguity with Svelte directives
+https://svelte.dev/e/attribute_illegal_colon (svelte)
+             inkscape:rounded="0"
+             inkscape:randomized="0"
+             d="m 109.72796,117.44344 -3.99661,-0.12043 -1.12048,-3.83822 3.30411,-2.25171 3.16254,2.44658 z"
+
+/home/bilele/Code/defis-integration-2026-2027/src/lib/components/LogoAE.svelte:558:14
+Warn: Attributes should not contain ':' characters to prevent ambiguity with Svelte directives
+https://svelte.dev/e/attribute_illegal_colon (svelte)
+             d="m 109.72796,117.44344 -3.99661,-0.12043 -1.12048,-3.83822 3.30411,-2.25171 3.16254,2.44658 z"
+             inkscape:transform-center-y="0.10506554"
+             transform="matrix(1.677858,0,0,1.677858,-14.023627,-23.085501)"
+
+/home/bilele/Code/defis-integration-2026-2027/src/lib/components/LogoAE.svelte:560:14
+Warn: Attributes should not contain ':' characters to prevent ambiguity with Svelte directives
+https://svelte.dev/e/attribute_illegal_colon (svelte)
+             transform="matrix(1.677858,0,0,1.677858,-14.023627,-23.085501)"
+             inkscape:transform-center-x="5.5518264e-06" /><path
+             style="fill:#502000;fill-opacity:1;stroke:none;stroke-width:1.32239;stroke-dasharray:none;stroke-opacity:1"
+
+/home/bilele/Code/defis-integration-2026-2027/src/lib/components/LogoAE.svelte:616:14
+Warn: Attributes should not contain ':' characters to prevent ambiguity with Svelte directives
+https://svelte.dev/e/attribute_illegal_colon (svelte)
+             id="path172-1" /><path
+             sodipodi:type="star"
+             style="fill:#ffa2a2;fill-opacity:1;stroke:none;stroke-width:0.401039;stroke-dasharray:none;stroke-opacity:1"
+
+/home/bilele/Code/defis-integration-2026-2027/src/lib/components/LogoAE.svelte:619:14
+Warn: Attributes should not contain ':' characters to prevent ambiguity with Svelte directives
+https://svelte.dev/e/attribute_illegal_colon (svelte)
+             id="path181-8"
+             inkscape:flatsided="true"
+             sodipodi:sides="5"
+
+/home/bilele/Code/defis-integration-2026-2027/src/lib/components/LogoAE.svelte:620:14
+Warn: Attributes should not contain ':' characters to prevent ambiguity with Svelte directives
+https://svelte.dev/e/attribute_illegal_colon (svelte)
+             inkscape:flatsided="true"
+             sodipodi:sides="5"
+             sodipodi:cx="111.42381"
+
+/home/bilele/Code/defis-integration-2026-2027/src/lib/components/LogoAE.svelte:621:14
+Warn: Attributes should not contain ':' characters to prevent ambiguity with Svelte directives
+https://svelte.dev/e/attribute_illegal_colon (svelte)
+             sodipodi:sides="5"
+             sodipodi:cx="111.42381"
+             sodipodi:cy="125.19092"
+
+/home/bilele/Code/defis-integration-2026-2027/src/lib/components/LogoAE.svelte:622:14
+Warn: Attributes should not contain ':' characters to prevent ambiguity with Svelte directives
+https://svelte.dev/e/attribute_illegal_colon (svelte)
+             sodipodi:cx="111.42381"
+             sodipodi:cy="125.19092"
+             sodipodi:r1="1.1376767"
+
+/home/bilele/Code/defis-integration-2026-2027/src/lib/components/LogoAE.svelte:623:14
+Warn: Attributes should not contain ':' characters to prevent ambiguity with Svelte directives
+https://svelte.dev/e/attribute_illegal_colon (svelte)
+             sodipodi:cy="125.19092"
+             sodipodi:r1="1.1376767"
+             sodipodi:r2="0.92039979"
+
+/home/bilele/Code/defis-integration-2026-2027/src/lib/components/LogoAE.svelte:624:14
+Warn: Attributes should not contain ':' characters to prevent ambiguity with Svelte directives
+https://svelte.dev/e/attribute_illegal_colon (svelte)
+             sodipodi:r1="1.1376767"
+             sodipodi:r2="0.92039979"
+             sodipodi:arg1="0.61719139"
+
+/home/bilele/Code/defis-integration-2026-2027/src/lib/components/LogoAE.svelte:625:14
+Warn: Attributes should not contain ':' characters to prevent ambiguity with Svelte directives
+https://svelte.dev/e/attribute_illegal_colon (svelte)
+             sodipodi:r2="0.92039979"
+             sodipodi:arg1="0.61719139"
+             sodipodi:arg2="1.2455099"
+
+/home/bilele/Code/defis-integration-2026-2027/src/lib/components/LogoAE.svelte:626:14
+Warn: Attributes should not contain ':' characters to prevent ambiguity with Svelte directives
+https://svelte.dev/e/attribute_illegal_colon (svelte)
+             sodipodi:arg1="0.61719139"
+             sodipodi:arg2="1.2455099"
+             inkscape:rounded="0"
+
+/home/bilele/Code/defis-integration-2026-2027/src/lib/components/LogoAE.svelte:627:14
+Warn: Attributes should not contain ':' characters to prevent ambiguity with Svelte directives
+https://svelte.dev/e/attribute_illegal_colon (svelte)
+             sodipodi:arg2="1.2455099"
+             inkscape:rounded="0"
+             inkscape:randomized="0"
+
+/home/bilele/Code/defis-integration-2026-2027/src/lib/components/LogoAE.svelte:628:14
+Warn: Attributes should not contain ':' characters to prevent ambiguity with Svelte directives
+https://svelte.dev/e/attribute_illegal_colon (svelte)
+             inkscape:rounded="0"
+             inkscape:randomized="0"
+             d="m 112.3516,125.84934 -1.26729,0.42742 -0.7981,-1.07318 0.77402,-1.09068 1.27649,0.39911 z"
+
+/home/bilele/Code/defis-integration-2026-2027/src/lib/components/LogoAE.svelte:630:14
+Warn: Attributes should not contain ':' characters to prevent ambiguity with Svelte directives
+https://svelte.dev/e/attribute_illegal_colon (svelte)
+             d="m 112.3516,125.84934 -1.26729,0.42742 -0.7981,-1.07318 0.77402,-1.09068 1.27649,0.39911 z"
+             inkscape:transform-center-x="-0.24414672"
+             inkscape:transform-center-y="-0.38653692"
+
+/home/bilele/Code/defis-integration-2026-2027/src/lib/components/LogoAE.svelte:631:14
+Warn: Attributes should not contain ':' characters to prevent ambiguity with Svelte directives
+https://svelte.dev/e/attribute_illegal_colon (svelte)
+             inkscape:transform-center-x="-0.24414672"
+             inkscape:transform-center-y="-0.38653692"
+             transform="matrix(3.1909009,1.1499981,-1.8090733,4.5393351,39.448774,-523.33032)" /><path
+
+/home/bilele/Code/defis-integration-2026-2027/src/lib/components/LogoAE.svelte:641:14
+Warn: Attributes should not contain ':' characters to prevent ambiguity with Svelte directives
+https://svelte.dev/e/attribute_illegal_colon (svelte)
+             r="1.2818817" /><path
+             sodipodi:type="star"
+             style="fill:#502000;fill-opacity:1;stroke:none;stroke-width:1.69491;stroke-dasharray:none;stroke-opacity:1"
+
+/home/bilele/Code/defis-integration-2026-2027/src/lib/components/LogoAE.svelte:644:14
+Warn: Attributes should not contain ':' characters to prevent ambiguity with Svelte directives
+https://svelte.dev/e/attribute_illegal_colon (svelte)
+             id="path184-3"
+             inkscape:flatsided="true"
+             sodipodi:sides="3"
+
+/home/bilele/Code/defis-integration-2026-2027/src/lib/components/LogoAE.svelte:645:14
+Warn: Attributes should not contain ':' characters to prevent ambiguity with Svelte directives
+https://svelte.dev/e/attribute_illegal_colon (svelte)
+             inkscape:flatsided="true"
+             sodipodi:sides="3"
+             sodipodi:cx="121.8959"
+
+/home/bilele/Code/defis-integration-2026-2027/src/lib/components/LogoAE.svelte:646:14
+Warn: Attributes should not contain ':' characters to prevent ambiguity with Svelte directives
+https://svelte.dev/e/attribute_illegal_colon (svelte)
+             sodipodi:sides="3"
+             sodipodi:cx="121.8959"
+             sodipodi:cy="111.66225"
+
+/home/bilele/Code/defis-integration-2026-2027/src/lib/components/LogoAE.svelte:647:14
+Warn: Attributes should not contain ':' characters to prevent ambiguity with Svelte directives
+https://svelte.dev/e/attribute_illegal_colon (svelte)
+             sodipodi:cx="121.8959"
+             sodipodi:cy="111.66225"
+             sodipodi:r1="2.2695582"
+
+/home/bilele/Code/defis-integration-2026-2027/src/lib/components/LogoAE.svelte:648:14
+Warn: Attributes should not contain ':' characters to prevent ambiguity with Svelte directives
+https://svelte.dev/e/attribute_illegal_colon (svelte)
+             sodipodi:cy="111.66225"
+             sodipodi:r1="2.2695582"
+             sodipodi:r2="2.3168938"
+
+/home/bilele/Code/defis-integration-2026-2027/src/lib/components/LogoAE.svelte:649:14
+Warn: Attributes should not contain ':' characters to prevent ambiguity with Svelte directives
+https://svelte.dev/e/attribute_illegal_colon (svelte)
+             sodipodi:r1="2.2695582"
+             sodipodi:r2="2.3168938"
+             sodipodi:arg1="-1.5707964"
+
+/home/bilele/Code/defis-integration-2026-2027/src/lib/components/LogoAE.svelte:650:14
+Warn: Attributes should not contain ':' characters to prevent ambiguity with Svelte directives
+https://svelte.dev/e/attribute_illegal_colon (svelte)
+             sodipodi:r2="2.3168938"
+             sodipodi:arg1="-1.5707964"
+             sodipodi:arg2="-0.52359881"
+
+/home/bilele/Code/defis-integration-2026-2027/src/lib/components/LogoAE.svelte:651:14
+Warn: Attributes should not contain ':' characters to prevent ambiguity with Svelte directives
+https://svelte.dev/e/attribute_illegal_colon (svelte)
+             sodipodi:arg1="-1.5707964"
+             sodipodi:arg2="-0.52359881"
+             inkscape:rounded="-0.03"
+
+/home/bilele/Code/defis-integration-2026-2027/src/lib/components/LogoAE.svelte:652:14
+Warn: Attributes should not contain ':' characters to prevent ambiguity with Svelte directives
+https://svelte.dev/e/attribute_illegal_colon (svelte)
+             sodipodi:arg2="-0.52359881"
+             inkscape:rounded="-0.03"
+             inkscape:randomized="0"
+
+/home/bilele/Code/defis-integration-2026-2027/src/lib/components/LogoAE.svelte:653:14
+Warn: Attributes should not contain ':' characters to prevent ambiguity with Svelte directives
+https://svelte.dev/e/attribute_illegal_colon (svelte)
+             inkscape:rounded="-0.03"
+             inkscape:randomized="0"
+             d="m 121.8959,109.39269 c -0.11793,0 1.90653,3.50647 1.96549,3.40434 0.059,-0.10213 -3.98995,-0.10213 -3.93099,0 0.059,0.10213 2.08343,-3.40434 1.9655,-3.40434 z"
+
+/home/bilele/Code/defis-integration-2026-2027/src/lib/components/LogoAE.svelte:655:14
+Warn: Attributes should not contain ':' characters to prevent ambiguity with Svelte directives
+https://svelte.dev/e/attribute_illegal_colon (svelte)
+             d="m 121.8959,109.39269 c -0.11793,0 1.90653,3.50647 1.96549,3.40434 0.059,-0.10213 -3.98995,-0.10213 -3.93099,0 0.059,0.10213 2.08343,-3.40434 1.9655,-3.40434 z"
+             inkscape:transform-center-x="0.59091845"
+             inkscape:transform-center-y="-0.29412491"
+
+/home/bilele/Code/defis-integration-2026-2027/src/lib/components/LogoAE.svelte:656:14
+Warn: Attributes should not contain ':' characters to prevent ambiguity with Svelte directives
+https://svelte.dev/e/attribute_illegal_colon (svelte)
+             inkscape:transform-center-x="0.59091845"
+             inkscape:transform-center-y="-0.29412491"
+             transform="matrix(0.84776852,-0.06085923,0.07984637,1.0882083,56.241655,60.902133)" /><path
+
+/home/bilele/Code/defis-integration-2026-2027/src/lib/components/LogoAE.svelte:30:8
+Error: Object literal may only specify known properties, and '"inkscape:version"' does not exist in type 'HTMLProps<"svg", SVGAttributes<any>>'. (ts)
+       xml:space="preserve"
+       inkscape:version="1.4.4 (dcaf3e7, 2026-05-05)"
+       sodipodi:docname="LOGO AEBORDAGE.svg"
+
+/home/bilele/Code/defis-integration-2026-2027/src/lib/components/LogoAE.svelte:143:12
+Error: Object literal may only specify known properties, and '"inkscape:collect"' does not exist in type 'HTMLProps<"pattern", SVGAttributes<any>>'. (ts)
+             id="path13-7-2-2-1-52" /></clipPath><pattern
+           inkscape:collect="always"
+           xlink:href="#Wave-3-8"
+
+/home/bilele/Code/defis-integration-2026-2027/src/lib/components/LogoAE.svelte:158:12
+Error: Object literal may only specify known properties, and '"inkscape:collect"' does not exist in type 'HTMLProps<"pattern", SVGAttributes<any>>'. (ts)
+           y="0"
+           inkscape:collect="always"
+           inkscape:isstock="true"
+
+/home/bilele/Code/defis-integration-2026-2027/src/lib/components/LogoAE.svelte:375:10
+Error: Object literal may only specify known properties, and '"inkscape:label"' does not exist in type 'HTMLProps<"g", SVGAttributes<any>>'. (ts)
+        </style></defs><g
+         inkscape:label="Exemple"
+         inkscape:groupmode="layer"
+
+/home/bilele/Code/defis-integration-2026-2027/src/lib/components/LogoAE.svelte:387:10
+Error: Object literal may only specify known properties, and '"inkscape:groupmode"' does not exist in type 'HTMLProps<"g", SVGAttributes<any>>'. (ts)
+           y="40.263634" /></g><g
+         inkscape:groupmode="layer"
+         id="layer3"
+
+/home/bilele/Code/defis-integration-2026-2027/src/lib/components/LogoAE.svelte:396:10
+Error: Object literal may only specify known properties, and '"inkscape:groupmode"' does not exist in type 'HTMLProps<"g", SVGAttributes<any>>'. (ts)
+           y="-0.72462183" /></g><g
+         inkscape:groupmode="layer"
+         id="g51"
+
+/home/bilele/Code/defis-integration-2026-2027/src/lib/components/LogoAE.svelte:400:12
+Error: Object literal may only specify known properties, and '"inkscape:groupmode"' does not exist in type 'HTMLProps<"g", SVGAttributes<any>>'. (ts)
+         style="display:inline"><g
+           inkscape:groupmode="layer"
+           id="layer5"
+
+/home/bilele/Code/defis-integration-2026-2027/src/lib/components/LogoAE.svelte:544:14
+Error: Object literal may only specify known properties, and '"sodipodi:type"' does not exist in type 'HTMLProps<"path", SVGAttributes<any>>'. (ts)
+                   style="stroke-width:0.762799" /></g></g></g><path
+             sodipodi:type="star"
+             style="fill:#502000;fill-opacity:1;stroke:none;stroke-width:0.788144;stroke-dasharray:none;stroke-opacity:1"
+
+/home/bilele/Code/defis-integration-2026-2027/src/lib/components/LogoAE.svelte:616:14
+Error: Object literal may only specify known properties, and '"sodipodi:type"' does not exist in type 'HTMLProps<"path", SVGAttributes<any>>'. (ts)
+             id="path172-1" /><path
+             sodipodi:type="star"
+             style="fill:#ffa2a2;fill-opacity:1;stroke:none;stroke-width:0.401039;stroke-dasharray:none;stroke-opacity:1"
+
+/home/bilele/Code/defis-integration-2026-2027/src/lib/components/LogoAE.svelte:641:14
+Error: Object literal may only specify known properties, and '"sodipodi:type"' does not exist in type 'HTMLProps<"path", SVGAttributes<any>>'. (ts)
+             r="1.2818817" /><path
+             sodipodi:type="star"
+             style="fill:#502000;fill-opacity:1;stroke:none;stroke-width:1.69491;stroke-dasharray:none;stroke-opacity:1"
+
+/home/bilele/Code/defis-integration-2026-2027/src/lib/components/Select.svelte:76:5
+Warn: Visible, non-interactive element `<div>` with a click event must be accompanied by a keyboard event handler. Consider whether an interactive element such as `<button type="button">` or `<a>` might be more appropriate
+https://svelte.dev/e/a11y_click_events_have_key_events (svelte)
+
+    <div 
+        class="input-wrapper" 
+        data-disabled={disabled}
+        onclick={handleWrapperClick}
+    >
+        {#if type === "datalist"}
+            <input
+                type="text"
+                bind:value
+                {disabled}
+                {placeholder}
+                list={datalistId}
+                {...rest}
+            />
+            <datalist id={datalistId}>
+                {#each options as option}
+                    <option value={option}>{option}</option>
+                {/each}
+            </datalist>
+        {:else}
+            <select bind:this={selectRef} bind:value {disabled} {...rest}>
+                {#if placeholder}
+                    <option value="" disabled selected>{placeholder}</option>
+                {/if}
+                {#each options as option}
+                    <option value={option}>{option}</option>
+                {/each}
+            </select>
+
+            <ChevronDown size="1em" class="select-chevron" />
+        {/if}
+    </div>
+</label>
+
+/home/bilele/Code/defis-integration-2026-2027/src/lib/components/Select.svelte:76:5
+Warn: `<div>` with a click handler must have an ARIA role
+https://svelte.dev/e/a11y_no_static_element_interactions (svelte)
+
+    <div 
+        class="input-wrapper" 
+        data-disabled={disabled}
+        onclick={handleWrapperClick}
+    >
+        {#if type === "datalist"}
+            <input
+                type="text"
+                bind:value
+                {disabled}
+                {placeholder}
+                list={datalistId}
+                {...rest}
+            />
+            <datalist id={datalistId}>
+                {#each options as option}
+                    <option value={option}>{option}</option>
+                {/each}
+            </datalist>
+        {:else}
+            <select bind:this={selectRef} bind:value {disabled} {...rest}>
+                {#if placeholder}
+                    <option value="" disabled selected>{placeholder}</option>
+                {/if}
+                {#each options as option}
+                    <option value={option}>{option}</option>
+                {/each}
+            </select>
+
+            <ChevronDown size="1em" class="select-chevron" />
+        {/if}
+    </div>
+</label>
+
+/home/bilele/Code/defis-integration-2026-2027/src/lib/components/UploadProof.svelte:41:36
+Warn: This reference only captures the initial value of `defaultTVn7`. Did you mean to reference it inside a closure instead?
+https://svelte.dev/e/state_referenced_locally (svelte)
+
+    let isOkTVn7: boolean = $state(defaultTVn7);
+</script>
+
+/home/bilele/Code/defis-integration-2026-2027/src/routes/+page.svelte:9:14
+Error: 'UploadType' resolves to a type-only declaration and must be imported using a type-only import when 'verbatimModuleSyntax' is enabled. (ts)
+    import { invalidateAll } from "$app/navigation";
+    import { UploadType } from "$lib/types/types.d";
+    import { deserialize } from '$app/forms';
+
+/home/bilele/Code/defis-integration-2026-2027/src/routes/+page.svelte:279:16
+Error: Parameter 'challenge' implicitly has an 'any' type. (ts)
+
+{#snippet card(challenge)}
+    {@const isDone = challenge.isDone}
+
+/home/bilele/Code/defis-integration-2026-2027/src/routes/+page.svelte:288:6
+Error: Property 'isUnfolded' is missing in type '{ title: any; points: any; badges: { name: string; icon: Component<LucideProps, {}, "">; values: any; }[]; header: () => any; content: () => any; }' but required in type 'Props'. (ts)
+
+    <ChallengeCard
+        title={challengeTitle}
+
+/home/bilele/Code/defis-integration-2026-2027/src/routes/+page.svelte:294:66
+Error: 'UploadType' cannot be used as a value because it was exported using 'export type'. (ts)
+            { name: "Lieu", icon: MapPin, values: [ challenge.locationName ] },
+            { name: "Type de preuve", icon: Paperclip, values: [ UploadType[challenge.type as keyof typeof UploadType]] },
+            { name: "Défi réussi par", icon: Trophy, values: challenge.groupInteSucceedName }
+
+/home/bilele/Code/defis-integration-2026-2027/src/routes/+page.svelte:309:17
+Error: Type 'boolean | undefined' is not assignable to type 'boolean'.
+  Type 'undefined' is not assignable to type 'boolean'. (ts)
+                onSave={handleSave}
+                defaultTVn7={user?.isOkTVn7}
+            />
+
+/home/bilele/Code/defis-integration-2026-2027/src/routes/+page.svelte:177:32
+Error: Property 'groupInteSucceedName' does not exist on type 'ChallengeRead'. Did you mean 'groupInteSuccedName'? (ts)
+                        flip *
+                            (b.groupInteSucceedName.length -
+                                a.groupInteSucceedName.length) ||
+
+/home/bilele/Code/defis-integration-2026-2027/src/routes/+page.svelte:178:35
+Error: Property 'groupInteSucceedName' does not exist on type 'ChallengeRead'. Did you mean 'groupInteSuccedName'? (ts)
+                            (b.groupInteSucceedName.length -
+                                a.groupInteSucceedName.length) ||
+                        secondarySort(a, b),
+
+/home/bilele/Code/defis-integration-2026-2027/src/routes/+page.svelte:189:13
+Error: Variable 'currentClub' implicitly has type 'any' in some locations where its type cannot be determined. (ts)
+    const processedChallenges = $derived(() => {
+        let currentClub = null;
+        return sortedSearchedChallenges.map((challenge) => {
+
+/home/bilele/Code/defis-integration-2026-2027/src/routes/+page.svelte:192:65
+Error: Variable 'currentClub' implicitly has an 'any' type. (ts)
+            const showCategory =
+                sortBind === "Clubs" && challenge.groupName !== currentClub;
+            if (showCategory) {
+
+/home/bilele/Code/defis-integration-2026-2027/src/routes/+page.svelte:216:9
+Error: Type 'string | null' is not assignable to type 'string'.
+  Type 'null' is not assignable to type 'string'. (ts)
+    <Header
+        firstName={user?.firstName ?? null}
+        lastName={user?.lastName ?? null}
+
+/home/bilele/Code/defis-integration-2026-2027/src/routes/+page.svelte:217:9
+Error: Type 'string | null' is not assignable to type 'string'.
+  Type 'null' is not assignable to type 'string'. (ts)
+        firstName={user?.firstName ?? null}
+        lastName={user?.lastName ?? null}
+        groupName={user?.is1A ? user?.groupInte?.name : ""}
+
+/home/bilele/Code/defis-integration-2026-2027/src/routes/+page.svelte:218:39
+Error: Property 'groupInte' does not exist on type '{ id: string; firstName: string; lastName: string; is1A: boolean; profilePictureURL: string | null; groupInteId: string | null; points: number; darkMode: boolean; isOkTVn7: boolean; isAdmin: boolean; }'. Did you mean 'groupInteId'? (ts)
+        lastName={user?.lastName ?? null}
+        groupName={user?.is1A ? user?.groupInte?.name : ""}
+        picture={user?.profilePictureURL ?? null}
+
+/home/bilele/Code/defis-integration-2026-2027/src/routes/+page.svelte:219:9
+Error: Type 'string | null' is not assignable to type 'string'.
+  Type 'null' is not assignable to type 'string'. (ts)
+        groupName={user?.is1A ? user?.groupInte?.name : ""}
+        picture={user?.profilePictureURL ?? null}
+        accessAdmin={user?.isAdmin || user?.groupBoard.length > 0}
+
+/home/bilele/Code/defis-integration-2026-2027/src/routes/+page.svelte:220:45
+Error: Property 'groupBoard' does not exist on type '{ id: string; firstName: string; lastName: string; is1A: boolean; profilePictureURL: string | null; groupInteId: string | null; points: number; darkMode: boolean; isOkTVn7: boolean; isAdmin: boolean; }'. (ts)
+        picture={user?.profilePictureURL ?? null}
+        accessAdmin={user?.isAdmin || user?.groupBoard.length > 0}
+        notificationsDefis={data.posts.pendingChallengeCount}
+
+/home/bilele/Code/defis-integration-2026-2027/src/routes/+page.svelte:264:25
+Error: Type 'string | null' is not assignable to type 'string | undefined'.
+  Type 'null' is not assignable to type 'string | undefined'. (ts)
+                        bind:list={hiddenClub}
+                        src={challenge.groupUrl}
+                    />
+
+/home/bilele/Code/defis-integration-2026-2027/src/routes/board/+page.svelte:13:51
+Warn: This reference only captures the initial value of `data`. Did you mean to reference it inside a derived instead?
+https://svelte.dev/e/state_referenced_locally (svelte)
+    let { data }: { data: PageData } = $props();
+    let groupChallenge: GroupChallenge[] = $state(data.posts.challenges);
+
+/home/bilele/Code/defis-integration-2026-2027/src/routes/board/+page.svelte:117:26
+Error: Parameter 'group' implicitly has an 'any' type. (ts)
+<!-- fonction qui affiche la liste de challenge pour le groupe -->
+{#snippet showChallenges(group)}
+        {#each group.challenges as challenge (challenge.challengeId)}
+
+/home/bilele/Code/defis-integration-2026-2027/src/routes/board/+page.svelte:13:9
+Error: Type 'ChallengeRead[]' is not assignable to type 'GroupChallenge[]'.
+  Type 'ChallengeRead' is not assignable to type 'GroupChallenge'.
+    Property 'pictureURL' is missing in type 'ChallengeRead' but required in type 'Pick<{ groupId: string; name: string; pictureURL: string | null; }, "name" | "pictureURL">'. (ts)
+    let { data }: { data: PageData } = $props();
+    let groupChallenge: GroupChallenge[] = $state(data.posts.challenges);
+
+/home/bilele/Code/defis-integration-2026-2027/src/routes/board/+page.svelte:16:9
+Error: Type 'ChallengeRead[]' is not assignable to type 'GroupChallenge[]'.
+  Type 'ChallengeRead' is not assignable to type 'GroupChallenge'.
+    Property 'pictureURL' is missing in type 'ChallengeRead' but required in type 'Pick<{ groupId: string; name: string; pictureURL: string | null; }, "name" | "pictureURL">'. (ts)
+    $effect(() => {
+        groupChallenge = data.posts.challenges;
+    });
+
+/home/bilele/Code/defis-integration-2026-2027/src/routes/board/+page.svelte:67:30
+Error: Property 'challengeId' does not exist on type 'GroupChallenge'. Did you mean 'challenges'? (ts)
+                const challenge = groupChallenge.find(
+                    (c) => c.challengeId === id,
+                );
+
+/home/bilele/Code/defis-integration-2026-2027/src/routes/board/+page.svelte:70:31
+Error: Property 'defiAccepte' does not exist on type 'GroupChallenge'. (ts)
+                if (challenge) {
+                    challenge.defiAccepte = true;
+                }
+
+/home/bilele/Code/defis-integration-2026-2027/src/routes/board/+page.svelte:99:30
+Error: Property 'challengeId' does not exist on type 'GroupChallenge'. Did you mean 'challenges'? (ts)
+                const challenge = groupChallenge.find(
+                    (c) => c.challengeId === id,
+                );
+
+/home/bilele/Code/defis-integration-2026-2027/src/routes/board/+page.svelte:102:31
+Error: Property 'defiAccepte' does not exist on type 'GroupChallenge'. (ts)
+                if (challenge) {
+                    challenge.defiAccepte = true;
+                }
+
+/home/bilele/Code/defis-integration-2026-2027/src/routes/board/+page.svelte:192:25
+Error: Type 'string | null' is not assignable to type 'string | undefined'.
+  Type 'null' is not assignable to type 'string | undefined'. (ts)
+                        bind:list={hiddenClubs}
+                        src={group.pictureURL}
+                    />
+
+/home/bilele/Code/defis-integration-2026-2027/src/routes/challenge/[challengeId]/+page.svelte:23:44
+Warn: This reference only captures the initial value of `data`. Did you mean to reference it inside a derived instead?
+https://svelte.dev/e/state_referenced_locally (svelte)
+
+    let formState = $state(getInitialState(data.existingChallenge));
+    let isSubmitting = $state(false);
+
+/home/bilele/Code/defis-integration-2026-2027/src/routes/challenge/[challengeId]/+page.svelte:4:19
+Error: Module '"$lib/types/types.d"' declares 'Location' locally, but it is not exported. (ts)
+    import BackButton from "$lib/components/BackButton.svelte";
+    import type { Location, GroupClub } from "$lib/types/types.d";
+    import { UploadType } from "../../../../prisma/generated/prisma/enums";
+
+/home/bilele/Code/defis-integration-2026-2027/src/routes/challenge/[challengeId]/+page.svelte:4:29
+Error: Module '"$lib/types/types.d"' declares 'GroupClub' locally, but it is not exported. (ts)
+    import BackButton from "$lib/components/BackButton.svelte";
+    import type { Location, GroupClub } from "$lib/types/types.d";
+    import { UploadType } from "../../../../prisma/generated/prisma/enums";
+
+/home/bilele/Code/defis-integration-2026-2027/src/routes/challenge/[challengeId]/+page.svelte:89:39
+Error: Type 'string | null' is not assignable to type 'string | undefined'.
+  Type 'null' is not assignable to type 'string | undefined'. (ts)
+        <Stack align="baseline">
+            <BackButton backCount={2} specialBack={data.referer} />
+            {#if isNew}
+
+/home/bilele/Code/defis-integration-2026-2027/src/routes/challenge/[challengeId]/+page.svelte:135:25
+Error: Object literal may only specify known properties, and '"icon"' does not exist in type 'HTMLSelectAttributes & HTMLInputAttributes & { options: string[]; value: string; placeholder?: string | undefined; disabled?: boolean | undefined; id?: string | undefined; type?: "select" | ... 1 more ... | undefined; outline?: boolean | undefined; }'. (ts)
+                        bind:value={formState.groupName}
+                        icon={SearchIcon}
+                        placeholder="Choisir un club"
+
+/home/bilele/Code/defis-integration-2026-2027/src/routes/challenge/[challengeId]/+page.svelte:145:25
+Error: Object literal may only specify known properties, and '"icon"' does not exist in type 'HTMLSelectAttributes & HTMLInputAttributes & { options: string[]; value: string; placeholder?: string | undefined; disabled?: boolean | undefined; id?: string | undefined; type?: "select" | ... 1 more ... | undefined; outline?: boolean | undefined; }'. (ts)
+                        bind:value={formState.locationName}
+                        icon={SearchIcon}
+                        placeholder="Lieu du défi"
+
+/home/bilele/Code/defis-integration-2026-2027/src/routes/challenge/[challengeId]/+page.svelte:156:25
+Error: Object literal may only specify known properties, and '"icon"' does not exist in type 'HTMLSelectAttributes & HTMLInputAttributes & { options: string[]; value: string; placeholder?: string | undefined; disabled?: boolean | undefined; id?: string | undefined; type?: "select" | ... 1 more ... | undefined; outline?: boolean | undefined; }'. (ts)
+                        bind:value={formState.type}
+                        icon={SearchIcon}
+                        placeholder="Type de rendu"
+
+/home/bilele/Code/defis-integration-2026-2027/src/routes/leaderboard/+page.svelte:12:32
+Warn: This reference only captures the initial value of `usersDB`. Did you mean to reference it inside a closure instead?
+https://svelte.dev/e/state_referenced_locally (svelte)
+    let usersDB: User[] = $derived(data.posts.users);
+    let users: Leaderboard[] = usersDB.map((user) => ({
+        ...user,
+
+/home/bilele/Code/defis-integration-2026-2027/src/routes/leaderboard/+page.svelte:21:29
+Error: Parameter 'data' implicitly has an 'any' type. (ts)
+
+    function calculateRanks(data) {
+        let currentRank = 1;
+
+/home/bilele/Code/defis-integration-2026-2027/src/routes/leaderboard/+page.svelte:24:26
+Error: Parameter 'item' implicitly has an 'any' type. (ts)
+        
+        return data.map((item, index, arr) => {
+            if (index > 0 && item.points < arr[index - 1].points) {
+
+/home/bilele/Code/defis-integration-2026-2027/src/routes/leaderboard/+page.svelte:24:32
+Error: Parameter 'index' implicitly has an 'any' type. (ts)
+        
+        return data.map((item, index, arr) => {
+            if (index > 0 && item.points < arr[index - 1].points) {
+
+/home/bilele/Code/defis-integration-2026-2027/src/routes/leaderboard/+page.svelte:24:39
+Error: Parameter 'arr' implicitly has an 'any' type. (ts)
+        
+        return data.map((item, index, arr) => {
+            if (index > 0 && item.points < arr[index - 1].points) {
+
+/home/bilele/Code/defis-integration-2026-2027/src/routes/leaderboard/+page.svelte:72:32
+Error: 'user' is possibly 'null'. (ts)
+                    rank={group.rank.toString()}
+                    highlight={user.groupInte?.name === group.name || `${user.firstName} ${user.lastName}` === group.name} // groupe et utilisateur
+                />
+
+/home/bilele/Code/defis-integration-2026-2027/src/routes/leaderboard/+page.svelte:72:74
+Error: 'user' is possibly 'null'. (ts)
+                    rank={group.rank.toString()}
+                    highlight={user.groupInte?.name === group.name || `${user.firstName} ${user.lastName}` === group.name} // groupe et utilisateur
+                />
+
+/home/bilele/Code/defis-integration-2026-2027/src/routes/leaderboard/+page.svelte:72:92
+Error: 'user' is possibly 'null'. (ts)
+                    rank={group.rank.toString()}
+                    highlight={user.groupInte?.name === group.name || `${user.firstName} ${user.lastName}` === group.name} // groupe et utilisateur
+                />
+
+/home/bilele/Code/defis-integration-2026-2027/src/routes/profile/+page.svelte:23:24
+Warn: This reference only captures the initial value of `user`. Did you mean to reference it inside a closure instead?
+https://svelte.dev/e/state_referenced_locally (svelte)
+    let statsPersonnels : string[] = [
+        "Vous avez " + user.points + " points.",
+        "Vous avez réalisé " + (data.posts.proofCount || 0) + " défis.",
+
+/home/bilele/Code/defis-integration-2026-2027/src/routes/profile/+page.svelte:24:33
+Warn: This reference only captures the initial value of `data`. Did you mean to reference it inside a closure instead?
+https://svelte.dev/e/state_referenced_locally (svelte)
+        "Vous avez " + user.points + " points.",
+        "Vous avez réalisé " + (data.posts.proofCount || 0) + " défis.",
+        "Vous avez validé " + (data.posts.proofDoneCount || 0) + " défis.",
+
+/home/bilele/Code/defis-integration-2026-2027/src/routes/profile/+page.svelte:25:32
+Warn: This reference only captures the initial value of `data`. Did you mean to reference it inside a closure instead?
+https://svelte.dev/e/state_referenced_locally (svelte)
+        "Vous avez réalisé " + (data.posts.proofCount || 0) + " défis.",
+        "Vous avez validé " + (data.posts.proofDoneCount || 0) + " défis.",
+    ];
+
+/home/bilele/Code/defis-integration-2026-2027/src/routes/profile/+page.svelte:7:35
+Error: Cannot find module '$lib/components/PopUpVerification.svelte' or its corresponding type declarations. (ts)
+    import Profile from "$lib/components/Profile.svelte";
+    import PopUpVerification from "$lib/components/PopUpVerification.svelte";
+    import AcceptableCard from "$lib/components/AcceptableCard.svelte";
+
+/home/bilele/Code/defis-integration-2026-2027/src/routes/profile/+page.svelte:8:32
+Error: Cannot find module '$lib/components/AcceptableCard.svelte' or its corresponding type declarations. (ts)
+    import PopUpVerification from "$lib/components/PopUpVerification.svelte";
+    import AcceptableCard from "$lib/components/AcceptableCard.svelte";
+    import ChallengeCard from "$lib/components/ChallengeCard.svelte";
+
+/home/bilele/Code/defis-integration-2026-2027/src/routes/profile/+page.svelte:11:27
+Error: Cannot find name 'PageData'. Did you mean 'ImageData'? (ts)
+
+    let { data }: { data: PageData } = $props();
+
+/home/bilele/Code/defis-integration-2026-2027/src/routes/profile/+page.svelte:107:15
+Error: Object literal may only specify known properties, and 'proofRender' does not exist in type 'HTMLAttributes<HTMLElement> & { margin?: Size | undefined; padding?: Size | undefined; direction?: FlexDirection | undefined; align?: AlignItems | undefined; justify?: JustifyContent | undefined; gap?: Size | undefined; wrap?: boolean | undefined; }'. (ts)
+
+    {#snippet proofRender(proof)}
+        <!-- métadonnées -->
+
+/home/bilele/Code/defis-integration-2026-2027/src/routes/profile/+page.svelte:107:27
+Error: Parameter 'proof' implicitly has an 'any' type. (ts)
+
+    {#snippet proofRender(proof)}
+        <!-- métadonnées -->
+
+/home/bilele/Code/defis-integration-2026-2027/src/routes/profile/+page.svelte:85:18
+Error: Property 'groupName' is missing in type '{ size: string; firstName: any; lastName: any; src: any; }' but required in type 'Props'. (ts)
+            <Flex direction="column" gap="lg">
+                <Profile
+                    size="xl"
+
+/home/bilele/Code/defis-integration-2026-2027/src/routes/profile/+page.svelte:143:18
+Error: Property 'isUnfolded' is missing in type '{ title: string; points: number; badges: { name: string; icon: Component<LucideProps, {}, "">; values: string[]; }[]; content: () => any; }' but required in type 'Props'. (ts)
+            {#each proofs as proof}
+                <ChallengeCard
+                    title={"Défi : " + proof.challenge.name}
+
+/home/bilele/Code/defis-integration-2026-2027/src/routes/profile/+page.svelte:144:40
+Error: 'proof.challenge' is possibly 'null'. (ts)
+                <ChallengeCard
+                    title={"Défi : " + proof.challenge.name}
+                    points={proof.challenge.nbPoints}
+
+/home/bilele/Code/defis-integration-2026-2027/src/routes/profile/+page.svelte:145:29
+Error: 'proof.challenge' is possibly 'null'. (ts)
+                    title={"Défi : " + proof.challenge.name}
+                    points={proof.challenge.nbPoints}
+                    badges={[
+
+/home/bilele/Code/defis-integration-2026-2027/src/routes/proof/+page.svelte:13:34
+Warn: This reference only captures the initial value of `data`. Did you mean to reference it inside a derived instead?
+https://svelte.dev/e/state_referenced_locally (svelte)
+    let { data }: { data: PageData } = $props();
+    let proofs: Proof[] = $state(data.posts.proofs);
+    $effect(() => {
+
+/home/bilele/Code/defis-integration-2026-2027/src/routes/proof/+page.svelte:173:5
+Warn: Unused CSS selector ".text-response"
+https://svelte.dev/e/css_unused_selector (svelte)
+<style>
+    .text-response {
+        width: 100%;
+
+/home/bilele/Code/defis-integration-2026-2027/src/routes/proof/+page.svelte:182:9
+Warn: Unused CSS selector ".video-container video"
+https://svelte.dev/e/css_unused_selector (svelte)
+    @media (max-width: 640px) {
+        .video-container video,
+        .image-container img {
+
+/home/bilele/Code/defis-integration-2026-2027/src/routes/proof/+page.svelte:183:9
+Warn: Unused CSS selector ".image-container img"
+https://svelte.dev/e/css_unused_selector (svelte)
+        .video-container video,
+        .image-container img {
+            max-height: 250px;
+
+/home/bilele/Code/defis-integration-2026-2027/src/routes/proof/+page.svelte:8:32
+Error: Cannot find module '$lib/components/AcceptableCard.svelte' or its corresponding type declarations. (ts)
+    import { Status } from "$lib/types/types.d";
+    import AcceptableCard from "$lib/components/AcceptableCard.svelte";
+    import BackButton from "$lib/components/BackButton.svelte";
+
+/home/bilele/Code/defis-integration-2026-2027/src/routes/proof/+page.svelte:13:45
+Error: Property 'proofs' does not exist on type '{ challenges: ChallengeRead[]; pendingChallengeCount: number; pendingProofCount: number; }'. (ts)
+    let { data }: { data: PageData } = $props();
+    let proofs: Proof[] = $state(data.posts.proofs);
+    $effect(() => {
+
+/home/bilele/Code/defis-integration-2026-2027/src/routes/proof/+page.svelte:15:29
+Error: Property 'proofs' does not exist on type '{ challenges: ChallengeRead[]; pendingChallengeCount: number; pendingProofCount: number; }'. (ts)
+    $effect(() => {
+        proofs = data.posts.proofs;
+    });
+
+/home/bilele/Code/defis-integration-2026-2027/src/routes/proof/+page.svelte:38:23
+Error: Type '{ isOkTVn7: boolean; proofId: number; userId: string; type: UploadType; content: string[]; date: Date; challengeId: number | null; validatorId: string | null; status: Status; } | undefined' is not assignable to type '{ isOkTVn7: boolean; proofId: number; userId: string; type: UploadType; content: string[]; date: Date; challengeId: number | null; validatorId: string | null; status: Status; }'.
+  Type 'undefined' is not assignable to type '{ isOkTVn7: boolean; proofId: number; userId: string; type: UploadType; content: string[]; date: Date; challengeId: number | null; validatorId: string | null; status: Status; }'. (ts)
+                }
+                const proof: Proof = proofs.find((c) => c.proofId === id);
+                if (proof) {
+
+/home/bilele/Code/defis-integration-2026-2027/src/routes/proof/+page.svelte:127:18
+Error: Property 'isUnfolded' is missing in type '{ title: string; points: any; badges: { name: string; icon: Component<LucideProps, {}, "">; values: string[]; }[]; content: () => any; actions: () => any; }' but required in type 'Props'. (ts)
+                <!-- </AcceptableCard> -->
+                <ChallengeCard
+                    title={"Défi : " + proof.challenge.name}
+
+/home/bilele/Code/defis-integration-2026-2027/src/routes/proof/+page.svelte:128:46
+Error: Property 'challenge' does not exist on type '{ isOkTVn7: boolean; proofId: number; userId: string; type: UploadType; content: string[]; date: Date; challengeId: number | null; validatorId: string | null; status: Status; }'. Did you mean 'challengeId'? (ts)
+                <ChallengeCard
+                    title={"Défi : " + proof.challenge.name}
+                    points={proof.challenge.nbPoints}
+
+/home/bilele/Code/defis-integration-2026-2027/src/routes/proof/+page.svelte:129:35
+Error: Property 'challenge' does not exist on type '{ isOkTVn7: boolean; proofId: number; userId: string; type: UploadType; content: string[]; date: Date; challengeId: number | null; validatorId: string | null; status: Status; }'. Did you mean 'challengeId'? (ts)
+                    title={"Défi : " + proof.challenge.name}
+                    points={proof.challenge.nbPoints}
+                    badges={[
+
+/home/bilele/Code/defis-integration-2026-2027/src/routes/proof/+page.svelte:131:67
+Error: Property 'user' does not exist on type '{ isOkTVn7: boolean; proofId: number; userId: string; type: UploadType; content: string[]; date: Date; challengeId: number | null; validatorId: string | null; status: Status; }'. (ts)
+                    badges={[
+                        { name: "Par", icon: User, values: [proof.user.firstName + " " + proof.user.lastName] },
+                        { name: "Date", icon: Clock, values: [formatDateTime(proof.date)] },
+
+/home/bilele/Code/defis-integration-2026-2027/src/routes/proof/+page.svelte:131:96
+Error: Property 'user' does not exist on type '{ isOkTVn7: boolean; proofId: number; userId: string; type: UploadType; content: string[]; date: Date; challengeId: number | null; validatorId: string | null; status: Status; }'. (ts)
+                    badges={[
+                        { name: "Par", icon: User, values: [proof.user.firstName + " " + proof.user.lastName] },
+                        { name: "Date", icon: Clock, values: [formatDateTime(proof.date)] },
+
+/home/bilele/Code/defis-integration-2026-2027/src/routes/proof/+page.svelte:136:56
+Error: Property 'challenge' does not exist on type '{ isOkTVn7: boolean; proofId: number; userId: string; type: UploadType; content: string[]; date: Date; challengeId: number | null; validatorId: string | null; status: Status; }'. Did you mean 'challengeId'? (ts)
+                    {#snippet content()}
+                        <p><b>Description :</b> {proof.challenge.description}</p>
+                        <Flex direction="column" gap="xs">
+
+/home/bilele/Code/defis-integration-2026-2027/src/routes/settings/+page.svelte:18:27
+Warn: This reference only captures the initial value of `data`. Did you mean to reference it inside a derived instead?
+https://svelte.dev/e/state_referenced_locally (svelte)
+
+    let darkMode = $state(data.user?.darkMode ?? false);
+    let okTVn7 = $state(data.user?.isOkTVn7 ?? false);
+
+/home/bilele/Code/defis-integration-2026-2027/src/routes/settings/+page.svelte:19:25
+Warn: This reference only captures the initial value of `data`. Did you mean to reference it inside a derived instead?
+https://svelte.dev/e/state_referenced_locally (svelte)
+    let darkMode = $state(data.user?.darkMode ?? false);
+    let okTVn7 = $state(data.user?.isOkTVn7 ?? false);
+
+/home/bilele/Code/defis-integration-2026-2027/src/routes/settings/+page.svelte:39:29
+Error: Argument of type '{}' is not assignable to parameter of type 'string | AnyComponent'. (ts)
+            } else if (result.type === "failure") {
+                toast.error(result.data?.message || "Une erreur est survenue");
+                // Revert UI switch state if it failed
+
+/home/bilele/Code/defis-integration-2026-2027/src/routes/settings/+page.svelte:161:10
+Error: 'user' is possibly 'null' or 'undefined'. (ts)
+
+    {#if user.isAdmin}
+        <Frame>
+
+====================================
+svelte-check found 125 errors and 86 warnings in 27 files

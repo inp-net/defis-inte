@@ -1,7 +1,5 @@
 import { prisma } from '$lib/server/prisma';
 import { error } from '@sveltejs/kit';
-import type { ChallengeInput } from '$lib/types/types.d';
-import type { Status, ProofInput } from '$lib/types/types.d';
 import { pointsUpdate, addChallengeSucced } from '$lib/server/proofService';
 
 // COMMANDES POUR LES ADMIN
@@ -15,9 +13,15 @@ export async function canUseAdmin(userId: string) {
         where: { id: userId },
         select: { isAdmin: true }
     })
-    if (!userAdmin.isAdmin) {
-        return error(403, 'Tu n\'es pas admin')
+
+    if (!userAdmin) {
+        throw error(404, "utilisateur introuvable");
     }
+    
+    if (!userAdmin.isAdmin) {
+        return error(403, "Tu n'es pas admin");
+    }
+
     return true
 }
 
@@ -28,7 +32,7 @@ export async function canUseAdmin(userId: string) {
 export async function recomptePoints() {
     // remise à 0 de tout les points 
     try {
-        const [resetUsers, disconnectAll] = await prisma.$transaction([
+        await prisma.$transaction([
             prisma.user.updateMany({
                 data: { points: 0 }
             }),
@@ -60,6 +64,10 @@ export async function recomptePoints() {
             where: { proofId: proof.proofId },
             select: { userId: true }
         })
+
+        if (!user || !user.userId) {
+            throw error(404, "utilsiateur introuvable");
+        }
 
         addChallengeSucced(user.userId, proof.proofId);
     }

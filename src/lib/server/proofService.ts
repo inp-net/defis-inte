@@ -1,10 +1,10 @@
 import { prisma } from '$lib/server/prisma';
+import type { Prisma } from '../../../prisma/generated/prisma/client';
 import { error } from '@sveltejs/kit';
-import { Status, type ProofInput } from '$lib/types/types.d';
-import { UploadType } from '../../../prisma/generated/prisma/client'
+import { Status, UploadType, type ProofInput } from '$lib/types/types.d';
 import { Churros1ATo2A } from '$lib/env';
 
-//GESTION DES PREUVES 
+// GESTION DES PREUVES 
 
 
 /** Verifie si l'utistaeur peut accepter/refuse la preuve 
@@ -37,6 +37,10 @@ async function canModifyProof(proofId: number, userId: string) {
         }
     });
 
+    if (!userAutorisation) {
+        throw error(404, "utilisateur introuvable")
+    }
+
     const groupProof = await prisma.proof.findUnique({
         where: {
             proofId: proofId
@@ -47,10 +51,15 @@ async function canModifyProof(proofId: number, userId: string) {
             }
         }
     })
+
+    if (!groupProof || !groupProof.challenge) {
+        throw error(404, "groupe ou challenge introuvable");
+    }
+
     const groupIdProof = groupProof.challenge.groupId;
 
     if (!userAutorisation.groupBoard.some(board => board.groupId === groupIdProof) && !userAutorisation.isAdmin) {
-        throw error(403, "tu ne fais pas partie du bureau du club")
+        throw error(403, "tu ne fais pas partie du bureau du club");
     }
 }
 
@@ -68,7 +77,6 @@ export async function newProof(body: ProofInput) {
         where: { challengeId: challengeId }
     });
 
-    // On récupère l'utilisateur ainsi que son groupe d'intégration d'un seul coup
     const user = await prisma.user.findUnique({
         where: { id: userId }
     });
@@ -77,30 +85,26 @@ export async function newProof(body: ProofInput) {
         throw error(404, `Challenge non trouvé: ${challengeId}`);
     }
 
-    if (!Object.values(UploadType).includes(type as UploadType)) {
+    if (!Object.values(UploadType).includes(type)) {
         throw error(404, `Type de challenge non trouvé: ${type}`);
     }
 
-    // Vérifie si l'utilisateur existe
     if (!user) {
         throw error(403, "L'utilisateur n'existe pas");
     }
 
-    // Vérifier que c'est bien un 1A    
     if (!user.is1A && Churros1ATo2A) {
         throw error(403, "Tu n'es pas un 1A");
     }
 
-    // Si pas de groupe d'inté on ne peut pas soumettre de preuve
     if (!user.groupInteId) {
         throw error(403, "Tu n'appartiens à aucun groupe d'intégration");
     }
-    
-    // Vérifier si son groupe d'inté a déjà fait le défi
+
     const existingProofFromGroup = await prisma.proof.findFirst({
         where: {
             challengeId: challengeId,
-            status: { in: ["PENDING", "VALID"] },
+            status: { in: [Status.PENDING, Status.VALID] },
             user: {
                 groupInteId: user.groupInteId
             }
@@ -115,32 +119,23 @@ export async function newProof(body: ProofInput) {
 
     if (existingProofFromGroup) {
         const author = `${existingProofFromGroup.user.firstName} ${existingProofFromGroup.user.lastName}`;
-        if (existingProofFromGroup.status === "PENDING") {
+        if (existingProofFromGroup.status === Status.PENDING) {
             throw error(400, `Une preuve a déjà été soumise par ${author} et attend validation.`);
         } else {
             throw error(400, `Votre groupe a déjà validé ce défi (validé par ${author}).`);
         }
     }
 
-
-    const coreData = {
-        user: {
-            connect: { id: userId }
-        },
-        content: content,
-        type: type,
-        challenge: {
-            connect: { challengeId: challengeId }
-        },
-        status: Status.PENDING,
-        isOkTVn7: isOkTVn7,
-        date: new Date()
-    };
-
     return await prisma.proof.create({
         data: {
-            ...coreData,
-        }
+            userId: userId,
+            challengeId: challengeId,
+            content: content,
+            type: type,
+            status: Status.PENDING,
+            isOkTVn7: isOkTVn7,
+            date: new Date()
+        } as unknown as Prisma.ProofUncheckedCreateInput
     });
 }
 
@@ -162,8 +157,8 @@ export async function approveProof(proofId: number, userId: string) {
     });
 
     // Mise à jour des points de l'utilisateur et du challenge
-    const updatePoint = await pointsUpdate(proofId)
-    const updateChallenge = await addChallengeSucced(userId, proofId);
+    await pointsUpdate(proofId)
+    await addChallengeSucced(userId, proofId);
 
     return updatedProof;
 }
@@ -207,6 +202,11 @@ export async function pointsUpdate(proofId: number) {
             challenge: { select: { nbPoints: true } }
         }
     })
+
+    if (!proofData || !proofData.challenge) {
+        throw error(404, "preuve introuvable");
+    }
+
     let newPointUser: number = proofData.challenge.nbPoints + proofData.user.points;
 
     const userUpdate = await prisma.user.update({
@@ -230,12 +230,21 @@ export async function addChallengeSucced(userId: string, proofId: number) {
             challengeId: true
         }
     });
+
     const userGroupId = await prisma.user.findUnique({
         where: { id: userId },
         select: {
             groupInteId: true
         }
     });
+
+    if (!proofData || !proofData.challengeId) {
+        throw error(404, "preuve introuvable");
+    }
+
+    if (!userGroupId || !userGroupId.groupInteId) {
+        throw error(404, "utilisateur du groupe introuvable");
+    }
 
     const challengeUpdate = await prisma.challenge.update({
         where: {

@@ -1,11 +1,11 @@
 import type { PageServerLoad } from './$types';
-import { type ProofInput, type ChallengeRead, UploadType } from '$lib/types/types.d';
+import { type UploadType, type ProofInput, type ChallengeRead } from '$lib/types/types.d';
 import { newProof } from '$lib/server/proofService';
 import { prisma } from "$lib/server/prisma";
-import { error, fail, type Actions } from '@sveltejs/kit';
+import { fail, type Actions } from '@sveltejs/kit';
 import { uploadUserFile, typeVideoFile, typePhotoFile } from '$lib/server/filesManagement';
 import { Churros1ATo2A } from '$lib/env';
-import path, { extname } from 'path';
+import { extname } from 'path';
 
 
 export const load: PageServerLoad = async ({ locals }) => {
@@ -116,27 +116,30 @@ export const load: PageServerLoad = async ({ locals }) => {
 
 export const actions: Actions = {
     save: async ({ request, locals }) => {
+
+        if (!locals.user) {
+            throw fail(404, "utilisateur introuvable");
+        }
+
         const data = await request.formData();
         const challengeId = parseInt(data.get('challengeId') as string, 10);
-        const type = data.get('type') as string;
         const textePreuve = data.get('textePreuve') as string;
-        const files: File[] = data.getAll('file');
+        // safe check que c'est bien des fichiers dans cette variable
+        const files = data.getAll('file').filter((file): file is File => file instanceof File && file.size > 0);
+        const type = data.get('type') as UploadType;
         const isOkTVn7 = data.get('isOkTVn7') === "true";
         const userId = locals.user.id;
         const maxFiles: number = 15;
         try {
             // Si pas connecter 
             if (!locals.user) {
-                return fail(403, "Tu n'es pas connecter")
+                return fail(403, "Tu n'es pas connecter");
             }
 
             // Vérifie si c'est un 1A 
             if (!(locals.user.is1A && Churros1ATo2A)) {
-                return fail(403, "Tu n'es pas un 1A")
+                return fail(403, "Tu n'es pas un 1A");
             }
-
-            // Récupérer le groupe d'intégration de l'utilisateur actuel
-            const userGroupInteId = locals.user.groupInteId;
 
             // VERIFIE QUE C'est bien le bon type
             for (const file of files) {
@@ -149,9 +152,7 @@ export const actions: Actions = {
                 }
             }
 
-
             let content: String[] = [];
-
 
             if (textePreuve) {
                 content = [textePreuve]
@@ -177,10 +178,7 @@ export const actions: Actions = {
                     }
                 }
             }
-
-            const body: ProofInput = { challengeId, userId, type, content, isOkTVn7 }
-
-
+            const body: ProofInput = { challengeId, userId, type, content, isOkTVn7 };
 
             const proof = await newProof(body);
             return {

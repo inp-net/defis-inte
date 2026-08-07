@@ -2,7 +2,6 @@ import { handle as handleAuth } from '$lib/server/auth';
 import type { Handle } from '@sveltejs/kit';
 import { sequence } from '@sveltejs/kit/hooks';
 import { prisma } from '$lib/server/prisma';
-import { redirect } from '@sveltejs/kit';
 import { error } from '@sveltejs/kit';
 import { Churros1ATo2A } from '$lib/env';
 
@@ -22,6 +21,10 @@ const handlePerms: Handle = async ({ event, resolve }) => {
                     groupInte: true
                 },
             });
+
+            if (!user) {
+                throw error(404, "utilisateur introuvable");
+            }
 
             console.log(`[Churros Auth] Utilisateur synchronisé : ${user.id}`);
 
