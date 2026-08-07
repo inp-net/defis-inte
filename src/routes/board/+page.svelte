@@ -1,6 +1,6 @@
 <script lang="ts">
     import type { PageData } from "../$types";
-    import type { GroupChallenge, ChallengeRead } from "$lib/types/types.d";
+    import type { GroupChallenge } from "$lib/types/types.d";
     import { Flex, Stack, Frame, Switch, Button } from "azucar-ui";
     import { MapPin, User, XIcon, Check } from "@lucide/svelte";
     import { invalidateAll } from '$app/navigation';
@@ -10,11 +10,7 @@
     import ChallengeCard from "$lib/components/ChallengeCard.svelte";
 
     let { data }: { data: PageData } = $props();
-    let groupChallenge: GroupChallenge[] = $state(data.posts.challenges);
-
-    $effect(() => {
-        groupChallenge = data.posts.challenges;
-    });
+    const groupChallenge: GroupChallenge[] = $derived(data.posts.challenges);
 
     // Filtres actifs sur défis.
     let activeIndexes = $state<number[]>([]);
