@@ -1,4 +1,5 @@
 import type { PageServerLoad } from './$types';
+import type { GroupChallenge, ChallengeRead } from "$lib/types/types.d";
 import { fail, error, type Actions } from '@sveltejs/kit';
 import { acceptChallenge, deleteChallenge, canModifyChallenge } from '$lib/server/challengeService';
 import { prisma } from "$lib/server/prisma";
@@ -9,7 +10,7 @@ export const load: PageServerLoad = async ({ locals }) => {
 
     if (!user) return error(500, "Utilisateur non connecté")
 
-    const clubsWithChallenges = await prisma.groupClub.findMany({
+    const clubsWithChallenges: GroupChallenge[] = await prisma.groupClub.findMany({
         where: user?.isAdmin ? {} : {
             board: {
                 some: {
@@ -33,7 +34,7 @@ export const load: PageServerLoad = async ({ locals }) => {
     });
 
     const allUserIds = [
-        ...new Set(clubsWithChallenges.flatMap(club => club.challenge.map(ch => ch.userId)))
+        ...new Set(clubsWithChallenges.flatMap(club => club.challenge.map((ch: ChallengeRead) => ch.userId)))
     ];
 
     const users = await prisma.user.findMany({
@@ -49,10 +50,10 @@ export const load: PageServerLoad = async ({ locals }) => {
         users.map(u => [u.id, `${u.firstName} ${u.lastName}`.trim()])
     );
 
-    const challenges = clubsWithChallenges.map((club) => ({
+    const challenges: GroupChallenge[] = clubsWithChallenges.map((club) => ({
         name: club.name,
         pictureURL: club.pictureURL ?? "",
-        challenges: club.challenge.map((ch) => ({
+        challenges: club.challenge.map((ch: ChallengeRead) => ({
             challengeId: ch.challengeId,
             name: ch.name,
             description: ch.description,

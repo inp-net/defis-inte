@@ -1,6 +1,6 @@
 <script lang="ts">
     import { invalidateAll } from '$app/navigation';
-    import type { PageData } from "../$types";
+    import type { PageData } from "./$types";
     import { Flex, Stack, Button } from "azucar-ui";
     import { User, Clock, XIcon, Check } from "@lucide/svelte";
     import type { Proof } from "$lib/types/types.d";
@@ -8,33 +8,18 @@
     import ChallengeCard from "$lib/components/ChallengeCard.svelte";
 
     let { data }: { data: PageData } = $props();
-    let proofs: Proof[] = $derived(data.proofs);
+    const proofs: Proof[] = $derived(data.proofs);
 
     async function approveProof(id: number): Promise<void> {
         try {
             const formData = new FormData();
             formData.append("proofId", id.toString());
 
-            const response = await fetch("?/approve", {
+            await fetch("?/approve", {
                 method: "POST",
                 headers: { "x-sveltekit-action": "true" },
                 body: formData,
             });
-            if (response.ok) {
-                // Changement local des modifications serveur
-                const result = await response.json();
-                if (result.type === "failure") {
-                    console.error(
-                        "Erreur de validation :",
-                        result.data?.message,
-                    );
-                    return;
-                }
-                const proof: Proof = proofs.find((c) => c.proofId === id);
-                if (proof) {
-                    proof.status = "VALID";
-                }
-            }
         } catch (err) {
             console.error("Erreur lors de l'envoi du form : ", err);
         }
@@ -163,20 +148,3 @@
         </Flex>
     </Stack>
 </Flex>
-
-<style>
-    .text-response {
-        width: 100%;
-        padding: var(--size-sm);
-        border-radius: 8px;
-        word-wrap: break-word;
-        overflow-wrap: break-word;
-    }
-
-    @media (max-width: 640px) {
-        .video-container video,
-        .image-container img {
-            max-height: 250px;
-        }
-    }
-</style>

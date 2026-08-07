@@ -49,22 +49,12 @@ export type ClubInfo = {
 
 export type {
     Challenge,
-    Proof,
     User
-}
-
-// Input pour crée une preuve
-export type ProofInput = {
-    challengeId: number;
-    userId: string;
-    type: UploadType;
-    content: String[];
-    isOkTVn7: boolean;
 }
 
 // Pour lire les preuves, informations utiles
 export type ProofRead = Pick< Proof, "proofId" | "type" | "content" | "date" | "status" | "validatorId" >
-    & { user: Pick<User, "firstName" | "lastName">; challenge: Pick<Challenge, "name" | "nbPoints"> | null; };
+& { user: Pick<User, "firstName" | "lastName">; challenge: Pick<Challenge, "name" | "nbPoints"> | null; };
 
 // Input pour crée un challenge
 export type ChallengeInput = {
@@ -90,8 +80,20 @@ export type Leaderboard = {
 
 // Type Challenge Read utilisé uniquement pour l'affichage UI du challenge
 export type ChallengeRead = Pick<
-    Challenge, "challengeId" | "name" | "description" | "type" | "nbPoints" | "locationName" | "defiAccepte" | "isDeleted"
+Challenge, "challengeId" | "name" | "description" | "type" | "nbPoints" | "locationName" | "defiAccepte" | "isDeleted" | "userId"
 > & { groupName: string; groupUrl: string | null; } & { userName?: string } & { groupInteSucceedName: string[] } & { isDone?: boolean, isPending?: boolean }
 
 // Type Group Challenge réunit les ChallengeRead dans des groupes
-export type GroupChallenge = Pick<GroupClub, "name" | "pictureURL"> & { challenges: ChallengeRead[] };
+export type GroupChallenge = PrismaGroupClubGetPayload<{
+    include: {
+        users: { select: { id: true } };
+        challenge: true;
+    };
+}>;
+
+// Input pour lire une preuve
+export type Proof = PrismaProofGetPayload<{
+    include: {
+        challenge: true;
+    };
+}>;

@@ -1,6 +1,6 @@
 <script lang="ts">
     import type { PageData } from "../$types";
-    import type { GroupChallenge } from "$lib/types/types.d";
+    import type { GroupChallenge, ChallengeRead } from "$lib/types/types.d";
     import { Flex, Stack, Frame, Switch, Button } from "azucar-ui";
     import { MapPin, User, XIcon, Check } from "@lucide/svelte";
     import { invalidateAll } from '$app/navigation';
@@ -114,7 +114,7 @@
 </script>
 
 <!-- fonction qui affiche la liste de challenge pour le groupe -->
-{#snippet showChallenges(group)}
+{#snippet showChallenges(group: GroupChallenge)}
         {#each group.challenges as challenge (challenge.challengeId)}
             {@const defiApprouved = challenge.defiAccepte}
             {@const defiDeleted = challenge.isDeleted}
@@ -126,7 +126,7 @@
                     isUnfolded={false}
                     badges={[
                         { name: "Lieu", icon: MapPin, values: [challenge.locationName]},
-                        { name: "Par", icon: User, values: [challenge.userName]},
+                        { name: "Par", icon: User, values: [challenge.userName ?? ""]},
                     ]}
                 >
                     {#snippet content()}
