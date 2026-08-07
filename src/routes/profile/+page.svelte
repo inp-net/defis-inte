@@ -4,8 +4,6 @@
     import { type ProofRead, Status } from "$lib/types/types.d";
     import BackButton from "$lib/components/BackButton.svelte";
     import Profile from "$lib/components/Profile.svelte";
-    import PopUpVerification from "$lib/components/PopUpVerification.svelte";
-    import AcceptableCard from "$lib/components/AcceptableCard.svelte";
     import ChallengeCard from "$lib/components/ChallengeCard.svelte";
 
     let { data }: { data: PageData } = $props();
