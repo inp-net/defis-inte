@@ -131,17 +131,14 @@ export async function convertToWebVideo(
 
     // --- Streaming-friendly ---
     // Indispensable car on écrit vers un pipe et non un vrai fichier
-    '-movflags', 'frag_keyframe+empty_moov',
+     '-movflags', '+faststart', 
 
     '-f', 'mp4',              // Format de sortie explicite
-    'pipe:1',                 // Écriture du résultat vers stdout
+    outputPath,                 // Écriture du résultat
   ];
 
   return new Promise((resolve, reject) => {
     const proc = spawn('ffmpeg', args);
-
-    const writeStream = createWriteStream(outputPath);
-    proc.stdout.pipe(writeStream);
 
     const stderrChunks: Buffer[] = [];
     proc.stderr.on('data', (chunk) => stderrChunks.push(chunk));
