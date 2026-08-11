@@ -170,13 +170,13 @@
         <p>Toutes les fonctionnalités admin.</p>
     </Stack>
 
-    <Stack>
-        <Frame border={true}>
-            <Flex direction="column">
+    <Stack style="width: 100%;">
+        <Frame border={true} style="width: 100%; max-width: 100%;">
+            <Flex direction="column" style="width: 100%; max-width: 100%;">
                 <Switch bind:checked={hideDone}
                     >Masquer les défis validés</Switch
                 >
-                <Flex gap="xs" wrap={false} align="center">
+                <Flex gap="xs" wrap={false} align="center" style="width: 100%; max-width: 100%;">
                     <span style="padding-right: 10px;">Filtre</span>
                     <Filters filters={filterNames} bind:activeIndexes />
                 </Flex>
