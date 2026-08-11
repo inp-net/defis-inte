@@ -2,7 +2,7 @@ import { handle as handleAuth } from '$lib/server/auth';
 import type { Handle } from '@sveltejs/kit';
 import { sequence } from '@sveltejs/kit/hooks';
 import { prisma } from '$lib/server/prisma';
-import { error } from '@sveltejs/kit';
+import { error, redirect } from '@sveltejs/kit';
 import { Churros1ATo2A } from '$lib/env';
 
 const handlePerms: Handle = async ({ event, resolve }) => {
@@ -47,9 +47,10 @@ const handlePerms: Handle = async ({ event, resolve }) => {
             if (e instanceof Response) throw e;
             console.error('PRISMA ERROR:', e);
         }
-    }else if (forbidenRoutes.some(route => currentPath.startsWith(route)) && (!session?.uid || (session.is1A && Churros1ATo2A))) {     //Empecher l'acces au non connéctées
-
-        throw error(403, 'Accès interdit');
+    } else if (forbidenRoutes.some(route => currentPath.startsWith(route)) && (!session?.uid || (session.is1A && Churros1ATo2A))) {     //Empecher l'acces au non connéctées
+        // throw error(403, 'Accès interdit');
+        const targetUrl = encodeURIComponent(event.url.pathname + event.url.search);
+        redirect(303, `/auth/signin?callbackUrl=${targetUrl}`);
     }
 
     return resolve(event);
