@@ -228,7 +228,7 @@
     <HomepageTitle />
 
     <!-- A afficher que pour les membres 2A de groupes et plus -->
-    {#if user && !(user.is1A === Churros1ATo2A)}
+    {#if user && (!(user.is1A && Churros1ATo2A) || !user.is1A) }
         <Stack>
             <AddChallenge />
         </Stack>

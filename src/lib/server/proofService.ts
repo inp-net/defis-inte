@@ -93,7 +93,7 @@ export async function newProof(body: ProofInput) {
         throw error(403, "L'utilisateur n'existe pas");
     }
 
-    if (!user.is1A && Churros1ATo2A) {
+    if (!(user.is1A && Churros1ATo2A) || !user.is1A) {
         throw error(403, "Tu n'es pas un 1A");
     }
 

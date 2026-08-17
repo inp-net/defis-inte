@@ -137,7 +137,7 @@ export const actions: Actions = {
             }
 
             // Vérifie si c'est un 1A 
-            if (!(locals.user.is1A && Churros1ATo2A)) {
+            if (!(locals.user.is1A && Churros1ATo2A) || !locals.user.is1A) {
                 return fail(403, "Tu n'es pas un 1A");
             }
 
