@@ -132,7 +132,7 @@
                     <Switch bind:checked={okTVn7} onchange={okTVn7Change}
                     ></Switch>
                     <p>
-                        Autoriser automatiquement TVN7 à utiliser les médias
+                        Autoriser automatiquement TVn7 à utiliser les médias
                         transmis
                     </p>
                 </Flex>
