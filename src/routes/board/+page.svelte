@@ -178,7 +178,7 @@
                 >
                 <Flex gap="xs" wrap={false} align="center" style="width: 100%; max-width: 100%;">
                     <span style="padding-right: 10px;">Filtre</span>
-                    <Filters filters={filterNames} bind:activeIndexes />
+                    <Filters filters={filterNames} save={true} name="active-clubs" bind:activeIndexes />
                 </Flex>
             </Flex>
         </Frame>
