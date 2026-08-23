@@ -1,18 +1,47 @@
 <script lang="ts">
     import { Badge } from "azucar-ui";
     import { flip } from "svelte/animate";
+    import { onMount } from "svelte";
 
     interface Props {
         readonly filters: readonly string[];
         activeIndexes?: number[];
+        save?: boolean;
+        name?: string;
         onFilterClick?: (index: number) => void;
     }
 
     let {
         filters,
         activeIndexes = $bindable([]),
+        save = false,
+        name = "",
         onFilterClick,
     }: Props = $props();
+
+    const storageKey = $derived(save && name ? `filter_active_${name}` : null);
+
+    onMount(() => {
+        if (!storageKey) return;
+        const saved = sessionStorage.getItem(storageKey);
+        if (saved) {
+            try {
+                const parsed = JSON.parse(saved);
+                if (Array.isArray(parsed)) {
+                    activeIndexes = parsed.filter(
+                        (i) => typeof i === "number" && i >= 0 && i < filters.length
+                    );
+                }
+            } catch (e) {
+                console.error("Failed to parse saved filter indexes", e);
+            }
+        }
+    });
+
+    $effect(() => {
+        if (!storageKey) return;
+        sessionStorage.setItem(storageKey, JSON.stringify(activeIndexes));
+    });
 
     let isTousActive = $derived(activeIndexes.length === 0);
 
