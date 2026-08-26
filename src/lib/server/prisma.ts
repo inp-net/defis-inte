@@ -25,11 +25,17 @@ export const prisma = new PrismaClient({ adapter });
  */
 export async function userChurrosToPrisma(userChurros: UserChurros): Promise<boolean> {
     try {
-        const id = userChurros?.uid;
+        const raw = userChurros as Record<string, any>;
+        // fallback si l'id n'est pas trouvé
+        const id = raw.uid ?? raw.preferred_username ?? raw.username ?? raw.sub;
+
         if (!id) {
             console.error("UID manquant pour l'utilisateur");
             return false;
         }
+
+        // on ecrase l'id si il n'était pas là de base
+        userChurros.uid = id;
 
         const { create, update } = await formatUserForPrisma(userChurros);
 
@@ -69,8 +75,14 @@ async function formatUserForPrisma(userChurros: UserChurros): Promise<{
     // On cherche a récuperer que les club et assos actives ainsi que les groupes d'inté 
 
     // Parcours les groupes reçu de Authentik de l'utilisateurs
-    for (const dataGroup of userChurros.churrosGroups) {
+    // Si Authentik ne renvoie aucun groupe Churros, fallback []
+    const groupsList = userChurros.churrosGroups ?? [];
+
+    for (const dataGroup of groupsList) {
         try {
+            // vérifie que l'id existe bien
+            if (!dataGroup?.group?.uid) continue;
+
             //On met à jour/ajoute le groupe dans la db 
             const groupAdded = await syncGroupFromChurros(dataGroup.group.uid); // true si club/asso, null si groupe d'inté, false sinon
 
