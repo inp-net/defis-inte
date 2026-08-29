@@ -57,13 +57,12 @@ if (ENABLE_MOCK_AUTH) {
         })
     );
 } else {
-    // envoie plus d'info que nécéssaire pour les fallback
     providers.push(
         Authentik({
             clientId: AUTH_AUTHENTIK_ID,
             issuer: PUBLIC_AUTH_AUTHENTIK_ISSUER,
             clientSecret: AUTH_AUTHENTIK_SECRET,
-            authorization: { params: { scope: 'openid email profile churros:profile' } }
+            authorization: { params: { scope: 'churros:profile' } }
         })
     );
 }
@@ -93,20 +92,8 @@ export const { handle, signIn, signOut } = SvelteKitAuth({
             }
             // Si c'est Authentik
             if (profile) {
-                // récupères toutes les infos dynamiquement
-                const raw = profile as Record<string, any>;
-                // si l'uid n'est pas trouvé, fallback dynamique
-                // pour fix l'erreur AccessDenied
-                const resolvedUid = raw.uid ?? raw.preferred_username ?? raw.username ?? raw.sub;
-
-                const user: UserChurros = {
-                    ...raw,
-                    uid: resolvedUid,
-                    firstName: raw.firstName,
-                    lastName: raw.lastName,
-                };
-
-                const success = await userChurrosToPrisma(user);
+                const { iss, sub, aud, exp, iat, auth_time, jti, acr, amr, sid, ...user } = profile;
+                const success = await userChurrosToPrisma(user as UserChurros);
                 if (!success) return false;
             }
             return true;
@@ -114,13 +101,10 @@ export const { handle, signIn, signOut } = SvelteKitAuth({
 
         async jwt({ token, profile, user, account }) {
             if (profile) {
-                const raw = profile as Record<string, any>;
-                // fallback pour l'id
-                const resolvedUid = raw.uid ?? raw.preferred_username ?? raw.username ?? raw.sub;
-
-                token.uid = resolvedUid;
-                token.firstName = raw.firstName ?? raw.given_name ?? '';
-                token.lastName = raw.lastName ?? raw.family_name ?? '';
+                const churrosProfile = profile as UserChurros;
+                token.uid = churrosProfile.uid;
+                token.firstName = churrosProfile.firstName;
+                token.lastName = churrosProfile.lastName;
             } 
             else if (account?.provider === 'credentials' && user) {
                 const mockUser = user as unknown as UserChurros;
