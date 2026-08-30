@@ -218,7 +218,7 @@
         lastName={user?.lastName ?? undefined}
         groupName={user?.is1A ? user?.groupInte?.name : ""}
         picture={user?.profilePictureURL ?? undefined}
-        accessAdmin={user?.isAdmin || user?.groupBoard.length > 0}
+        accessAdmin={user?.isAdmin || false } // || user?.groupBoard.length > 0      Maintenant avec l'inté que les admins on les droits d'accès à la page board
         notificationsDefis={data.posts.pendingChallengeCount}
         notificationsPreuves={data.posts.pendingProofCount}
     ></Header>

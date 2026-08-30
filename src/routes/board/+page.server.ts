@@ -9,6 +9,10 @@ export const load: PageServerLoad = async ({ locals }) => {
 
     if (!user) return error(500, "Utilisateur non connecté")
 
+    if (!user.isAdmin) {
+        throw error(403, "Vous n'avez pas les droits pour accéder à cette page");
+    }
+
     const clubsWithChallenges = await prisma.groupClub.findMany({
         where: user?.isAdmin ? {} : {
             board: {
