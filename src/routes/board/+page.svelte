@@ -219,7 +219,7 @@
                         {/if}
                     </Flex>
 
-                    {#if group.challenges.length == 0 && !hiddenClubs.includes(group.name)}
+                    {#if group.challenges.length == 0 && hiddenClubs.includes(group.name)}
                         <p><i>( aucun challenge à accepter )</i></p>
                     {/if}
                 </Flex>
