@@ -3,7 +3,7 @@
     import type { GroupChallenge } from "$lib/types/types.d";
     import { Flex, Stack, Frame, Switch, Button } from "azucar-ui";
     import { MapPin, User, XIcon, Check, Paperclip } from "@lucide/svelte";
-    import { invalidateAll } from '$app/navigation';
+    import { invalidateAll } from "$app/navigation";
     import Filters from "$lib/components/Filters.svelte";
     import BackButton from "$lib/components/BackButton.svelte";
     import Category from "$lib/components/Category.svelte";
@@ -110,57 +110,62 @@
 
     /** Nom des clubs qui sont cachés dans la page. */
     let hiddenClubs: string[] = $state([]);
-
 </script>
 
 <!-- fonction qui affiche la liste de challenge pour le groupe -->
 {#snippet showChallenges(group)}
-        {#each group.challenges as challenge (challenge.challengeId)}
-            {@const defiApprouved = challenge.defiAccepte}
-            {@const defiDeleted = challenge.isDeleted}
+    {#each group.challenges as challenge (challenge.challengeId)}
+        {@const defiApprouved = challenge.defiAccepte}
+        {@const defiDeleted = challenge.isDeleted}
 
-            {#if !(hideDone && (defiDeleted || defiApprouved))}
-                <ChallengeCard
-                    title={challenge.name}
-                    points={challenge.nbPoints}
-                    isUnfolded={false}
-                    badges={[
-                        { name: "Lieu", icon: MapPin, values: [challenge.locationName]},
-                        { name: "Par", icon: User, values: [challenge.userName]},
-                        { name: "Type", icon: Paperclip, values: [challenge.type]}
-                    ]}
-                >
-                    {#snippet content()}
-                        <p><b>Description: </b>{"\ " + challenge.description}</p>
-                    {/snippet}
-                    {#snippet actions()}
-                        <Flex gap="xs" style="margin-left: auto; flex-shrink: 0;">
-                            <Button
-                                variant="outline"
-                                disabled={defiDeleted}
-                                href = {`challenge/${challenge.challengeId}`}
-                            >
-                                Modifier
-                            </Button>
-                            <Button
-                                icon={XIcon}
-                                class="danger"
-                                name="Delete"
-                                disabled={defiDeleted}
-                                onclick={() => deleteChallenge(challenge.challengeId)}
-                            />
-                            <Button
-                                icon={Check}
-                                class="success"
-                                name="Success"
-                                disabled={defiApprouved || defiDeleted}
-                                onclick={() => approuveChallenge(challenge.challengeId)}
-                            />
-                        </Flex>
-                    {/snippet}
-                </ChallengeCard>
-            {/if}
-        {/each}
+        {#if !(hideDone && (defiDeleted || defiApprouved))}
+            <ChallengeCard
+                title={challenge.name}
+                points={challenge.nbPoints}
+                isUnfolded={false}
+                badges={[
+                    {
+                        name: "Lieu",
+                        icon: MapPin,
+                        values: [challenge.locationName],
+                    },
+                    { name: "Par", icon: User, values: [challenge.userName] },
+                    { name: "Type", icon: Paperclip, values: [challenge.type] },
+                ]}
+            >
+                {#snippet content()}
+                    <p><b>Description: </b>{"\ " + challenge.description}</p>
+                {/snippet}
+                {#snippet actions()}
+                    <Flex gap="xs" style="margin-left: auto; flex-shrink: 0;">
+                        <Button
+                            variant="outline"
+                            disabled={defiDeleted}
+                            href={`challenge/${challenge.challengeId}`}
+                        >
+                            Modifier
+                        </Button>
+                        <Button
+                            icon={XIcon}
+                            class="danger"
+                            name="Delete"
+                            disabled={defiDeleted}
+                            onclick={() =>
+                                deleteChallenge(challenge.challengeId)}
+                        />
+                        <Button
+                            icon={Check}
+                            class="success"
+                            name="Success"
+                            disabled={defiApprouved || defiDeleted}
+                            onclick={() =>
+                                approuveChallenge(challenge.challengeId)}
+                        />
+                    </Flex>
+                {/snippet}
+            </ChallengeCard>
+        {/if}
+    {/each}
 {/snippet}
 
 <Flex direction="column" gap="xl" margin="lg">
@@ -176,9 +181,19 @@
                 <Switch bind:checked={hideDone}
                     >Masquer les défis validés</Switch
                 >
-                <Flex gap="xs" wrap={false} align="center" style="width: 100%; max-width: 100%;">
+                <Flex
+                    gap="xs"
+                    wrap={false}
+                    align="center"
+                    style="width: 100%; max-width: 100%;"
+                >
                     <span style="padding-right: 10px;">Filtre</span>
-                    <Filters filters={filterNames} save={true} name="active-clubs" bind:activeIndexes />
+                    <Filters
+                        filters={filterNames}
+                        save={true}
+                        name="active-clubs"
+                        bind:activeIndexes
+                    />
                 </Flex>
             </Flex>
         </Frame>
@@ -187,7 +202,11 @@
     <Stack style="max-width: 100%; min-width: 0; overflow: hidden;">
         <Flex gap="md" direction="column" style="max-width: 100%; width: 100%;">
             {#each activeGroups as group}
-                <Flex direction="column" gap="xs" style="max-width: 100%; width: 100%;">
+                <Flex
+                    direction="column"
+                    gap="xs"
+                    style="max-width: 100%; width: 100%;"
+                >
                     <Category
                         name={group.name}
                         bind:list={hiddenClubs}
@@ -195,7 +214,7 @@
                     />
 
                     <Flex gap="xs" direction="column" style="max-width: 100%">
-                        {#if !hiddenClubs.includes(group.name)}
+                        {#if hiddenClubs.includes(group.name)}
                             {@render showChallenges(group)}
                         {/if}
                     </Flex>
@@ -208,6 +227,5 @@
         </Flex>
     </Stack>
 
-    <Stack>
-    </Stack>
+    <Stack></Stack>
 </Flex>

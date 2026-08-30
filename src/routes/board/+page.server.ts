@@ -24,6 +24,7 @@ export const load: PageServerLoad = async ({ locals }) => {
                 }
             },
             challenge: {
+                where: {isDeleted: false},
                 orderBy: {
                     // Trier dans l'ordre de création
                     challengeId: 'desc',
