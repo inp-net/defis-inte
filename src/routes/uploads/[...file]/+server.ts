@@ -62,7 +62,7 @@ export async function GET({ params, request, locals }: RequestEvent) {
                 'content-disposition': 'inline',
                 'accept-ranges': 'bytes',
                 'x-content-type-options': 'nosniff',
-                'content-security-policy': "default-src 'none'; style-src 'none'; script-src 'none';",
+                'content-security-policy': "default-src 'none'; style-src 'none'; script-src 'none'; media-src 'self';",
                 'cache-control': 'public, max-age=31536000, immutable'
             };
 
