@@ -8,9 +8,9 @@ import { Churros1ATo2A } from '$lib/env';
 
 
 /** Verifie si l'utistaeur peut accepter/refuse la preuve 
- * @param proofId id de la preuve 
- * @param userId uid de l'utilsateur
- */
+* @param proofId id de la preuve 
+* @param userId uid de l'utilsateur
+*/
 async function canModifyProof(proofId: number, userId: string) {
     const proof = await prisma.proof.findUnique({
         where: { proofId: proofId }
@@ -66,10 +66,10 @@ async function canModifyProof(proofId: number, userId: string) {
 
 
 /** Ajout d'une nouvelle preuve à un défi par un 1A
- * Vérifier que l'on est connecter avant d'appeler cette fonction
- * @param body information nécessaire (voire type ProofInput)
- * @returns ce qui à été crée en db 
- */
+* Vérifier que l'on est connecter avant d'appeler cette fonction
+* @param body information nécessaire (voire type ProofInput)
+* @returns ce qui à été crée en db 
+*/
 export async function newProof(body: ProofInput) {
     const { challengeId, userId, type, content, isOkTVn7 } = body;
 
@@ -139,50 +139,72 @@ export async function newProof(body: ProofInput) {
     });
 }
 
-/** Accepter une preuve. 
- * Met à jour les point du user 
- * met à jour le challenge pour le groupe d'inté de l'utilisateur
-* @param proofId identifiant de la preuve
-* @param userId identifiant de l'utilisateur ayant valider la preuve
+/**
+* Nettoie les commentaires.
+* @param comment Chaîne brute fournie par l'utilisateur
+* @param maxLength Longueur maximale autorisée (par défaut 1000)
 */
-export async function approveProof(proofId: number, userId: string, comment?: string) {
+function sanitizeComment(comment?: string, maxLength: number = 1000): string | undefined {
+    if (typeof comment !== "string") return undefined;
+    const sanitized = comment.trim();
+    if (!sanitized) return undefined;
+    return sanitized.slice(0, maxLength);
+}
+
+/**
+* Traiter une preuve (acceptation ou refus).
+* @param userId identifiant de l'utilisateur ayant validé/refusé la preuve
+* @param status nouveau statut de la preuve (VALID ou DENIED)
+* @param comment commentaire facultatif laissé par le validateur
+*/
+export async function updateProofStatus(
+    proofId: number,
+    userId: string,
+    status: Status.VALID | Status.DENIED,
+    comment?: string
+) {
     await canModifyProof(proofId, userId);
+
+    const safeComment = sanitizeComment(comment);
 
     const updatedProof = await prisma.proof.update({
         where: { proofId: proofId },
         data: {
-            status: Status.VALID,
+            status: status,
             validatorId: userId,
-            ...(comment !== undefined && { comment: comment })
+            ...(safeComment !== undefined && { comment: safeComment })
         }
     });
 
-    // Mise à jour des points de l'utilisateur et du challenge
-    await pointsUpdate(proofId)
-    await addChallengeSucced(userId, proofId);
+    // Mise à jour des points de l'utilisateur et du challenge uniquement si validé
+    if (status === Status.VALID) {
+        await pointsUpdate(proofId);
+        await addChallengeSucced(userId, proofId);
+    }
 
     return updatedProof;
 }
 
-
-/** refuser une preuve. 
+/**
+* Accepter une preuve. 
+* Met à jour les points du user 
+* met à jour le challenge pour le groupe d'inté de l'utilisateur
 * @param proofId identifiant de la preuve
-* @param userId identifiant de l'utilisateur ayant valider la preuve
+* @param userId identifiant de l'utilisateur ayant validé la preuve
+* @param comment commentaire facultatif
+*/
+export async function approveProof(proofId: number, userId: string, comment?: string) {
+    return updateProofStatus(proofId, userId, Status.VALID, comment);
+}
+
+/**
+* Refuser une preuve. 
+* @param proofId identifiant de la preuve
+* @param userId identifiant de l'utilisateur ayant validé la preuve
+* @param comment commentaire facultatif
 */
 export async function denyProof(proofId: number, userId: string, comment?: string) {
-
-    await canModifyProof(proofId, userId);
-
-    const updatedProof = await prisma.proof.update({
-        where: { proofId: proofId },
-        data: {
-            status: Status.DENIED,
-            validatorId: userId,
-            ...(comment !== undefined && { comment: comment })
-        }
-    });
-
-    return updatedProof;
+    return updateProofStatus(proofId, userId, Status.DENIED, comment);
 }
 
 /** Mise a jour des points de l'utilisateur reussisant le challenge 
@@ -220,9 +242,9 @@ export async function pointsUpdate(proofId: number) {
 }
 
 /**Ajout d'un challenge réussi pour le groupe d'intégration de l'utilisateur
- * @param userId // identifiant de l'utilisateur 
- * @param proofId // identifiant de la preuve 
- */
+* @param userId // identifiant de l'utilisateur 
+* @param proofId // identifiant de la preuve 
+*/
 export async function addChallengeSucced(userId: string, proofId: number) {
     const proofData = await prisma.proof.findUnique({
         where: {
