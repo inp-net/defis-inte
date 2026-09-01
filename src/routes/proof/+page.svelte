@@ -2,7 +2,7 @@
     import { invalidateAll } from '$app/navigation';
     import type { PageData } from "../$types";
     import { Flex, Stack, Button } from "azucar-ui";
-    import { User, Clock, XIcon, Check } from "@lucide/svelte";
+    import { User, Users, Clock, XIcon, Check, Video, House } from "@lucide/svelte";
     import type { Proof } from "$lib/types/types.d";
     import BackButton from "$lib/components/BackButton.svelte";
     import ChallengeCard from "$lib/components/ChallengeCard.svelte";
@@ -111,22 +111,14 @@
             style="display: flex; flex-direction: column; width: 100%; min-width: 0;"
         >
             {#each proofs as proof}
-                <!-- <AcceptableCard -->
-                <!--     id={proof.proofId} -->
-                <!--     name={"Défi : " + proof.challenge.name} -->
-                <!--     isModifiable={false} -->
-                <!--     onAccepted={() => } -->
-                <!--     onDeleted={() => } -->
-                <!--     isApprouved={proof.status === Status.VALID} -->
-                <!--     isDisabled={proof.status === Status.DENIED} -->
-                <!-- > -->
-                <!--     {@render proofDetails(proof)} -->
-                <!-- </AcceptableCard> -->
                 <ChallengeCard
                     title={"Défi : " + proof.challenge.name}
                     points={proof.challenge.nbPoints}
                     badges={[
                         { name: "Par", icon: User, values: [proof.user.firstName + " " + proof.user.lastName] },
+                        { name: "Groupe", icon: Users, values: [proof.user.groupInte.name] },
+                        { name: "Pour", icon: House, values: [proof.challenge.group.name] },
+                        { name: "Droit TVn7 ?", icon: Video, values: [proof.isOkTVn7 ? 'oui' : 'non'] },
                         { name: "Date", icon: Clock, values: [formatDateTime(proof.date)] },
                     ]}
                 >

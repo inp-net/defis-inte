@@ -24,8 +24,16 @@ export const load: PageServerLoad = async ({ locals }) => {
             }
         },
         include: {
-            user: true,
-            challenge: true,
+            user: {
+                include: {
+                    groupInte: true,
+                }
+            },
+            challenge: {
+                include: {
+                    group: true,
+                },
+            },
         }
     })
 
@@ -78,24 +86,24 @@ export const actions: Actions = {
             ? parseInt(proofIdString, 10)
             : NaN;
 
-        try {
-            const updatedProof = await approveProof(proofId, locals.user.id);
-            return {
-                success: true,
-                proof: updatedProof
-            };
-        } catch (error: any) {
-            if (error.status && error.message) {
-                return fail(error.status, {
-                    message: error.message,
-                    proofId
+            try {
+                const updatedProof = await approveProof(proofId, locals.user.id);
+                return {
+                    success: true,
+                    proof: updatedProof
+                };
+            } catch (error: any) {
+                if (error.status && error.message) {
+                    return fail(error.status, {
+                        message: error.message,
+                        proofId
+                    });
+                }
+                console.error('Action Error:', error);
+                return fail(500, {
+                    message: 'Impossible d\'accepter le défi'
                 });
             }
-            console.error('Action Error:', error);
-            return fail(500, {
-                message: 'Impossible d\'accepter le défi'
-            });
-        }
     },
     deny: async ({ request, locals }) => {
 
@@ -126,22 +134,22 @@ export const actions: Actions = {
             ? parseInt(proofIdString, 10)
             : NaN;
 
-        try {
-            const fallbackUserId = locals.user.id;
-            await denyProof(proofId, fallbackUserId);
-            return { success: true, };
-        } catch (error: any) {
-            if (error.status && error.message) {
-                return fail(error.status, {
-                    message: error.message,
-                    proofId
+            try {
+                const fallbackUserId = locals.user.id;
+                await denyProof(proofId, fallbackUserId);
+                return { success: true, };
+            } catch (error: any) {
+                if (error.status && error.message) {
+                    return fail(error.status, {
+                        message: error.message,
+                        proofId
+                    });
+                }
+                console.error('Action Error:', error);
+                return fail(500, {
+                    message: 'Impossible de supprimer le défi', error
                 });
             }
-            console.error('Action Error:', error);
-            return fail(500, {
-                message: 'Impossible de supprimer le défi', error
-            });
-        }
     }
 };
 
