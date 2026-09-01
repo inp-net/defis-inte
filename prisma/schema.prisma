@@ -91,6 +91,8 @@ model Proof {
     status            Status          @default(PENDING)
     // Céder les droits d'images à TVn7
     isOkTVn7          Boolean         @default(false)
+    // commentaires sur la preuve
+    comment           String?
 }
 
 model Challenge {
