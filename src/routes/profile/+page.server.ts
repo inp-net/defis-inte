@@ -45,7 +45,8 @@ export const load: PageServerLoad = async ({ locals }) => {
                     name: true,
                     nbPoints: true
                 }
-            }
+            },
+            comment: true,
         }
     });
 

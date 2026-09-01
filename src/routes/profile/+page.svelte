@@ -116,6 +116,9 @@
                             {:else}
                                 <p><b>Réponse :</b> {proof.content}</p>
                             {/if}
+                            {#if proof.comment}
+                                <p><b>Commentaire :</b> {proof.comment}</p>
+                            {/if}
                         </Flex>
                     {/snippet}
                 </ChallengeCard>

@@ -63,7 +63,7 @@ export type ProofInput = {
 }
 
 // Pour lire les preuves, informations utiles
-export type ProofRead = Pick< Proof, "proofId" | "type" | "content" | "date" | "status" | "validatorId" >
+export type ProofRead = Pick< Proof, "proofId" | "type" | "content" | "date" | "status" | "validatorId" | "comment" >
     & { user: Pick<User, "firstName" | "lastName">; challenge: Pick<Challenge, "name" | "nbPoints"> | null; groupInte: Pick<GroupInte, "name"> };
 
 // Input pour crée un challenge

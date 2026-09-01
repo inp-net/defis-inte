@@ -118,7 +118,8 @@ export const ProofScalarFieldEnum = {
   challengeId: 'challengeId',
   validatorId: 'validatorId',
   status: 'status',
-  isOkTVn7: 'isOkTVn7'
+  isOkTVn7: 'isOkTVn7',
+  comment: 'comment'
 } as const
 
 export type ProofScalarFieldEnum = (typeof ProofScalarFieldEnum)[keyof typeof ProofScalarFieldEnum]

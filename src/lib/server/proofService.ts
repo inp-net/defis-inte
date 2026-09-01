@@ -145,14 +145,15 @@ export async function newProof(body: ProofInput) {
 * @param proofId identifiant de la preuve
 * @param userId identifiant de l'utilisateur ayant valider la preuve
 */
-export async function approveProof(proofId: number, userId: string) {
+export async function approveProof(proofId: number, userId: string, comment?: string) {
     await canModifyProof(proofId, userId);
 
     const updatedProof = await prisma.proof.update({
         where: { proofId: proofId },
         data: {
             status: Status.VALID,
-            validatorId: userId
+            validatorId: userId,
+            ...(comment !== undefined && { comment: comment })
         }
     });
 
@@ -168,7 +169,7 @@ export async function approveProof(proofId: number, userId: string) {
 * @param proofId identifiant de la preuve
 * @param userId identifiant de l'utilisateur ayant valider la preuve
 */
-export async function denyProof(proofId: number, userId: string) {
+export async function denyProof(proofId: number, userId: string, comment?: string) {
 
     await canModifyProof(proofId, userId);
 
@@ -176,7 +177,8 @@ export async function denyProof(proofId: number, userId: string) {
         where: { proofId: proofId },
         data: {
             status: Status.DENIED,
-            validatorId: userId
+            validatorId: userId,
+            ...(comment !== undefined && { comment: comment })
         }
     });
 

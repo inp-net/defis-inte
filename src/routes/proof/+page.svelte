@@ -1,13 +1,14 @@
 <script lang="ts">
     import { invalidateAll } from '$app/navigation';
     import type { PageData } from "./$types";
-    import { Flex, Stack, Button, Frame, Switch } from "azucar-ui";
+    import { Flex, Stack, Button, Frame, Switch, TextInput } from "azucar-ui";
     import { User, Users, Clock, XIcon, Check, Video, House } from "@lucide/svelte";
     import type { Proof } from "$lib/types/types.d";
     import BackButton from "$lib/components/BackButton.svelte";
     import ChallengeCard from "$lib/components/ChallengeCard.svelte";
 
     let showPending = $state(false);
+    let comments = $state<Record<number, string>>({});
 
     let { data }: { data: PageData } = $props();
     const proofsRaw: Proof[] = $derived(data.posts.proofs);
@@ -21,6 +22,12 @@
             const formData = new FormData();
             formData.append("proofId", id.toString());
 
+            const text = comments[id]?.trim();
+            if (text) {
+                formData.append("comment", text);
+            }
+            console.log(text);
+
             const response = await fetch("?/approve", {
                 method: "POST",
                 headers: { "x-sveltekit-action": "true" },
@@ -29,10 +36,7 @@
             if (response.ok) {
                 const result = await response.json();
                 if (result.type === "failure") {
-                    console.error(
-                        "Erreur de validation :",
-                        result.data?.message,
-                    );
+                    console.error("Erreur de validation :", result.data?.message ?? result);
                 }
             }
         } catch (err) {
@@ -45,6 +49,11 @@
             const formData = new FormData();
             formData.append("proofId", id.toString());
 
+            const text = comments[id]?.trim();
+            if (text) {
+                formData.append("comment", text);
+            }
+
             const response = await fetch("?/deny", {
                 method: "POST",
                 headers: { "x-sveltekit-action": "true" },
@@ -53,10 +62,7 @@
             if (response.ok) {
                 const result = await response.json();
                 if (result.type === "failure") {
-                    console.error(
-                        "Erreur de validation :",
-                        result.data?.message,
-                    );
+                    console.error("Erreur de validation :", result.data?.message ?? result);
                 }
             }
         } catch (err) {
@@ -66,11 +72,13 @@
 
     async function handleAccept(id: number) {
         await approveProof(id);
+        delete comments[id];
         await invalidateAll(); // reset les données
     }
 
     async function handleDeny(id: number) {
         await denyProof(id);
+        delete comments[id];
         await invalidateAll();
     }
 
@@ -108,7 +116,7 @@
             direction="column"
             style="display: flex; flex-direction: column; width: 100%; min-width: 0;"
         >
-            {#each proofs as proof}
+            {#each proofs as proof (proof.proofId)}
                 <ChallengeCard
                     title={"Défi : " + proof.challenge.name}
                     points={proof.challenge.nbPoints}
@@ -137,6 +145,16 @@
                                 <p><b>Réponse :</b> {proof.content}</p>
                             {/if}
                         </Flex>
+                        {#if proof.status === "PENDING"}
+                            <TextInput
+                                placeholder="Optionnel, visible par le groupe"
+                                oninput={(e) =>
+                                    (comments[proof.proofId] = (
+                                        e.target as HTMLInputElement
+                            ).value)}>
+                                Commentaire
+                            </TextInput >
+                        {/if}
                     {/snippet}
                     {#snippet actions()}
                         {#if proof.status === "PENDING"}

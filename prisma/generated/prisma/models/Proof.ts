@@ -45,6 +45,7 @@ export type ProofMinAggregateOutputType = {
   validatorId: string | null
   status: $Enums.Status | null
   isOkTVn7: boolean | null
+  comment: string | null
 }
 
 export type ProofMaxAggregateOutputType = {
@@ -56,6 +57,7 @@ export type ProofMaxAggregateOutputType = {
   validatorId: string | null
   status: $Enums.Status | null
   isOkTVn7: boolean | null
+  comment: string | null
 }
 
 export type ProofCountAggregateOutputType = {
@@ -68,6 +70,7 @@ export type ProofCountAggregateOutputType = {
   validatorId: number
   status: number
   isOkTVn7: number
+  comment: number
   _all: number
 }
 
@@ -91,6 +94,7 @@ export type ProofMinAggregateInputType = {
   validatorId?: true
   status?: true
   isOkTVn7?: true
+  comment?: true
 }
 
 export type ProofMaxAggregateInputType = {
@@ -102,6 +106,7 @@ export type ProofMaxAggregateInputType = {
   validatorId?: true
   status?: true
   isOkTVn7?: true
+  comment?: true
 }
 
 export type ProofCountAggregateInputType = {
@@ -114,6 +119,7 @@ export type ProofCountAggregateInputType = {
   validatorId?: true
   status?: true
   isOkTVn7?: true
+  comment?: true
   _all?: true
 }
 
@@ -213,6 +219,7 @@ export type ProofGroupByOutputType = {
   validatorId: string | null
   status: $Enums.Status
   isOkTVn7: boolean
+  comment: string | null
   _count: ProofCountAggregateOutputType | null
   _avg: ProofAvgAggregateOutputType | null
   _sum: ProofSumAggregateOutputType | null
@@ -248,6 +255,7 @@ export type ProofWhereInput = {
   validatorId?: Prisma.StringNullableFilter<"Proof"> | string | null
   status?: Prisma.EnumStatusFilter<"Proof"> | $Enums.Status
   isOkTVn7?: Prisma.BoolFilter<"Proof"> | boolean
+  comment?: Prisma.StringNullableFilter<"Proof"> | string | null
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
   challenge?: Prisma.XOR<Prisma.ChallengeNullableScalarRelationFilter, Prisma.ChallengeWhereInput> | null
 }
@@ -262,6 +270,7 @@ export type ProofOrderByWithRelationInput = {
   validatorId?: Prisma.SortOrderInput | Prisma.SortOrder
   status?: Prisma.SortOrder
   isOkTVn7?: Prisma.SortOrder
+  comment?: Prisma.SortOrderInput | Prisma.SortOrder
   user?: Prisma.UserOrderByWithRelationInput
   challenge?: Prisma.ChallengeOrderByWithRelationInput
 }
@@ -279,6 +288,7 @@ export type ProofWhereUniqueInput = Prisma.AtLeast<{
   validatorId?: Prisma.StringNullableFilter<"Proof"> | string | null
   status?: Prisma.EnumStatusFilter<"Proof"> | $Enums.Status
   isOkTVn7?: Prisma.BoolFilter<"Proof"> | boolean
+  comment?: Prisma.StringNullableFilter<"Proof"> | string | null
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
   challenge?: Prisma.XOR<Prisma.ChallengeNullableScalarRelationFilter, Prisma.ChallengeWhereInput> | null
 }, "proofId">
@@ -293,6 +303,7 @@ export type ProofOrderByWithAggregationInput = {
   validatorId?: Prisma.SortOrderInput | Prisma.SortOrder
   status?: Prisma.SortOrder
   isOkTVn7?: Prisma.SortOrder
+  comment?: Prisma.SortOrderInput | Prisma.SortOrder
   _count?: Prisma.ProofCountOrderByAggregateInput
   _avg?: Prisma.ProofAvgOrderByAggregateInput
   _max?: Prisma.ProofMaxOrderByAggregateInput
@@ -313,6 +324,7 @@ export type ProofScalarWhereWithAggregatesInput = {
   validatorId?: Prisma.StringNullableWithAggregatesFilter<"Proof"> | string | null
   status?: Prisma.EnumStatusWithAggregatesFilter<"Proof"> | $Enums.Status
   isOkTVn7?: Prisma.BoolWithAggregatesFilter<"Proof"> | boolean
+  comment?: Prisma.StringNullableWithAggregatesFilter<"Proof"> | string | null
 }
 
 export type ProofCreateInput = {
@@ -322,6 +334,7 @@ export type ProofCreateInput = {
   validatorId?: string | null
   status?: $Enums.Status
   isOkTVn7?: boolean
+  comment?: string | null
   user: Prisma.UserCreateNestedOneWithoutProofInput
   challenge?: Prisma.ChallengeCreateNestedOneWithoutProofsInput
 }
@@ -336,6 +349,7 @@ export type ProofUncheckedCreateInput = {
   validatorId?: string | null
   status?: $Enums.Status
   isOkTVn7?: boolean
+  comment?: string | null
 }
 
 export type ProofUpdateInput = {
@@ -345,6 +359,7 @@ export type ProofUpdateInput = {
   validatorId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumStatusFieldUpdateOperationsInput | $Enums.Status
   isOkTVn7?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  comment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   user?: Prisma.UserUpdateOneRequiredWithoutProofNestedInput
   challenge?: Prisma.ChallengeUpdateOneWithoutProofsNestedInput
 }
@@ -359,6 +374,7 @@ export type ProofUncheckedUpdateInput = {
   validatorId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumStatusFieldUpdateOperationsInput | $Enums.Status
   isOkTVn7?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  comment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type ProofCreateManyInput = {
@@ -371,6 +387,7 @@ export type ProofCreateManyInput = {
   validatorId?: string | null
   status?: $Enums.Status
   isOkTVn7?: boolean
+  comment?: string | null
 }
 
 export type ProofUpdateManyMutationInput = {
@@ -380,6 +397,7 @@ export type ProofUpdateManyMutationInput = {
   validatorId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumStatusFieldUpdateOperationsInput | $Enums.Status
   isOkTVn7?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  comment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type ProofUncheckedUpdateManyInput = {
@@ -392,6 +410,7 @@ export type ProofUncheckedUpdateManyInput = {
   validatorId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumStatusFieldUpdateOperationsInput | $Enums.Status
   isOkTVn7?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  comment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type ProofListRelationFilter = {
@@ -422,6 +441,7 @@ export type ProofCountOrderByAggregateInput = {
   validatorId?: Prisma.SortOrder
   status?: Prisma.SortOrder
   isOkTVn7?: Prisma.SortOrder
+  comment?: Prisma.SortOrder
 }
 
 export type ProofAvgOrderByAggregateInput = {
@@ -438,6 +458,7 @@ export type ProofMaxOrderByAggregateInput = {
   validatorId?: Prisma.SortOrder
   status?: Prisma.SortOrder
   isOkTVn7?: Prisma.SortOrder
+  comment?: Prisma.SortOrder
 }
 
 export type ProofMinOrderByAggregateInput = {
@@ -449,6 +470,7 @@ export type ProofMinOrderByAggregateInput = {
   validatorId?: Prisma.SortOrder
   status?: Prisma.SortOrder
   isOkTVn7?: Prisma.SortOrder
+  comment?: Prisma.SortOrder
 }
 
 export type ProofSumOrderByAggregateInput = {
@@ -576,6 +598,7 @@ export type ProofCreateWithoutUserInput = {
   validatorId?: string | null
   status?: $Enums.Status
   isOkTVn7?: boolean
+  comment?: string | null
   challenge?: Prisma.ChallengeCreateNestedOneWithoutProofsInput
 }
 
@@ -588,6 +611,7 @@ export type ProofUncheckedCreateWithoutUserInput = {
   validatorId?: string | null
   status?: $Enums.Status
   isOkTVn7?: boolean
+  comment?: string | null
 }
 
 export type ProofCreateOrConnectWithoutUserInput = {
@@ -629,6 +653,7 @@ export type ProofScalarWhereInput = {
   validatorId?: Prisma.StringNullableFilter<"Proof"> | string | null
   status?: Prisma.EnumStatusFilter<"Proof"> | $Enums.Status
   isOkTVn7?: Prisma.BoolFilter<"Proof"> | boolean
+  comment?: Prisma.StringNullableFilter<"Proof"> | string | null
 }
 
 export type ProofCreateWithoutChallengeInput = {
@@ -638,6 +663,7 @@ export type ProofCreateWithoutChallengeInput = {
   validatorId?: string | null
   status?: $Enums.Status
   isOkTVn7?: boolean
+  comment?: string | null
   user: Prisma.UserCreateNestedOneWithoutProofInput
 }
 
@@ -650,6 +676,7 @@ export type ProofUncheckedCreateWithoutChallengeInput = {
   validatorId?: string | null
   status?: $Enums.Status
   isOkTVn7?: boolean
+  comment?: string | null
 }
 
 export type ProofCreateOrConnectWithoutChallengeInput = {
@@ -687,6 +714,7 @@ export type ProofCreateManyUserInput = {
   validatorId?: string | null
   status?: $Enums.Status
   isOkTVn7?: boolean
+  comment?: string | null
 }
 
 export type ProofUpdateWithoutUserInput = {
@@ -696,6 +724,7 @@ export type ProofUpdateWithoutUserInput = {
   validatorId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumStatusFieldUpdateOperationsInput | $Enums.Status
   isOkTVn7?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  comment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   challenge?: Prisma.ChallengeUpdateOneWithoutProofsNestedInput
 }
 
@@ -708,6 +737,7 @@ export type ProofUncheckedUpdateWithoutUserInput = {
   validatorId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumStatusFieldUpdateOperationsInput | $Enums.Status
   isOkTVn7?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  comment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type ProofUncheckedUpdateManyWithoutUserInput = {
@@ -719,6 +749,7 @@ export type ProofUncheckedUpdateManyWithoutUserInput = {
   validatorId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumStatusFieldUpdateOperationsInput | $Enums.Status
   isOkTVn7?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  comment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type ProofCreateManyChallengeInput = {
@@ -730,6 +761,7 @@ export type ProofCreateManyChallengeInput = {
   validatorId?: string | null
   status?: $Enums.Status
   isOkTVn7?: boolean
+  comment?: string | null
 }
 
 export type ProofUpdateWithoutChallengeInput = {
@@ -739,6 +771,7 @@ export type ProofUpdateWithoutChallengeInput = {
   validatorId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumStatusFieldUpdateOperationsInput | $Enums.Status
   isOkTVn7?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  comment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   user?: Prisma.UserUpdateOneRequiredWithoutProofNestedInput
 }
 
@@ -751,6 +784,7 @@ export type ProofUncheckedUpdateWithoutChallengeInput = {
   validatorId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumStatusFieldUpdateOperationsInput | $Enums.Status
   isOkTVn7?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  comment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type ProofUncheckedUpdateManyWithoutChallengeInput = {
@@ -762,6 +796,7 @@ export type ProofUncheckedUpdateManyWithoutChallengeInput = {
   validatorId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumStatusFieldUpdateOperationsInput | $Enums.Status
   isOkTVn7?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  comment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 
@@ -776,6 +811,7 @@ export type ProofSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   validatorId?: boolean
   status?: boolean
   isOkTVn7?: boolean
+  comment?: boolean
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   challenge?: boolean | Prisma.Proof$challengeArgs<ExtArgs>
 }, ExtArgs["result"]["proof"]>
@@ -790,6 +826,7 @@ export type ProofSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensi
   validatorId?: boolean
   status?: boolean
   isOkTVn7?: boolean
+  comment?: boolean
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   challenge?: boolean | Prisma.Proof$challengeArgs<ExtArgs>
 }, ExtArgs["result"]["proof"]>
@@ -804,6 +841,7 @@ export type ProofSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensi
   validatorId?: boolean
   status?: boolean
   isOkTVn7?: boolean
+  comment?: boolean
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   challenge?: boolean | Prisma.Proof$challengeArgs<ExtArgs>
 }, ExtArgs["result"]["proof"]>
@@ -818,9 +856,10 @@ export type ProofSelectScalar = {
   validatorId?: boolean
   status?: boolean
   isOkTVn7?: boolean
+  comment?: boolean
 }
 
-export type ProofOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"proofId" | "userId" | "type" | "content" | "date" | "challengeId" | "validatorId" | "status" | "isOkTVn7", ExtArgs["result"]["proof"]>
+export type ProofOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"proofId" | "userId" | "type" | "content" | "date" | "challengeId" | "validatorId" | "status" | "isOkTVn7" | "comment", ExtArgs["result"]["proof"]>
 export type ProofInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   challenge?: boolean | Prisma.Proof$challengeArgs<ExtArgs>
@@ -850,6 +889,7 @@ export type $ProofPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs 
     validatorId: string | null
     status: $Enums.Status
     isOkTVn7: boolean
+    comment: string | null
   }, ExtArgs["result"]["proof"]>
   composites: {}
 }
@@ -1284,6 +1324,7 @@ export interface ProofFieldRefs {
   readonly validatorId: Prisma.FieldRef<"Proof", 'String'>
   readonly status: Prisma.FieldRef<"Proof", 'Status'>
   readonly isOkTVn7: Prisma.FieldRef<"Proof", 'Boolean'>
+  readonly comment: Prisma.FieldRef<"Proof", 'String'>
 }
     
 
