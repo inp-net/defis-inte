@@ -27,7 +27,10 @@
 
     categories.push({ key: "Statistiques", valeurs: statsPersonnels });
 
-    const proofs : ProofRead[] = $derived(data.posts.userProofs);
+    const proofsRaw : ProofRead[] = $derived(data.posts.userProofs);
+    const proofs = $derived(proofsRaw
+        .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+    );
 
     function formatDateTime(date: Date | string): string {
         const d = new Date(date);
@@ -41,17 +44,17 @@
         });
     }
 
-    let renderStatus = (status: Status): string => {
-        if (status === Status.PENDING) {
-            return "En attente de validation ...";
-        } else if (status === Status.DENIED) {
-            return "Preuve rejetée.";
-        } else if (status === Status.VALID) {
-            return "Preuve acceptée.";
+    let emojiStatus = (status: Status | string): string => {
+        if (status === "PENDING" || status === Status.PENDING) {
+            return "⏳";
+        } else if (status === "DENIED" || status === Status.DENIED) {
+            return "❌";
+        } else if (status === "VALID" || status === Status.VALID) {
+            return "✅";
         } else {
-            return "Statut inconnu, voir avec l'admin";
+            return "LEGENDAIRE";
         }
-    };
+    }
 
 </script>
 
@@ -88,45 +91,13 @@
         </Frame>
     </Stack>
 
-    {#snippet proofRender(proof)}
-        <!-- métadonnées -->
-        <Flex direction="column" gap="xs">
-            <Flex gap="xs" align="center" >
-                <UserRound size="15px" />
-                <p>{proof.user.firstName + " " + proof.user.lastName}</p>
-            </Flex>
-            <Flex gap="xs" align="center" >
-                <Clock size="15px" />
-                <p>{formatDateTime(proof.date)}</p>
-            </Flex>
-            <Flex gap="xs" align="center" >
-                <Route size="15px" />
-                <p>{renderStatus(proof.status)}</p>
-            </Flex>
-        </Flex>
-        <Flex direction="column" gap="xs">
-            <h4>Contenu de la preuve :</h4>
-            <Flex direction="column" gap="xs">
-                {#each proof.content as content}
-                    {#if proof.type === 'TEXT'}
-                        <p>{content}</p>
-                    {:else}
-                        <a href={content} target="_blank" rel="noopener noreferrer">
-                            <p>Regarder le média</p>
-                        </a>
-                    {/if}
-                {/each}
-            </Flex>
-        </Flex>
-    {/snippet}
-
     <Stack>
         <h3>Preuves de votre groupe</h3>
         <Flex direction="column" gap="xs">
             {#each proofs as proof}
                 <ChallengeCard
-                    title={"Défi : " + proof.challenge.name}
-                    points={proof.challenge.nbPoints}
+                    title={emojiStatus((proof.status as Status) ?? Status.PENDING) + " : " + (proof.challenge?.name ?? "Défi inconnu")}
+                    points={proof.challenge?.nbPoints ?? 0}
                     badges={[
                         { name: "Par", icon: User, values: [proof.user.firstName + " " + proof.user.lastName] },
                         { name: "Date", icon: Clock, values: [formatDateTime(proof.date)] },
