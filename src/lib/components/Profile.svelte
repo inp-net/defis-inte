@@ -9,7 +9,7 @@
         size?: Size;
         firstName: string;
         lastName: string;
-        groupName: string;
+        groupName?: string;
     };
 
     const {

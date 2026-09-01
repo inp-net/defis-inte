@@ -1,4 +1,5 @@
 <script lang="ts">
+    import type { PageData } from "./$types";
     import { Flex, Stack, Frame } from "azucar-ui";
     import { Clock, UserRound, Route, User, Loader } from "@lucide/svelte";
     import { type ProofRead, Status } from "$lib/types/types.d";
@@ -9,6 +10,7 @@
     let { data }: { data: PageData } = $props();
 
     let user = $derived(data.user);
+    const groupName = $derived(data.posts.groupInteName);
 
     type Category = {
         key: string;
@@ -67,7 +69,8 @@
                     size="xl"
                     firstName={user.firstName}
                     lastName={user.lastName}
-                    src={user.profilePictureURL}
+                    src={user.profilePictureURL ?? ""}
+                    groupName={groupName ?? "Sans groupe"}
                 />
                 <Flex gap="xl">
                     {#each categories as category}
