@@ -1,17 +1,20 @@
 <script lang="ts">
     import { invalidateAll } from '$app/navigation';
-    import type { PageData } from "../$types";
-    import { Flex, Stack, Button } from "azucar-ui";
+    import type { PageData } from "./$types";
+    import { Flex, Stack, Button, Frame, Switch } from "azucar-ui";
     import { User, Users, Clock, XIcon, Check, Video, House } from "@lucide/svelte";
     import type { Proof } from "$lib/types/types.d";
     import BackButton from "$lib/components/BackButton.svelte";
     import ChallengeCard from "$lib/components/ChallengeCard.svelte";
 
+    let showPending = $state(false);
+
     let { data }: { data: PageData } = $props();
-    let proofs: Proof[] = $state(data.posts.proofs);
-    $effect(() => {
-        proofs = data.posts.proofs;
-    });
+    const proofsRaw: Proof[] = $derived(data.posts.proofs);
+    const proofs = $derived(proofsRaw
+        .filter((p) => p.status === "PENDING" || showPending)
+        .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+    );
 
     async function approveProof(id: number): Promise<void> {
         try {
@@ -24,18 +27,12 @@
                 body: formData,
             });
             if (response.ok) {
-                // Changement local des modifications serveur
                 const result = await response.json();
                 if (result.type === "failure") {
                     console.error(
                         "Erreur de validation :",
                         result.data?.message,
                     );
-                    return;
-                }
-                const proof: Proof = proofs.find((c) => c.proofId === id);
-                if (proof) {
-                    proof.status = "VALID";
                 }
             }
         } catch (err) {
@@ -60,11 +57,6 @@
                         "Erreur de validation :",
                         result.data?.message,
                     );
-                    return;
-                }
-                const proof = proofs.find((c) => c.challengeId === id);
-                if (proof) {
-                    proof.status = "DENIED";
                 }
             }
         } catch (err) {
@@ -73,13 +65,13 @@
     }
 
     async function handleAccept(id: number) {
-        approveProof(id);
-        invalidateAll(); // reset les données
+        await approveProof(id);
+        await invalidateAll(); // reset les données
     }
 
     async function handleDeny(id: number) {
-        denyProof(id);
-        invalidateAll();
+        await denyProof(id);
+        await invalidateAll();
     }
 
     function formatDateTime(date: Date | string): string {
@@ -102,6 +94,12 @@
         <p>Validation des preuves</p>
     </Stack>
 
+    <Frame border={true}>
+        <Stack>
+            <Switch bind:checked={showPending}>Afficher les preuves traités</Switch>
+        </Stack>
+    </Frame>
+
     <Stack
         style="max-width: 100%; width: 100%; min-width: 0; display: flex; flex-direction: column;"
     >
@@ -116,12 +114,15 @@
                     points={proof.challenge.nbPoints}
                     badges={[
                         { name: "Par", icon: User, values: [proof.user.firstName + " " + proof.user.lastName] },
-                        { name: "Groupe", icon: Users, values: [proof.user.groupInte.name] },
-                        { name: "Pour", icon: House, values: [proof.challenge.group.name] },
+                        { name: "Groupe", icon: Users, values: [proof.user.groupInte?.name ?? "Inconnu"] },
+                        { name: "Pour", icon: House, values: [proof.challenge.group?.name ?? "Inconnu"] },
                         { name: "Droit TVn7 ?", icon: Video, values: [proof.isOkTVn7 ? 'oui' : 'non'] },
                         { name: "Date", icon: Clock, values: [formatDateTime(proof.date)] },
                     ]}
                 >
+                    {#snippet header()}
+                        <img src={proof.challenge.group.pictureURL} alt={proof.challenge.group.pictureURL} />
+                    {/snippet}
                     {#snippet content()}
                         <p><b>Description :</b> {proof.challenge.description}</p>
                         <Flex direction="column" gap="xs">
@@ -138,20 +139,22 @@
                         </Flex>
                     {/snippet}
                     {#snippet actions()}
-                        <Flex gap="xs" style="margin-left: auto; flex-shrink: 0;">
-                            <Button
-                                icon={XIcon}
-                                class="danger"
-                                name="Delete"
-                                onclick={() => handleDeny(proof.proofId)}
-                            />
-                            <Button
-                                icon={Check}
-                                class="success"
-                                name="Success"
-                                onclick={() => handleAccept(proof.proofId)}
-                            />
-                        </Flex>
+                        {#if proof.status === "PENDING"}
+                            <Flex gap="xs" style="margin-left: auto; flex-shrink: 0;">
+                                <Button
+                                    icon={XIcon}
+                                    class="danger"
+                                    name="Delete"
+                                    onclick={() => handleDeny(proof.proofId)}
+                                />
+                                <Button
+                                    icon={Check}
+                                    class="success"
+                                    name="Success"
+                                    onclick={() => handleAccept(proof.proofId)}
+                                />
+                            </Flex>
+                        {/if}
                     {/snippet}
                 </ChallengeCard>
             {/each}
@@ -160,18 +163,10 @@
 </Flex>
 
 <style>
-    .text-response {
-        width: 100%;
-        padding: var(--size-sm);
-        border-radius: 8px;
-        word-wrap: break-word;
-        overflow-wrap: break-word;
-    }
-
-    @media (max-width: 640px) {
-        .video-container video,
-        .image-container img {
-            max-height: 250px;
-        }
+    img {
+        width: var(--size-lg);
+        height: var(--size-lg);
+        border-radius: var(--size-xl);
+        object-fit: cover;
     }
 </style>

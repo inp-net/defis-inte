@@ -320,8 +320,8 @@
 
 <style>
     img {
-        width: var(--size-md);
-        height: var(--size-md);
+        width: var(--size-lg);
+        height: var(--size-lg);
         border-radius: var(--size-xl);
         object-fit: cover;
     }

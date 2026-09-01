@@ -12,7 +12,6 @@ export const load: PageServerLoad = async ({ locals }) => {
 
     const proofs: Proof[] = await prisma.proof.findMany({
         where: {
-            status: "PENDING",
             challenge: user?.isAdmin ? {} : {
                 group: {
                     board: {
