@@ -11,10 +11,15 @@ export const load: PageServerLoad = async ({ locals }) => {
         throw error(403, "utilisateur non connecté");
     }
 
-    const userGroupInteId = user.groupInteId || (await prisma.user.findUnique({
+    const userGroupData = (user.groupInteId && user.groupInte?.name)
+    ? user
+    : await prisma.user.findUnique({
         where: { id: user.id },
-        select: { groupInteId: true }
-    }))?.groupInteId;
+        select: { groupInteId: true, groupInte: { select: { name: true } } }
+    });
+
+    const userGroupInteId = userGroupData?.groupInteId;
+    const groupInteName = userGroupData?.groupInte?.name;
 
     const userProofs : ProofRead[] = await prisma.proof.findMany({
         where: {
@@ -40,7 +45,8 @@ export const load: PageServerLoad = async ({ locals }) => {
                     name: true,
                     nbPoints: true
                 }
-            }
+            },
+            comment: true,
         }
     });
 
@@ -64,7 +70,8 @@ export const load: PageServerLoad = async ({ locals }) => {
         posts: {
             userProofs,
             proofCount,
-            proofDoneCount
+            proofDoneCount,
+            groupInteName
         }, user
     };
 };

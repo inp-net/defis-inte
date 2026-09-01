@@ -10,9 +10,8 @@ export const load: PageServerLoad = async ({ locals }) => {
 
     if (!user) return error(500, "Utilisateur non connecté.");
 
-    const proofs: Proof[] = await prisma.proof.findMany({
+    const proofs = await prisma.proof.findMany({
         where: {
-            status: "PENDING",
             challenge: user?.isAdmin ? {} : {
                 group: {
                     board: {
@@ -35,7 +34,7 @@ export const load: PageServerLoad = async ({ locals }) => {
                 },
             },
         }
-    })
+    });
 
     //
     // STATISTIQUES
@@ -81,13 +80,14 @@ export const actions: Actions = {
 
         const data = await request.formData();
         const proofIdString = data.get('proofId');
+        const comment = data.get('comment')?.toString() || undefined;
 
         const proofId: number = (typeof proofIdString === 'string')
             ? parseInt(proofIdString, 10)
             : NaN;
 
             try {
-                const updatedProof = await approveProof(proofId, locals.user.id);
+                const updatedProof = await approveProof(proofId, locals.user.id, comment);
                 return {
                     success: true,
                     proof: updatedProof
@@ -99,9 +99,10 @@ export const actions: Actions = {
                         proofId
                     });
                 }
-                console.error('Action Error:', error);
+
                 return fail(500, {
-                    message: 'Impossible d\'accepter le défi'
+                    message: error?.message || 'Impossible d\'accepter le défi',
+                    proofId
                 });
             }
     },
@@ -129,6 +130,7 @@ export const actions: Actions = {
 
         const data = await request.formData();
         const proofIdString = data.get('proofId');
+        const comment = data.get('comment')?.toString() || undefined;
 
         const proofId: number = (typeof proofIdString === 'string')
             ? parseInt(proofIdString, 10)
@@ -136,7 +138,7 @@ export const actions: Actions = {
 
             try {
                 const fallbackUserId = locals.user.id;
-                await denyProof(proofId, fallbackUserId);
+                await denyProof(proofId, fallbackUserId, comment);
                 return { success: true, };
             } catch (error: any) {
                 if (error.status && error.message) {

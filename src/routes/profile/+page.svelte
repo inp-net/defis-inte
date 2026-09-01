@@ -1,6 +1,7 @@
 <script lang="ts">
-    import { Flex, Stack, Frame, Switch, Button } from "azucar-ui";
-    import { Clock, UserRound, UserStar, Route, User } from "@lucide/svelte";
+    import type { PageData } from "./$types";
+    import { Flex, Stack, Frame } from "azucar-ui";
+    import { Clock, UserRound, Route, User, Loader } from "@lucide/svelte";
     import { type ProofRead, Status } from "$lib/types/types.d";
     import BackButton from "$lib/components/BackButton.svelte";
     import Profile from "$lib/components/Profile.svelte";
@@ -9,6 +10,7 @@
     let { data }: { data: PageData } = $props();
 
     let user = $derived(data.user);
+    const groupName = $derived(data.posts.groupInteName);
 
     type Category = {
         key: string;
@@ -25,24 +27,10 @@
 
     categories.push({ key: "Statistiques", valeurs: statsPersonnels });
 
-    // Mettre en forme les métadonnées
-
-    let showPopUp: boolean = $state(false);
-
-    // Sert a recalculer les points
-    async function reCalculPoints() {
-        try {
-            const response = await fetch("?/reCalculPoints", {
-                method: "POST",
-                headers: { "x-sveltekit-action": "true" },
-                body: new FormData(),
-            });
-        } catch (err) {
-            console.error("Erreur lors de l'envoi du form : ", err);
-        }
-    }
-
-    const proofs : ProofRead[] = $derived(data.posts.userProofs);
+    const proofsRaw : ProofRead[] = $derived(data.posts.userProofs);
+    const proofs = $derived(proofsRaw
+        .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+    );
 
     function formatDateTime(date: Date | string): string {
         const d = new Date(date);
@@ -56,17 +44,17 @@
         });
     }
 
-    let renderStatus = (status: Status): string => {
-        if (status === Status.PENDING) {
-            return "En attente de validation ...";
-        } else if (status === Status.DENIED) {
-            return "Preuve rejetée.";
-        } else if (status === Status.VALID) {
-            return "Preuve acceptée.";
+    let emojiStatus = (status: Status | string): string => {
+        if (status === "PENDING" || status === Status.PENDING) {
+            return "⏳";
+        } else if (status === "DENIED" || status === Status.DENIED) {
+            return "❌";
+        } else if (status === "VALID" || status === Status.VALID) {
+            return "✅";
         } else {
-            return "Statut inconnu, voir avec l'admin";
+            return "LEGENDAIRE";
         }
-    };
+    }
 
 </script>
 
@@ -84,7 +72,8 @@
                     size="xl"
                     firstName={user.firstName}
                     lastName={user.lastName}
-                    src={user.profilePictureURL}
+                    src={user.profilePictureURL ?? ""}
+                    groupName={groupName ?? "Sans groupe"}
                 />
                 <Flex gap="xl">
                     {#each categories as category}
@@ -102,48 +91,17 @@
         </Frame>
     </Stack>
 
-    {#snippet proofRender(proof)}
-        <!-- métadonnées -->
-        <Flex direction="column" gap="xs">
-            <Flex gap="xs" align="center" >
-                <UserRound size="15px" />
-                <p>{proof.user.firstName + " " + proof.user.lastName}</p>
-            </Flex>
-            <Flex gap="xs" align="center" >
-                <Clock size="15px" />
-                <p>{formatDateTime(proof.date)}</p>
-            </Flex>
-            <Flex gap="xs" align="center" >
-                <Route size="15px" />
-                <p>{renderStatus(proof.status)}</p>
-            </Flex>
-        </Flex>
-        <Flex direction="column" gap="xs">
-            <h4>Contenu de la preuve :</h4>
-            <Flex direction="column" gap="xs">
-                {#each proof.content as content}
-                    {#if proof.type === 'TEXT'}
-                        <p>{content}</p>
-                    {:else}
-                        <a href={content} target="_blank" rel="noopener noreferrer">
-                            <p>Regarder le média</p>
-                        </a>
-                    {/if}
-                {/each}
-            </Flex>
-        </Flex>
-    {/snippet}
-
     <Stack>
         <h3>Preuves de votre groupe</h3>
         <Flex direction="column" gap="xs">
             {#each proofs as proof}
                 <ChallengeCard
-                    title={"Défi : " + proof.challenge.name}
-                    points={proof.challenge.nbPoints}
+                    title={emojiStatus((proof.status as Status) ?? Status.PENDING) + " : " + (proof.challenge?.name ?? "Défi inconnu")}
+                    points={proof.challenge?.nbPoints ?? 0}
                     badges={[
                         { name: "Par", icon: User, values: [proof.user.firstName + " " + proof.user.lastName] },
                         { name: "Date", icon: Clock, values: [formatDateTime(proof.date)] },
+                        { name: "Status", icon: Loader, values: [proof.status] },
                     ]}
                 >
                     {#snippet content()}
@@ -157,6 +115,9 @@
                                 {/each}
                             {:else}
                                 <p><b>Réponse :</b> {proof.content}</p>
+                            {/if}
+                            {#if proof.comment}
+                                <p><b>Commentaire :</b> {proof.comment}</p>
                             {/if}
                         </Flex>
                     {/snippet}
