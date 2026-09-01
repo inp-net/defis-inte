@@ -10,6 +10,7 @@
         groupName: string;
         picture?: string;
         accessAdmin: boolean;
+        accessBoard: boolean;
         notificationsDefis?: number;
         notificationsPreuves?: number;
     };
@@ -20,6 +21,7 @@
         groupName = "",
         picture,
         accessAdmin,
+        accessBoard,
         notificationsDefis,
         notificationsPreuves,
     }: Props = $props();
@@ -49,6 +51,8 @@
                         notifications={notificationsDefis}
                         disabled={false}
                     ></ButtonNotification>
+                {/if}
+                {#if accessAdmin || accessBoard}
                     <ButtonNotification
                         href="/proof"
                         icon={ImageUp}
