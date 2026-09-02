@@ -154,6 +154,8 @@
                             ).value)}>
                                 Commentaire
                             </TextInput >
+                        {:else if proof.comment}
+                            <p><b>Commentaire :</b> {proof.comment}</p>
                         {/if}
                     {/snippet}
                     {#snippet actions()}
