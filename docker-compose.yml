@@ -20,7 +20,7 @@ services:
     profiles: ["prod-test"]
 
   db:
-    image: postgres:14
+    image: postgres:17
     ports:
       - "5432:5432"
     environment:
