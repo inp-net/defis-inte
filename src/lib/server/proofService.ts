@@ -179,7 +179,7 @@ export async function updateProofStatus(
     // Mise à jour des points de l'utilisateur et du challenge uniquement si validé
     if (status === Status.VALID) {
         await pointsUpdate(proofId);
-        await addChallengeSucced(userId, proofId);
+        await addChallengeSucced(proofId);
     }
 
     return updatedProof;
@@ -245,44 +245,38 @@ export async function pointsUpdate(proofId: number) {
 * @param userId // identifiant de l'utilisateur 
 * @param proofId // identifiant de la preuve 
 */
-export async function addChallengeSucced(userId: string, proofId: number) {
+export async function addChallengeSucced(proofId: number) {
     const proofData = await prisma.proof.findUnique({
-        where: {
-            proofId: proofId
-        },
+        where: { proofId },
         select: {
-            challengeId: true
-        }
-    });
-
-    const userGroupId = await prisma.user.findUnique({
-        where: { id: userId },
-        select: {
-            groupInteId: true
+            challengeId: true,
+            user: {
+                select: {
+                    groupInteId: true
+                }
+            }
         }
     });
 
     if (!proofData || !proofData.challengeId) {
-        throw error(404, "preuve introuvable");
+        throw error(404, "Preuve ou challenge introuvable");
     }
 
-    if (!userGroupId || !userGroupId.groupInteId) {
-        throw error(404, "utilisateur du groupe introuvable");
+    const groupInteId = proofData.user.groupInteId;
+    if (!groupInteId) {
+        throw error(400, "L'auteur de la preuve n'a pas de groupe d'intégration");
     }
 
-    const challengeUpdate = await prisma.challenge.update({
+    return await prisma.challenge.update({
         where: {
             challengeId: proofData.challengeId
         },
         data: {
             groupInteSucceed: {
                 connect: {
-                    groupId: userGroupId.groupInteId
+                    groupId: groupInteId
                 }
             }
         }
     });
-
-    return challengeUpdate;
-
 }
