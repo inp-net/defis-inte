@@ -1,4 +1,5 @@
 <script lang="ts">
+    import { Toaster, toast } from 'svelte-sonner'
     import { invalidateAll } from '$app/navigation';
     import type { PageData } from "./$types";
     import { Flex, Stack, Button, Frame, Switch, TextInput } from "azucar-ui";
@@ -71,6 +72,7 @@
     }
 
     async function handleAccept(id: number) {
+
         await approveProof(id);
         delete comments[id];
         await invalidateAll(); // reset les données
@@ -165,13 +167,27 @@
                                     icon={XIcon}
                                     class="danger"
                                     name="Delete"
-                                    onclick={() => handleDeny(proof.proofId)}
+                                    onclick={() =>
+                                        toast('Voulez-vous refuser la preuve ?', {
+                                            action: {
+                                                label: 'Oui',
+                                                onClick: () => handleDeny(proof.proofId)
+                                            },
+                                        })
+                                    }
                                 />
                                 <Button
                                     icon={Check}
                                     class="success"
                                     name="Success"
-                                    onclick={() => handleAccept(proof.proofId)}
+                                    onclick={() =>
+                                        toast('Voulez-vous valider la preuve ?', {
+                                            action: {
+                                                label: 'Oui',
+                                                onClick: () => handleAccept(proof.proofId)
+                                            },
+                                        })
+                                    }
                                 />
                             </Flex>
                         {/if}
@@ -181,6 +197,8 @@
         </Flex>
     </Stack>
 </Flex>
+
+<Toaster richColors  />
 
 <style>
     img {
