@@ -45,7 +45,7 @@ model User {
     
     // Préférences de l'utilisateur
     darkMode          Boolean         @default(false)
-    isOkTVn7          Boolean         @default(false)
+    isOkTVn7          Boolean         @default(true)
 
     // Si l'utilateur est administrateur
     isAdmin           Boolean         @default(false)
