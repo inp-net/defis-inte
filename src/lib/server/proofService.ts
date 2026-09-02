@@ -179,7 +179,7 @@ export async function updateProofStatus(
     // Mise à jour des points de l'utilisateur et du challenge uniquement si validé
     if (status === Status.VALID) {
         await pointsUpdate(proofId);
-        await addChallengeSucced(proofId);
+        // await addChallengeSucced(proofId);
     }
 
     return updatedProof;
@@ -244,6 +244,7 @@ export async function pointsUpdate(proofId: number) {
 /**Ajout d'un challenge réussi pour le groupe d'intégration de l'utilisateur
 * @param userId // identifiant de l'utilisateur 
 * @param proofId // identifiant de la preuve 
+* @deprecated
 */
 export async function addChallengeSucced(proofId: number) {
     const proofData = await prisma.proof.findUnique({

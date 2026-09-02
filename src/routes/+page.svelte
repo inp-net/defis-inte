@@ -175,8 +175,8 @@
                     (a, b) =>
                         sortByDone(a, b) ||
                         flip *
-                            (b.groupInteSucceedName.length -
-                                a.groupInteSucceedName.length) ||
+                            ((b.allSucceedGroupNames?.length ?? 0) -
+                                (a.allSucceedGroupNames?.length ?? 0)) ||
                         secondarySort(a, b),
                 );
             default:
@@ -294,8 +294,8 @@
             { name: "Club", icon: UsersRound, values: [ challenge.groupName ] },
             { name: "Lieu", icon: MapPin, values: [ challenge.locationName ] },
             { name: "Type de preuve", icon: Paperclip, values: [ UploadType[challenge.type as keyof typeof UploadType]] },
-            ...(challenge.groupInteSucceedName?.length
-            ? [{ name: "Défi réussi par", icon: Trophy, values: challenge.groupInteSucceedName}]
+            ...(challenge.allSucceedGroupNames?.length
+            ? [{ name: "Défi réussi par", icon: Trophy, values: challenge.allSucceedGroupNames }]
             : [])
         ]}
     >

@@ -112,6 +112,7 @@ model Challenge {
     defiAccepte       Boolean         @default(false)
 
     // Quels groupe d'inté ont réussi le défi
+    // deprecated
     groupInteSucceed  GroupInte[]     @relation("ChallengesSucceed")
 
     // Type de preuve (VIDEO / TEXTE / PHOTO)

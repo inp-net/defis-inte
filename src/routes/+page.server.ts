@@ -31,40 +31,54 @@ export const load: PageServerLoad = async ({ locals }) => {
                     pictureURL: true
                 }
             },
-            groupInteSucceed: {
-                select: {
-                    groupId: true,
-                    name: true
-                }
+            proofs: {
+            where: {
+                status: "VALID",
             },
-            proofs: userGroupInteId ? {
-                where: {
-                    status: "PENDING",
-                    user: {
-                        groupInteId: userGroupInteId
+            select: {
+                status: true,
+                user: {
+                    select: {
+                        groupInte: {
+                            select: {
+                                groupId: true,
+                                name: true
+                            }
+                        }
                     }
-                },
-                select: {
-                    proofId: true
                 }
-            } : false
+            }
+        }
         }
     });
 
     // Ajoute une information si un membre du groupe a fait le défi
-    const allChallenges = allChallengesUntyped.map(({ group, groupInteSucceed, proofs, ...challenge }) => {
-        const isDone = Boolean(
-            userGroupInteId &&
-            groupInteSucceed.some(g => g.groupId === userGroupInteId)
-        );
-        const isPending = Boolean(userGroupInteId && Array.isArray(proofs) && proofs.length > 0);
+    const allChallenges = allChallengesUntyped.map(({ group, proofs, ...challenge }) => {
+        const validGroupMap = new Map<string, string>();
+        let isDone = false;
+        let isPending = false;
+
+        for (const proof of proofs) {
+            const groupInte = proof.user?.groupInte;
+            if (!groupInte) continue;
+
+            if (proof.status === 'VALID') {
+                validGroupMap.set(groupInte.groupId, groupInte.name);
+                if (userGroupInteId && groupInte.groupId === userGroupInteId) {
+                    isDone = true;
+                }
+            } else if (proof.status === 'PENDING' && userGroupInteId && groupInte.groupId === userGroupInteId) {
+                isPending = true;
+            }
+        }
+
         return {
             ...challenge,
             groupName: group.name ?? "",
             groupUrl: group.pictureURL ?? "",
-            allSucceedGroupNames: groupInteSucceed.map(g => g.name),
+            allSucceedGroupNames: Array.from(validGroupMap.values()),
             isDone,
-            isPending
+            isPending: !isDone && isPending
         };
     });
 
