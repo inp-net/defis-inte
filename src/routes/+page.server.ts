@@ -38,34 +38,32 @@ export const load: PageServerLoad = async ({ locals }) => {
                     name: true,
                 }
             },
-            proofs: {
+            proofs: userGroupInteId ? {
                 where: {
                     status: "PENDING",
                     user: {
-                        groupInteId: user?.groupInteId ?? ""
+                        groupInteId: userGroupInteId
                     }
                 },
                 select: {
                     proofId: true
                 }
-            }
+            } : false
         }
-    })
+    });
 
     // Ajoute une information si un membre du groupe à fait le défi
     const allChallenges = allChallengesUntyped.map(({ group, groupInteSucceed, proofs, ...challenge }) => {
         const isDone = Boolean(
-            user?.groupInteId &&
-            groupInteSucceed.some(g => g.groupId === user.groupInteId)
+            userGroupInteId &&
+            groupInteSucceed.some(g => g.groupId === userGroupInteId)
         );
-
-        const isPending = user?.groupInteId ? proofs.length > 0 : false;
-
+        const isPending = Boolean(userGroupInteId && Array.isArray(proofs) && proofs.length > 0);
         return {
             ...challenge,
             groupName: group.name ?? "",
             groupUrl: group.pictureURL ?? "",
-            groupInteSucceedName: groupInteSucceed.map(g => g.name),
+            allSucceedGroupNames: groupInteSucceed.map(g => g.name),
             isDone,
             isPending,
         };
@@ -79,38 +77,39 @@ export const load: PageServerLoad = async ({ locals }) => {
         where: {
             defiAccepte: false,
             isDeleted: false,
-            group: user?.isAdmin ? {} : {
-                board: {
-                    some: {
-                        id: user.id
+            ...(user.isAdmin ? {} : {
+                group: {
+                    board: {
+                        some: { id: user.id }
                     }
                 }
-            }
+            })
         }
-    })
+    });
 
     // Le nombre de preuves en attentes d'être validés par l'utilisateur
     const pendingProofCount = !user ? 0 : await prisma.proof.count({
         where: {
             status: "PENDING",
-            challenge: user?.isAdmin ? {} : {
-                group: {
-                    board: {
-                        some: {
-                            id: user.id
+            ...(user.isAdmin ? {} : {
+                challenge: {
+                    group: {
+                        board: {
+                            some: { id: user.id }
                         }
                     }
                 }
-            }
+            })
         }
-    })
+    });
 
     return {
         posts: {
             challenges,
             pendingChallengeCount,
             pendingProofCount
-        }, user: locals.user,
+        },
+        user
     };
 };
 
