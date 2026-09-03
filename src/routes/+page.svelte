@@ -186,7 +186,7 @@
     let isConnected: boolean = $derived(Boolean(user));
 
     // Précompute les endroits où il faut mettre une catégorie
-    const processedChallenges = $derived(() => {
+    let processedChallenges = $derived.by(() => {
         let currentClub: string = "";
         return sortedSearchedChallenges.map((challenge) => {
             const showCategory =
