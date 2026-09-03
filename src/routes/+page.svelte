@@ -301,7 +301,7 @@
     >
         {#snippet header()}
             {#if challenge.groupUrl && !(sortBind === "Clubs")}
-                <img src={challenge.groupUrl} alt={challenge.groupName} />
+                <img src={challenge.groupUrl} alt={challenge.groupName} loading="lazy" />
             {/if}
         {/snippet}
         {#snippet content()}
