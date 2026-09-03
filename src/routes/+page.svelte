@@ -11,7 +11,7 @@
     
 
     // composants
-    import { Flex, Stack, Button } from "azucar-ui";
+    import { Flex, Stack, Button, Frame } from "azucar-ui";
     import { MapPin, UsersRound, Trophy, LogIn, Paperclip } from "@lucide/svelte";
     import Header from "$lib/components/Header.svelte";
     import AddChallenge from "$lib/components/AddChallenge.svelte";
