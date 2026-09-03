@@ -8,6 +8,10 @@ export default defineConfig({
 	optimizeDeps: {
 		include: ['svelte-sonner']
 	},
+    build: {
+        cssCodeSplit: true,
+        assetsInlineLimit: 4096
+    },
 	resolve: {
 		alias: {
 			'~generated': path.resolve('./prisma/generated')

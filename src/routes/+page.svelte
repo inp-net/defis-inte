@@ -186,7 +186,7 @@
     let isConnected: boolean = $derived(Boolean(user));
 
     // Précompute les endroits où il faut mettre une catégorie
-    const processedChallenges = $derived(() => {
+    let processedChallenges = $derived.by(() => {
         let currentClub: string = "";
         return sortedSearchedChallenges.map((challenge) => {
             const showCategory =
@@ -251,7 +251,7 @@
             style="max-width: 100%; width: 100%;"
             wrap={false}
         >
-            {#each processedChallenges() as challenge (challenge.challengeId)}
+            {#each processedChallenges as challenge (challenge.challengeId)}
                 {#if challenge.showCategory}
                     <!--
                         Cette section devrait être refactor. Du a une mauvaise
@@ -301,7 +301,7 @@
     >
         {#snippet header()}
             {#if challenge.groupUrl && !(sortBind === "Clubs")}
-                <img src={challenge.groupUrl} alt={challenge.groupName} />
+                <img src={challenge.groupUrl} alt={challenge.groupName} loading="lazy" />
             {/if}
         {/snippet}
         {#snippet content()}
