@@ -11,7 +11,7 @@ export default defineConfig({
     build: {
         cssCodeSplit: true,
         assetsInlineLimit: 4096
-    }
+    },
 	resolve: {
 		alias: {
 			'~generated': path.resolve('./prisma/generated')

@@ -251,7 +251,7 @@
             style="max-width: 100%; width: 100%;"
             wrap={false}
         >
-            {#each processedChallenges() as challenge (challenge.challengeId)}
+            {#each processedChallenges as challenge (challenge.challengeId)}
                 {#if challenge.showCategory}
                     <!--
                         Cette section devrait être refactor. Du a une mauvaise
