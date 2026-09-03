@@ -6,6 +6,7 @@
         UserRound,
         Wrench,
         Recycle,
+        Loader
     } from "@lucide/svelte";
     import { signOut } from "@auth/sveltekit/client";
     import { Toaster, toast } from "svelte-sonner";
@@ -167,7 +168,7 @@
                 </Flex>
                 <p>Paramètres administrateurs.</p>
                 <Button
-                    icon={Power}
+                    icon={Loader}
                     variant="outline"
                     onclick={() => recomputePoints()}>
                     Recalculer les points

@@ -3,7 +3,7 @@
     import { invalidateAll } from '$app/navigation';
     import type { PageData } from "./$types";
     import { Flex, Stack, Button, Frame, Switch, TextInput } from "azucar-ui";
-    import { User, Users, Clock, XIcon, Check, Video, House, Loader } from "@lucide/svelte";
+    import { User, Users, Clock, XIcon, Check, Video, House, Loader, Hammer } from "@lucide/svelte";
     import type { Proof } from "$lib/types/types.d";
     import BackButton from "$lib/components/BackButton.svelte";
     import ChallengeCard from "$lib/components/ChallengeCard.svelte";
@@ -129,6 +129,7 @@
                         { name: "Status", icon: Loader, values: [proof.status] },
                         { name: "Droit TVn7 ?", icon: Video, values: [proof.isOkTVn7 ? 'oui' : 'non'] },
                         { name: "Date", icon: Clock, values: [formatDateTime(proof.date)] },
+                        { name: "Id du validateur", icon: Hammer, values: [proof.validatorId ?? "personne"] },
                     ]}
                 >
                     {#snippet header()}

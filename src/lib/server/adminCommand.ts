@@ -30,7 +30,6 @@ export async function canUseAdmin(userId: string) {
  * exemple utilisation : supression de defi déja réalisée 
  */
 export async function recomptePoints() {
-    // remise à 0 de tout les points 
     try {
         await prisma.$transaction([
             prisma.user.updateMany({
@@ -52,25 +51,25 @@ export async function recomptePoints() {
         select: {
             proofId: true,
         }
-    })
+    });
 
     // parcours des preuves et ajout des points en consequence
     try {
-    for (const proof of proofs) {
+        for (const proof of proofs) {
 
-        pointsUpdate(proof.proofId);
+            pointsUpdate(proof.proofId);
 
-        const user = await prisma.proof.findUnique({
-            where: { proofId: proof.proofId },
-            select: { userId: true }
-        })
+            const user = await prisma.proof.findUnique({
+                where: { proofId: proof.proofId },
+                select: { userId: true }
+            })
 
-        if (!user || !user.userId) {
-            throw error(404, "utilsiateur introuvable");
+            if (!user || !user.userId) {
+                throw error(404, "utilsiateur introuvable");
+            }
+
+            // addChallengeSucced(user.userId, proof.proofId);
         }
-
-        addChallengeSucced(user.userId, proof.proofId);
-    }
     } catch (error) {
         console.error( error);
     }
