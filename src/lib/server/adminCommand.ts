@@ -30,48 +30,36 @@ export async function canUseAdmin(userId: string) {
  * exemple utilisation : supression de defi déja réalisée 
  */
 export async function recomptePoints() {
-    try {
-        await prisma.$transaction([
-            prisma.user.updateMany({
-                data: { points: 0 }
-            }),
-            prisma.$executeRawUnsafe(
-                `DELETE FROM "_ChallengesSucceed";`
-            )
-
-        ]);
-
-    } catch (error) {
-        console.error("Échec de la réinitialisation :", error);
-    }
-
     // recupération des preuves réussites
     const proofs = await prisma.proof.findMany({
         where: { status: 'VALID' },
         select: {
             proofId: true,
+            userId: true,
+            challenge: {
+                select: {
+                    nbPoints: true
+                }
+            }
         }
     });
 
-    // parcours des preuves et ajout des points en consequence
-    try {
-        for (const proof of proofs) {
+    let userProof: Record<string, number> = {};
 
-            pointsUpdate(proof.proofId);
-
-            const user = await prisma.proof.findUnique({
-                where: { proofId: proof.proofId },
-                select: { userId: true }
-            })
-
-            if (!user || !user.userId) {
-                throw error(404, "utilsiateur introuvable");
-            }
-
-            // addChallengeSucced(user.userId, proof.proofId);
+    proofs.forEach((p) => {
+        if (p.userId in userProof) {
+            userProof[p.userId] += p.challenge.nbPoints;
+        } else {
+            userProof[p.userId] = p.challenge.nbPoints;
         }
-    } catch (error) {
-        console.error( error);
-    }
+    });
 
+    const updatePromises = Object.entries(userProof).map(([userId, points]) => {
+        return prisma.user.update({
+            where: { id: userId },
+            data: { points: points }
+        });
+    });
+
+    await Promise.all(updatePromises);
 }
