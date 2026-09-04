@@ -10,22 +10,38 @@ export const load: PageServerLoad = async ({ locals }) => {
 }
 
 export const actions: Actions = {
-    modifyDarkMode: async ({ request, locals }) => {
+    modifyDarkMode: async ({ request, locals, cookies }) => {
         if (!locals.user) return fail(401, { message: 'Non authentifié' });
 
         const data = await request.formData();
-        const darkMode = data.get('darkMode') === "true";
+        const darkMode = data.get("darkMode") === "true";
 
         try {
-            await switchMode(darkMode, locals.user.id);
+            if (!locals.user) return fail(401, { message: 'Non authentifié' });
+
+            try {
+                await switchMode(darkMode, locals.user.id);
+                return { success: true };
+            } catch (error: any) {
+                if (error.status && error.message) {
+                    return fail(error.status, { message: error.message });
+                }
+                console.error('Action Error:', error);
+                return fail(500, { message: 'Impossible de modifier le paramètre' });
+            }
+
+            cookies.set("theme", darkMode ? "dark" : "light", {
+                path: "/",
+                maxAge: 60 * 60 * 24 * 365,
+                sameSite: "lax",
+                httpOnly: false
+            });
+
             return { success: true };
         } catch (error: any) {
-            if (error.status && error.message) {
-                return fail(error.status, { message: error.message });
-            }
-            console.error('Action Error:', error);
-            return fail(500, { message: 'Impossible de modifier le paramètre' });
+            return fail(500, { message: 'Impossible de modifier le thème' });
         }
+
     },
 
     modifyOkTVn7: async ({ request, locals }) => {
