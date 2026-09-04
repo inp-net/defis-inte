@@ -2,8 +2,9 @@
     import { Toaster, toast } from 'svelte-sonner'
     import { invalidateAll } from '$app/navigation';
     import type { PageData } from "./$types";
+    import { CHALLENGE_PER_PAGE } from "$lib/types/types.d";
     import { Flex, Stack, Button, Frame, Switch, TextInput } from "azucar-ui";
-    import { User, Users, Clock, XIcon, Check, Video, House, Loader, Hammer } from "@lucide/svelte";
+    import { User, Users, Clock, XIcon, Check, Video, House, Loader, Hammer, ArrowLeft, ArrowRight, Search } from "@lucide/svelte";
     import type { Proof } from "$lib/types/types.d";
     import BackButton from "$lib/components/BackButton.svelte";
     import ChallengeCard from "$lib/components/ChallengeCard.svelte";
@@ -16,7 +17,16 @@
     const proofs = $derived(proofsRaw
         .filter((p) => p.status === "PENDING" || showPending)
         .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+        .filter((p) => 
+            p.challenge.name.toLowerCase().includes(search.toLowerCase()) || 
+            p.challenge.group.name.toLowerCase().includes(search.toLowerCase())
+        )
     );
+
+    // Navigation
+    let page: number = $state(1);
+    const maxPage: number = $derived(Math.max(Math.round(proofs.length / CHALLENGE_PER_PAGE) - 1, 0));
+    let search: string = $state("");
 
     async function approveProof(id: number): Promise<void> {
         try {
@@ -97,6 +107,32 @@
     }
 </script>
 
+{#snippet pageNavigation()}
+    <Flex align="center" style="margin: 0 auto">
+        <Button
+            onclick={() => page = Math.max(page - 1, 1)}
+            disabled={page == 1}
+            icon={ArrowLeft}
+        />
+        <Flex gap="xs" align="center">
+            <p>Page </p>
+            <input 
+                type="number" 
+                min="1" 
+                max={maxPage} 
+                bind:value={page} 
+                class="page-input"
+            />
+            <p> / {maxPage}</p>
+        </Flex>
+        <Button
+            onclick={() => page = Math.min(page + 1, maxPage)}
+            disabled={page == maxPage}
+            icon={ArrowRight}
+        />
+    </Flex>
+{/snippet}
+
 <Flex direction="column" gap="xxl" margin="lg">
     <Stack align="baseline">
         <BackButton />
@@ -107,8 +143,19 @@
     <Frame border={true}>
         <Stack>
             <Switch bind:checked={showPending}>Afficher les preuves traités</Switch>
+            <Flex justify="space-between" align="center">
+                <p>Recherche</p>
+                <Flex wrap={false} align="end" gap="xs">
+                    <TextInput
+                        placeholder="Citer l'unique asso technique ..."
+                        oninput={(e) => (search = ( e.target as HTMLInputElement).value)}
+                    />
+                </Flex>
+            </Flex>
         </Stack>
     </Frame>
+
+    {@render pageNavigation()}
 
     <Stack
         style="max-width: 100%; width: 100%; min-width: 0; display: flex; flex-direction: column;"
@@ -118,7 +165,7 @@
             direction="column"
             style="display: flex; flex-direction: column; width: 100%; min-width: 0;"
         >
-            {#each proofs as proof (proof.proofId)}
+            {#each proofs.slice((page + 1) * CHALLENGE_PER_PAGE, (page + 2) * CHALLENGE_PER_PAGE) as proof (proof.proofId)}
                 <ChallengeCard
                     title={"Défi : " + proof.challenge.name}
                     points={proof.challenge.nbPoints}
@@ -152,10 +199,8 @@
                         {#if proof.status === "PENDING"}
                             <TextInput
                                 placeholder="Optionnel, visible par le groupe"
-                                oninput={(e) =>
-                                    (comments[proof.proofId] = (
-                                        e.target as HTMLInputElement
-                            ).value)}>
+                                oninput={(e) => (comments[proof.proofId] = ( e.target as HTMLInputElement).value)
+                            }>
                                 Commentaire
                             </TextInput >
                         {:else if proof.comment}
@@ -198,6 +243,10 @@
             {/each}
         </Flex>
     </Stack>
+
+    {#if proofs.length > 0}
+        {@render pageNavigation()}
+    {/if}
 </Flex>
 
 <Toaster richColors  />
@@ -208,5 +257,17 @@
         height: var(--size-lg);
         border-radius: var(--size-xl);
         object-fit: cover;
+    }
+
+    .page-input {
+        width: 50px;
+        text-align: center;
+        font-size: 1rem;
+        border: none;
+        outline: none;
+        transition: border-color 0.2s;
+        font-family: Atkinson Hyperlegible;
+        color: var(--color-fg-high);
+        background-color: transparent;
     }
 </style>
