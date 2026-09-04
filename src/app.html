@@ -8,6 +8,16 @@
 	%sveltekit.head%
 	<link rel="icon" href="%sveltekit.assets%/logo-defis-inte-color.svg" />
 
+    <script>
+        const match = document.cookie.match(new RegExp('(^| )theme=([^;]+)'));
+        const isDark = match ? match[2] === 'dark' : window.matchMedia('(prefers-color-scheme: dark)').matches;
+        
+        if (isDark) {
+            document.documentElement.classList.add('dark');
+            document.documentElement.style.setProperty('color-scheme', 'dark');
+        }
+    </script>
+
 </head>
 
 <body data-sveltekit-preload-data="hover">

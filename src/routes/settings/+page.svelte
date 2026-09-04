@@ -5,7 +5,6 @@
         Settings2,
         UserRound,
         Wrench,
-        Recycle,
         Loader
     } from "@lucide/svelte";
     import { signOut } from "@auth/sveltekit/client";
@@ -23,6 +22,8 @@
 
     async function darkModeChange() {
         try {
+            document.cookie = `theme=${darkMode ? 'dark' : 'light'}; path=/; max-age=31536000; SameSite=Lax`;
+
             const formData = new FormData();
             formData.append("darkMode", darkMode.toString());
 
@@ -37,9 +38,8 @@
             if (result.type === "success") {
                 await invalidateAll();
             } else if (result.type === "failure") {
-                toast.error(result.data?.message || "Une erreur est survenue");
-                // Revert UI switch state if it failed
                 darkMode = data.user?.darkMode ?? false;
+                document.cookie = `theme=${darkMode ? 'dark' : 'light'}; path=/; max-age=31536000; SameSite=Lax`;
             }
         } catch (err) {
             console.error("Erreur lors de l'envoi du form : ", err);
