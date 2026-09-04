@@ -106,4 +106,4 @@ export type ChallengeRead = Pick<
 // Type Group Challenge réunit les ChallengeRead dans des groupes
 export type GroupChallenge = Pick<GroupClub, "name" | "pictureURL"> & { challenges: ChallengeRead[] };
 
-export const CHALLENGE_PER_PAGE = 20;
+export const CHALLENGE_PER_PAGE = 25;
