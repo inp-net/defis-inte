@@ -1,64 +1,49 @@
 <script lang="ts">
-    import { Flex } from "azucar-ui";
+    import type { HTMLAttributes } from 'svelte/elements';
+    import { Flex, Stack } from "azucar-ui";
     import { ChevronDown, ChevronUp } from "@lucide/svelte";
 
-    interface Props {
+    type Props = HTMLAttributes<HTMLDivElement> & {
         // Nom de la catégorie
         name: string;
-        // Liste général des catégories. Le nom sera écrit si ce composant est désactivé
-        list: string[];
         // Logo affiché dans la catégorie
         src?: string;
-        // La catégorie est masqué
-        enabled?: boolean;
+        // La catégorie est masquée
+        folded?: boolean;
     }
 
-    let { name, list = $bindable(), src, enabled = false }: Props = $props();
+    let { name, src, folded = true, children }: Props = $props();
 
-    /** Ajoute dans la liste si n'est pas présent, supprime si présent. */
-    function flipFlopAddList() {
-        if (list.includes(name)) {
-            list = list.filter((item) => item !== name);
-            enabled = false;
-        } else {
-            list.push(name);
-            enabled = true;
-        }
-    }
+    let isOpen = $state(!folded);
+
+    $effect(() => {
+        isOpen = !folded;
+    });
 </script>
 
-<!--
-    @component
-    Agit comme la balise `details` en HTML.
-
-    Composant Category. Il permet à l'utilisateur de cliquer sur une catégorie
-    pour l'activer ou la désactiver, ce qui met à jour une liste partagée avec
-    le composant parent.
-
-    La list est une liste générale. Quand le composant est cliqué, son nom est
-    ajouté dans cette liste. Ceci permet à la page de savoir quels catégories
-    sont activés.
-
-    Utilisé par exemple comme Header d'un club (net7) dans la liste des défis
-    et cache la liste des défis si folded.
--->
-
-<button onclick={() => flipFlopAddList()} style="margin: var(--size-lg) 0">
-    <Flex justify="space-between" align="center" margin="xs" wrap={false}>
-        <Flex align="center" gap="md" wrap={false}>
-            {#if src}
-                <img src={src} alt={name} />
+<details bind:open={isOpen} style="margin: var(--size-lg) 0">
+    <summary>
+        <Flex justify="space-between" align="center" margin="xs" wrap={false}>
+            <Flex align="center" gap="md" wrap={false}>
+                {#if src}
+                    <img src={src} alt={name} />
+                {/if}
+                <h4>{name}</h4>
+            </Flex>
+            {#if isOpen}
+                <ChevronUp />
+            {:else}
+                <ChevronDown />
             {/if}
-            <h4>{name}</h4>
         </Flex>
-        {#if enabled}
-            <ChevronUp />
-        {:else}
-            <ChevronDown />
+        <hr />
+    </summary>
+    <Stack gap="xs">
+        {#if children}
+            {@render children()}
         {/if}
-    </Flex>
-    <hr />
-</button>
+    </Stack>
+</details>
 
 <style>
     img {
@@ -81,6 +66,10 @@
         text-align: left;
     }
 
+    summary {
+        padding-bottom: 1em;
+    }
+
     button {
         background: none;
         color: inherit;
@@ -93,5 +82,16 @@
         min-width: 0;
         display: block;
         -webkit-tap-highlight-color: transparent;
+    }
+
+    details summary::-webkit-details-marker {
+        display:none;
+    }
+
+    details > summary {
+        list-style: none;
+    }
+    details > summary::-webkit-details-marker {
+        display: none;
     }
 </style>

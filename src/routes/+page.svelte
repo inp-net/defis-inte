@@ -1,12 +1,11 @@
 <script lang="ts">
     // TS
     import type { PageData } from "./$types";
-    import type { ChallengeRead } from "$lib/types/types.d.ts";
+    import { type ChallengeRead, UploadType } from "$lib/types/types.d";
     import { signIn } from "@auth/sveltekit/client";
     import { Churros1ATo2A } from "$lib/env";
     import { Toaster, toast } from "svelte-sonner";
     import { invalidateAll } from "$app/navigation";
-    import { UploadType } from "$lib/types/types.d";
     import { deserialize } from '$app/forms';
     
 
@@ -201,7 +200,31 @@
             };
         });
     });
+
+    let categoryChallenge: Record<string, ChallengeRead[]> = $derived.by(() => {
+        const groups: Record<string, ChallengeRead[]> = {};
+
+        for (const challenge of sortedSearchedChallenges) {
+            let key = "";
+            if (sortBind === "Clubs") {
+                key = challenge.groupName || "Autres";
+            } else if (sortBind === "Lieux") {
+                key = challenge.locationName || "Autres";
+            } else {
+                key = "Général";
+            }
+
+            if (!groups[key]) {
+                groups[key] = [];
+            }
+            groups[key].push(challenge);
+        }
+
+        return groups;
+    });
 </script>
+
+<!-- End Script -->
 
 {#if !isConnected}
     <Flex gap="xs" margin="lg" justify="right">
@@ -245,31 +268,33 @@
                 bind:isDesc={isSortDesc}
             />
         </Flex>
+
         <Flex
             gap="xs"
             direction="column"
             style="max-width: 100%; width: 100%;"
             wrap={false}
         >
-            {#each processedChallenges as challenge (challenge.challengeId)}
-                {#if challenge.showCategory}
-                    <!--
-                        Cette section devrait être refactor. Du a une mauvaise
-                        architecture de départ, fix fonctionne. Client side, les
-                        challenges sont triés par clubs et quand il y a un changement
-                        de club d'un challenge à l'autre, ce dernier à son terme
-                        showCategory à true.
-                    -->
-                    <Category
-                        name={challenge.groupName}
-                        bind:list={hiddenClub}
-                        src={challenge.groupUrl ?? undefined}
-                    />
-                {/if}
-                {#if !challenge.is_hidden || sortBind !== "Clubs"}
-                    {@render card(challenge)}
-                {/if}
-
+            {#each Object.entries(categoryChallenge) as [key, values]} 
+                {#if key && key !== "undefined"} 
+                    <Category 
+                        name={key} 
+                        src={sortBind == "Clubs" ? values[0]?.groupUrl : undefined} 
+                        folded={false}
+                    > 
+                        {#each values as challenge (challenge.challengeId)} 
+                            {#if !hiddenClub.includes(challenge.groupName) || sortBind !== "Clubs"} 
+                                {@render card(challenge)} 
+                            {/if} 
+                        {/each} 
+                    </Category> 
+                {:else} 
+                    {#each values as challenge (challenge.challengeId)} 
+                        {#if !hiddenClub.includes(challenge.groupName) || sortBind !== "Clubs"} 
+                            {@render card(challenge)} 
+                        {/if} 
+                    {/each} 
+                {/if} 
             {/each}
         </Flex>
     </Stack>
