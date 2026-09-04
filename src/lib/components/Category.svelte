@@ -21,7 +21,7 @@
     });
 </script>
 
-<details bind:open={isOpen} style="margin: var(--size-lg) 0">
+<details bind:open={isOpen} style="margin: 0 0 var(--size-xl) 0">
     <summary>
         <Flex justify="space-between" align="center" margin="xs" wrap={false}>
             <Flex align="center" gap="md" wrap={false}>
