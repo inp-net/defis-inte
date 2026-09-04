@@ -1,11 +1,13 @@
 <script lang="ts">
     import type { PageData } from "./$types";
     import { Flex, Stack, Frame } from "azucar-ui";
-    import { Clock, UserRound, Route, User, Loader } from "@lucide/svelte";
+    import { Clock, User, Loader } from "@lucide/svelte";
+    import { CHALLENGE_PER_PAGE } from "$lib/types/types.d";
     import { type ProofRead, Status } from "$lib/types/types.d";
     import BackButton from "$lib/components/BackButton.svelte";
     import Profile from "$lib/components/Profile.svelte";
     import ChallengeCard from "$lib/components/ChallengeCard.svelte";
+    import PageNavigation from "$lib/components/PageNavigation.svelte";
 
     let { data }: { data: PageData } = $props();
 
@@ -56,6 +58,10 @@
         }
     }
 
+    // navigation and paging
+    let page: number = $state(0);
+    const maxPage: number = $derived(Math.max(Math.round(proofs.length / CHALLENGE_PER_PAGE), 0));
+    const renderProofs = $derived(proofs.slice(page * CHALLENGE_PER_PAGE, (page + 1) * CHALLENGE_PER_PAGE));
 </script>
 
 <Flex direction="column" gap="xxl" margin="lg">
@@ -64,7 +70,6 @@
         <h2>Profil</h2>
         <p>Voir les informations du profil.</p>
     </Stack>
-
     <Stack>
         <Frame transparent={true} border={true} shadow={true}>
             <Flex direction="column" gap="lg">
@@ -93,8 +98,11 @@
 
     <Stack>
         <h3>Preuves de votre groupe</h3>
+
+        <PageNavigation bind:page {maxPage} />
+
         <Flex direction="column" gap="xs">
-            {#each proofs as proof}
+            {#each renderProofs as proof}
                 <ChallengeCard
                     title={emojiStatus((proof.status as Status) ?? Status.PENDING) + " : " + (proof.challenge?.name ?? "Défi inconnu")}
                     points={proof.challenge?.nbPoints ?? 0}
@@ -128,4 +136,8 @@
             {/if}
         </Flex>
     </Stack>
+
+    {#if renderProofs.length > 0}
+        <PageNavigation bind:page {maxPage} />
+    {/if}
 </Flex>

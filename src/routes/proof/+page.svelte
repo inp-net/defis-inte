@@ -2,21 +2,34 @@
     import { Toaster, toast } from 'svelte-sonner'
     import { invalidateAll } from '$app/navigation';
     import type { PageData } from "./$types";
+    import { CHALLENGE_PER_PAGE } from "$lib/types/types.d";
     import { Flex, Stack, Button, Frame, Switch, TextInput } from "azucar-ui";
     import { User, Users, Clock, XIcon, Check, Video, House, Loader, Hammer } from "@lucide/svelte";
     import type { Proof } from "$lib/types/types.d";
     import BackButton from "$lib/components/BackButton.svelte";
     import ChallengeCard from "$lib/components/ChallengeCard.svelte";
+    import PageNavigation from "$lib/components/PageNavigation.svelte";
 
     let showPending = $state(false);
     let comments = $state<Record<number, string>>({});
 
     let { data }: { data: PageData } = $props();
     const proofsRaw: Proof[] = $derived(data.posts.proofs);
-    const proofs = $derived(proofsRaw
+    const proofs: Proof[] = $derived(proofsRaw
         .filter((p) => p.status === "PENDING" || showPending)
         .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+        .filter((p) => 
+            p.challenge.name.toLowerCase().includes(search.toLowerCase()) || 
+            p.challenge.group.name.toLowerCase().includes(search.toLowerCase())
+        )
     );
+
+    // Navigation
+    let page: number = $state(0);
+    const maxPage: number = $derived(Math.max(Math.round(proofs.length / CHALLENGE_PER_PAGE), 0));
+    let search: string = $state("");
+
+    const renderProofs: Proof[] = $derived(proofs.slice(page * CHALLENGE_PER_PAGE, (page + 1) * CHALLENGE_PER_PAGE));
 
     async function approveProof(id: number): Promise<void> {
         try {
@@ -107,8 +120,19 @@
     <Frame border={true}>
         <Stack>
             <Switch bind:checked={showPending}>Afficher les preuves traités</Switch>
+            <Flex justify="space-between" align="center">
+                <p>Recherche</p>
+                <Flex wrap={false} align="end" gap="xs">
+                    <TextInput
+                        placeholder="Citer l'unique asso technique ..."
+                        oninput={(e) => (search = ( e.target as HTMLInputElement).value)}
+                    />
+                </Flex>
+            </Flex>
         </Stack>
     </Frame>
+
+    <PageNavigation bind:page {maxPage} />
 
     <Stack
         style="max-width: 100%; width: 100%; min-width: 0; display: flex; flex-direction: column;"
@@ -118,7 +142,7 @@
             direction="column"
             style="display: flex; flex-direction: column; width: 100%; min-width: 0;"
         >
-            {#each proofs as proof (proof.proofId)}
+            {#each renderProofs as proof (proof.proofId)}
                 <ChallengeCard
                     title={"Défi : " + proof.challenge.name}
                     points={proof.challenge.nbPoints}
@@ -152,10 +176,8 @@
                         {#if proof.status === "PENDING"}
                             <TextInput
                                 placeholder="Optionnel, visible par le groupe"
-                                oninput={(e) =>
-                                    (comments[proof.proofId] = (
-                                        e.target as HTMLInputElement
-                            ).value)}>
+                                oninput={(e) => (comments[proof.proofId] = ( e.target as HTMLInputElement).value)
+                            }>
                                 Commentaire
                             </TextInput >
                         {:else if proof.comment}
@@ -198,6 +220,10 @@
             {/each}
         </Flex>
     </Stack>
+
+    {#if renderProofs.length > 0}
+        <PageNavigation bind:page {maxPage} />
+    {/if}
 </Flex>
 
 <Toaster richColors  />

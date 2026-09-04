@@ -1,12 +1,11 @@
 <script lang="ts">
     // TS
     import type { PageData } from "./$types";
-    import type { ChallengeRead } from "$lib/types/types.d.ts";
+    import { type ChallengeRead, UploadType } from "$lib/types/types.d";
     import { signIn } from "@auth/sveltekit/client";
     import { Churros1ATo2A } from "$lib/env";
     import { Toaster, toast } from "svelte-sonner";
     import { invalidateAll } from "$app/navigation";
-    import { UploadType } from "$lib/types/types.d";
     import { deserialize } from '$app/forms';
     
 
@@ -21,6 +20,7 @@
     import HomepageTitle from "$lib/components/HomepageTitle.svelte";
     import ChallengeCard from "$lib/components/ChallengeCard.svelte";
     import UploadProof from "$lib/components/UploadProof.svelte";
+    import PageNavigation from "$lib/components/PageNavigation.svelte";
 
     let { data }: { data: PageData } = $props();
     let challenges: ChallengeRead[] = $derived(data.posts.challenges);
@@ -113,6 +113,7 @@
             console.error("Erreur lors de l'envoi du form : ", err);
         } finally {
             isSending = false;
+            invalidateAll();
         }
     }
 
@@ -185,23 +186,44 @@
     });
     let isConnected: boolean = $derived(Boolean(user));
 
-    // Précompute les endroits où il faut mettre une catégorie
-    let processedChallenges = $derived.by(() => {
-        let currentClub: string = "";
-        return sortedSearchedChallenges.map((challenge) => {
-            const showCategory =
-                sortBind === "Clubs" && challenge.groupName !== currentClub;
-            if (showCategory) {
-                currentClub = challenge.groupName;
+    let categoryChallenge: Record<string, ChallengeRead[]> = $derived.by(() => {
+        const groups: Record<string, ChallengeRead[]> = {};
+
+        for (const challenge of sortedSearchedChallenges) {
+            let key = "";
+            if (sortBind === "Clubs") {
+                key = challenge.groupName || "Autres";
+            } else if (sortBind === "Lieux") {
+                key = challenge.locationName || "Autres";
+            } else {
+                key = "Général";
             }
-            return {
-                ...challenge,
-                showCategory,
-                is_hidden: hiddenClub.includes(challenge.groupName),
-            };
-        });
+
+            if (!groups[key]) {
+                groups[key] = [];
+            }
+            groups[key].push(challenge);
+        }
+
+        return groups;
     });
+
+    // pagination et navigation
+    let page: number = $state(0);
+    const showPerPage: number = $derived(sortBind === "Clubs" || sortBind === "Lieux" ? 5 : 35);
+    const maxPage: number = $derived.by(() => {
+        if (sortBind === "Clubs" || sortBind === "Lieux") {
+            return Math.max(0, Math.ceil(Object.keys(categoryChallenge).length / showPerPage) - 1);
+        } else {
+            return Math.max(0, Math.ceil(sortedSearchedChallenges.length / showPerPage) - 1);
+        }
+    });
+
+    // VARIABLE FINALE
+    const renderCategory = $derived(Object.entries(categoryChallenge).slice(page * showPerPage, (page + 1) * showPerPage));
 </script>
+
+<!-- End Script -->
 
 {#if !isConnected}
     <Flex gap="xs" margin="lg" justify="right">
@@ -236,7 +258,7 @@
     {/if}
 
     <!-- Liste des défis -->
-    <Stack style="max-width: 100%; min-width: 0; overflow: hidden;">
+    <Stack gap="xl" style="max-width: 100%; min-width: 0; overflow: hidden;">
         <Flex gap="xxs" wrap={false} align="center">
             <SearchBar bind:value={searchValue} />
             <Sort
@@ -245,33 +267,46 @@
                 bind:isDesc={isSortDesc}
             />
         </Flex>
+
+        <PageNavigation bind:page {maxPage} />
+
         <Flex
             gap="xs"
             direction="column"
             style="max-width: 100%; width: 100%;"
             wrap={false}
         >
-            {#each processedChallenges as challenge (challenge.challengeId)}
-                {#if challenge.showCategory}
-                    <!--
-                        Cette section devrait être refactor. Du a une mauvaise
-                        architecture de départ, fix fonctionne. Client side, les
-                        challenges sont triés par clubs et quand il y a un changement
-                        de club d'un challenge à l'autre, ce dernier à son terme
-                        showCategory à true.
-                    -->
-                    <Category
-                        name={challenge.groupName}
-                        bind:list={hiddenClub}
-                        src={challenge.groupUrl ?? undefined}
-                    />
+            <Flex
+                gap="xs"
+                direction="column"
+                style="max-width: 100%; width: 100%;"
+                wrap={false}
+            >
+                {#if sortBind === "Clubs" || sortBind === "Lieux"}
+                    {#each renderCategory as [key, values]} 
+                        <Category 
+                            name={key} 
+                            src={sortBind == "Clubs" ? values[0]?.groupUrl : undefined} 
+                            folded={false}
+                        > 
+                            {#each values as challenge (challenge.challengeId)} 
+                                {@render card(challenge)} 
+                            {/each} 
+                        </Category> 
+                    {/each}
+                {:else}
+                    {@const paginatedChallenges = sortedSearchedChallenges.slice(page * showPerPage, (page + 1) * showPerPage)}
+                    {#each paginatedChallenges as challenge (challenge.challengeId)} 
+                        {@render card(challenge)} 
+                    {/each}
                 {/if}
-                {#if !challenge.is_hidden || sortBind !== "Clubs"}
-                    {@render card(challenge)}
-                {/if}
-
-            {/each}
+            </Flex>
         </Flex>
+
+        {#if renderCategory.length > 0}
+            <PageNavigation bind:page {maxPage} />
+        {/if}
+
     </Stack>
 
     <Toaster />
