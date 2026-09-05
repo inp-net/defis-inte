@@ -36,7 +36,7 @@
         style="padding: var(--size-md) var(--size-md);"
     >
         <Flex justify="space-between" align="center" wrap={false}>
-            <Flex align="center" gap="md">
+            <Flex align="center" gap="md" style="flex-shrink: 20;">
                 <Profile {firstName} {lastName} {groupName} src={picture} size="xl" />
             </Flex>
             <Flex wrap={false} gap="xs" align="center">
