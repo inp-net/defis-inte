@@ -120,14 +120,12 @@
     <Frame border={true}>
         <Stack>
             <Switch bind:checked={showPending}>Afficher les preuves traités</Switch>
-            <Flex justify="space-between" align="center">
+            <Flex justify="space-between" align="center" wrap={false}>
                 <p>Recherche</p>
-                <Flex wrap={false} align="end" gap="xs">
-                    <TextInput
-                        placeholder="Citer l'unique asso technique ..."
-                        oninput={(e) => (search = ( e.target as HTMLInputElement).value)}
-                    />
-                </Flex>
+                <TextInput
+                    placeholder="Citer l'unique asso technique ..."
+                    oninput={(e) => (search = ( e.target as HTMLInputElement).value)}
+                />
             </Flex>
         </Stack>
     </Frame>
