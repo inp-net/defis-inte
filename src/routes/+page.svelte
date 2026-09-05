@@ -259,8 +259,8 @@
 
     <!-- Liste des défis -->
     <Stack gap="xl" style="max-width: 100%; min-width: 0; overflow: hidden;">
-        <Flex gap="lg" wrap={true} justify="space-between" style="width: 100%;">
-            <Flex gap="xxs">
+        <Flex gap="xl" wrap={true} justify="center" align="center" style="width: 100%;">
+            <Flex gap="xxs" wrap={true} style="margin-right: auto;">
                 <SearchBar bind:value={searchValue} />
                 <Sort
                     bind:bind={sortBind}
@@ -306,7 +306,9 @@
         </Flex>
 
         {#if renderCategory.length > 0}
-            <PageNavigation bind:page {maxPage} />
+            <Stack align="center">
+                <PageNavigation bind:page {maxPage} />
+            </Stack>
         {/if}
 
     </Stack>

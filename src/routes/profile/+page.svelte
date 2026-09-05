@@ -99,7 +99,9 @@
     <Stack>
         <h3>Preuves de votre groupe</h3>
 
-        <PageNavigation bind:page {maxPage} />
+        <Stack align="center">
+            <PageNavigation bind:page {maxPage} />
+        </Stack>
 
         <Flex direction="column" gap="xs">
             {#each renderProofs as proof}
@@ -138,6 +140,8 @@
     </Stack>
 
     {#if renderProofs.length > 0}
-        <PageNavigation bind:page {maxPage} />
+        <Stack align="center">
+            <PageNavigation bind:page {maxPage} />
+        </Stack>
     {/if}
 </Flex>

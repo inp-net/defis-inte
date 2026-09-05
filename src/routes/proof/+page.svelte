@@ -132,7 +132,9 @@
         </Stack>
     </Frame>
 
-    <PageNavigation bind:page {maxPage} />
+    <Stack align="center">
+        <PageNavigation bind:page {maxPage} />
+    </Stack>
 
     <Stack
         style="max-width: 100%; width: 100%; min-width: 0; display: flex; flex-direction: column;"
@@ -222,7 +224,9 @@
     </Stack>
 
     {#if renderProofs.length > 0}
-        <PageNavigation bind:page {maxPage} />
+        <Stack align="center">
+            <PageNavigation bind:page {maxPage} />
+        </Stack>
     {/if}
 </Flex>
 

@@ -51,6 +51,7 @@
         bind:value={bind}
         variant="outline"
         id="sort-select"
+        style="flex: 1 1 200px; width: 100%;"
     />
     <!-- bouton pour tirer dans l'ordre croissant ou décroissant -->
     <Button
