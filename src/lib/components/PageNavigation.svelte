@@ -11,6 +11,9 @@
         page = $bindable(0),
         maxPage = 0,
     }: Props = $props();
+
+    let maxPagePrint = $derived(maxPage + 1);
+    let pagePrint = $derived(page + 1);
 </script>
 
 <Flex align="center" style="margin: 0 auto">
@@ -24,11 +27,11 @@
         <input 
             type="number" 
             min="0" 
-            max={maxPage} 
-            bind:value={page} 
+            max={maxPagePrint} 
+            bind:value={pagePrint} 
             class="page-input"
         />
-        <p> / {maxPage}</p>
+        <p> / {maxPagePrint}</p>
     </Flex>
     <Button
         onclick={() => page = Math.min(page + 1, maxPage)}
