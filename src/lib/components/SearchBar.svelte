@@ -16,6 +16,6 @@
 <!-- On attent que azucar implémente TextInput avec flex-grow à 1 -->
 <TextInput
     placeholder="Rechercher un défi ..."
-    style="flex-grow: 2;"
+    style="flex-grow: 2; width: 100%;"
     oninput={(e) => (value = (e.target as HTMLInputElement).value)}
 />

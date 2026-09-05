@@ -28,7 +28,7 @@
     }
 </script>
 
-<Flex align="center" style="margin: 0 auto">
+<Flex align="center">
     <Button
         onclick={() => handleArrowClick(-1)}
         disabled={page === 0}

@@ -70,20 +70,6 @@
         padding-bottom: 1em;
     }
 
-    button {
-        background: none;
-        color: inherit;
-        border: none;
-        padding: 0;
-        font: inherit;
-        cursor: pointer;
-        outline: inherit;
-        width: 100%;
-        min-width: 0;
-        display: block;
-        -webkit-tap-highlight-color: transparent;
-    }
-
     details summary::-webkit-details-marker {
         display:none;
     }

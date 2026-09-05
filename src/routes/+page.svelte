@@ -259,16 +259,18 @@
 
     <!-- Liste des défis -->
     <Stack gap="xl" style="max-width: 100%; min-width: 0; overflow: hidden;">
-        <Flex gap="xxs" wrap={false} align="center">
-            <SearchBar bind:value={searchValue} />
-            <Sort
-                bind:bind={sortBind}
-                options={sortList}
-                bind:isDesc={isSortDesc}
-            />
-        </Flex>
+        <Flex gap="lg" wrap={true} justify="space-between" style="width: 100%;">
+            <Flex gap="xxs">
+                <SearchBar bind:value={searchValue} />
+                <Sort
+                    bind:bind={sortBind}
+                    options={sortList}
+                    bind:isDesc={isSortDesc}
+                />
+            </Flex>
 
-        <PageNavigation bind:page {maxPage} />
+            <PageNavigation bind:page {maxPage} />
+        </Flex>
 
         <Flex
             gap="xs"

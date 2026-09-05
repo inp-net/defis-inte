@@ -49,7 +49,7 @@
     <Select
         options={capitalizedOptions}
         bind:value={bind}
-        outline={true}
+        variant="outline"
         id="sort-select"
     />
     <!-- bouton pour tirer dans l'ordre croissant ou décroissant -->
