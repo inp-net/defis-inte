@@ -24,7 +24,7 @@
         {
             label: "Clubs",
             comparator: (a: ChallengeRead, b: ChallengeRead) =>
-                (b.groupName || "").localeCompare(a.groupName || "") ||
+                (a.groupName || "").localeCompare(b.groupName || "") ||
                 (b.challengeId - a.challengeId),
             groupBy: (c: ChallengeRead) => c.groupName || "Autres",
             categoryUrl: (c: ChallengeRead) => c.groupUrl
