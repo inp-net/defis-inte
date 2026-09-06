@@ -65,4 +65,4 @@
         color: var(--color-fg-high);
         background-color: transparent;
     }
-</style
+</style>

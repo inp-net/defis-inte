@@ -28,6 +28,16 @@ export const UploadType = {
     TEXT: "TEXT"
 } as const;
 
+// cette primitive sert à rendre les ChallengeCard
+export type ListPrimitive = {
+    text: string,
+    description?: string | null,
+    id: number,
+    url?: string,
+    alt?: string,
+    points: number
+}
+
 export type UserChurros = {
     uid: string;
     firstName: string;
@@ -65,8 +75,20 @@ export type ProofInput = {
 }
 
 // Pour lire les preuves, informations utiles
-export type ProofRead = Pick< Proof, "proofId" | "type" | "content" | "date" | "status" | "validatorId" | "comment" >
-    & { user: Pick<User, "firstName" | "lastName">; challenge: Pick<Challenge, "name" | "nbPoints"> | null; groupInte: Pick<GroupInte, "name"> };
+export type RawProof = Pick<
+    Proof,
+    "proofId" | "type" | "content" | "date" | "status" | "validatorId" | "comment"
+> & {
+    user: Pick<User, "firstName" | "lastName"> & {
+        groupInte?: Pick<GroupInte, "name"> | null;
+    };
+    challenge: (Pick<Challenge, "name" | "nbPoints" | "description"> & {
+        group?: Pick<GroupClub, "name" | "pictureURL"> | null;
+    }) | null;
+    isOkTVn7?: boolean;
+};
+
+export type ProofRead = RawProof & ListPrimitive;
 
 // Input pour crée un challenge
 export type ChallengeInput = {
@@ -91,19 +113,19 @@ export type Leaderboard = {
 };
 
 // Type Challenge Read utilisé uniquement pour l'affichage UI du challenge
-export type ChallengeRead = Pick<
-    Challenge, "challengeId" | "name" | "description" | "type" | "nbPoints" | "locationName" | "defiAccepte" | "isDeleted"
-> & { 
-    groupName: string; 
-    groupUrl: string | null; 
-} & { 
-    userName?: string; 
-} & { 
+export type RawChallenge = Pick<
+    Challenge,
+    "challengeId" | "name" | "description" | "type" | "nbPoints" | "locationName" | "defiAccepte" | "isDeleted"
+> & {
+    groupName: string;
+    groupUrl: string | null;
+    userName?: string;
     allSucceedGroupNames: string[];
-} & { 
-    isDone?: boolean; 
-    isPending?: boolean; 
+    isDone?: boolean;
+    isPending?: boolean;
 };
+
+export type ChallengeRead = RawChallenge & ListPrimitive;
 
 // Type Group Challenge réunit les ChallengeRead dans des groupes
 export type GroupChallenge = Pick<GroupClub, "name" | "pictureURL"> & { challenges: ChallengeRead[] };
@@ -111,5 +133,3 @@ export type GroupChallenge = Pick<GroupClub, "name" | "pictureURL"> & { challeng
 export const CHALLENGE_PER_PAGE = 25;
 
 export type MetadataCard = { name: string, icon: LucideIcon, values: string[] };
-
-export type ListPrimitive = { text: string, description?: string, id: number, url?: string, alt?: string, points: number}
