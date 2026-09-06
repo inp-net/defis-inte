@@ -1,7 +1,7 @@
 <script lang="ts" generics="Item extends ListPrimitive">
     import type { HTMLAttributes } from 'svelte/elements';
     import type { MetadataCard, ListPrimitive } from '$lib/types/types.d';
-    import { Flex } from 'azucar-ui';
+    import { Flex, Stack } from 'azucar-ui';
     import type { Snippet } from 'svelte';
     import Category from '$lib/components/Category.svelte';
     import ChallengeCard from '$lib/components/ChallengeCard.svelte';
@@ -13,7 +13,7 @@
         label: string;
         comparator: (a: Item, b: Item) => number;
         groupBy?: (item: Item) => string;
-        categoryUrl?: (item: Item) => string;
+        categoryUrl?: (item: Item) => string | null;
     };
 
     type Props = HTMLAttributes<HTMLDivElement> & {
@@ -151,7 +151,9 @@
 </Flex>
 
 {#if maxPage > 0}
-    <PageNavigation bind:page {maxPage} />
+    <Stack align="center">
+        <PageNavigation bind:page {maxPage} />
+    </Stack>
 {/if}
 
 {#snippet card(value: Item)}

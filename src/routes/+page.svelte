@@ -166,6 +166,21 @@
             sortOptions={challengeSortOptions}
             getSearchableText={(c) => `${c.name} ${c.groupName} ${c.locationName ?? ''}`}
         >
+            {#snippet children(challenge: ChallengeRead)}
+                {@const isDone = challenge.isDone}
+                {@const isPending = challenge.isPending}
+
+                <p><b>Description :</b> {challenge.description}</p>
+                {#if user && (user.is1A && Churros1ATo2A) && !isDone && !isPending}
+                    <UploadProof
+                        challengeId={challenge.challengeId}
+                        type={challenge.type}
+                        onSave={handleSave}
+                        defaultTVn7={user?.isOkTVn7 ?? undefined}
+                    />
+                {/if}
+
+            {/snippet}
         </RenderList>
     </Stack>
 

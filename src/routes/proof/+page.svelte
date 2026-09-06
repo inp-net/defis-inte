@@ -2,7 +2,7 @@
     import { Toaster, toast } from 'svelte-sonner';
     import { invalidateAll } from '$app/navigation';
     import type { PageData } from "./$types";
-    import { type ProofRead, UploadType } from "$lib/types/types.d";
+    import { type ProofRead } from "$lib/types/types.d";
     import { ProofItem } from '$lib/types/models.d';
     import { Flex, Stack, Button, Frame, Switch, TextInput } from "azucar-ui";
     import { User, Users, Clock, XIcon, Check, Video, House, Loader, Hammer } from "@lucide/svelte";
@@ -144,13 +144,6 @@
     <Frame border={true}>
         <Stack>
             <Switch bind:checked={showPending}>Afficher les preuves traités</Switch>
-            <Flex justify="space-between" align="center" wrap={false}>
-                <p>Recherche</p>
-                <TextInput
-                    placeholder="Citer l'unique asso technique ..."
-                    oninput={(e) => (search = ( e.target as HTMLInputElement).value)}
-                />
-            </Flex>
         </Stack>
     </Frame>
 

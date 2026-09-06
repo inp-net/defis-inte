@@ -38,10 +38,11 @@ if (ENABLE_MOCK_AUTH) {
             async authorize() {
                 // Utilisateur fake crée
                 const mockProfile: UserChurros = {
-                    uid: "fake-user-id",
-                    firstName: "Fake",
+                    uid: "fake-user-id-2",
+                    firstName: "Fake Fake Fake",
                     lastName: "User",
                     pictureURL: "https://picsum.photos/200",
+                    groupInteId: "groupe-10-2026",
                     yearTier: 1,
                     churrosGroups: [
                         // {
@@ -76,8 +77,8 @@ export const { handle, signIn, signOut } = SvelteKitAuth({
     providers,
     session: {
         strategy: "jwt",
-        maxAge: 2 * 60 * 60,  // durée du token en secondes (ici 2 heures)
-        updateAge: 1 * 60 * 60,   // durée de mise à jour du token en secondes (ici 1 heures)
+        maxAge: 24 * 60 * 60,
+        updateAge: 1 * 60 * 60,
     },
     trustHost: true,
     logger: {
