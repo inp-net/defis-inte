@@ -79,7 +79,7 @@ export type RawProof = Pick<
     Proof,
     "proofId" | "type" | "content" | "date" | "status" | "validatorId" | "comment"
 > & {
-    user: Pick<User, "firstName" | "lastName"> & {
+    user: Pick<User, "firstName" | "lastName" | "profilePictureURL"> & {
         groupInte?: Pick<GroupInte, "name", "pictureURL"> | null;
     };
     challenge: (Pick<Challenge, "name" | "nbPoints" | "description"> & {

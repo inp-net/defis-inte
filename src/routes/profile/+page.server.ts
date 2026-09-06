@@ -21,7 +21,7 @@ export const load: PageServerLoad = async ({ locals }) => {
     const userGroupInteId = userGroupData?.groupInteId;
     const groupInteName = userGroupData?.groupInte?.name;
 
-    const userProofs : ProofRead[] = await prisma.proof.findMany({
+    const userProofs = await prisma.proof.findMany({
         where: {
             user: {
                 groupInteId: userGroupInteId
@@ -34,19 +34,32 @@ export const load: PageServerLoad = async ({ locals }) => {
             date: true,
             status: true,
             validatorId: true,
+            comment: true,
+            isOkTVn7: true,
             user: {
                 select: {
                     firstName: true,
-                    lastName: true
+                    lastName: true,
+                    groupInte: {
+                        select: {
+                            name: true
+                        }
+                    }
                 }
             },
             challenge: {
                 select: {
                     name: true,
-                    nbPoints: true
+                    nbPoints: true,
+                    description: true,
+                    group: {
+                        select: {
+                            name: true,
+                            pictureURL: true
+                        }
+                    }
                 }
-            },
-            comment: true,
+            }
         }
     });
 

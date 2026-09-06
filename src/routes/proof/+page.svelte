@@ -153,7 +153,7 @@
             {metadata}
             sortOptions={proofSortOptions}
             getSearchableText={(p) =>
-                `${p.text} ${p.alt ?? ''} ${p.user.firstName} ${p.user.lastName} ${p.user.groupInte?.name ?? ''}`
+                `${p.text} ${p.alt ?? ''} ${p.user.firstName} ${p.user.lastName} ${p.user.groupInte?.name ?? ''} ${p.challenge?.group?.name ?? ''}`
             }
         >
             {#snippet children(proof: ProofRead)}
