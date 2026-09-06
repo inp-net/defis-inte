@@ -9,6 +9,7 @@
         options?: string[];
         value?: string;
         disabled?: boolean;
+        fill?: boolean;
         children?: Snippet;
     };
 
@@ -18,12 +19,13 @@
         options = [],
         value = $bindable(),
         disabled = false,
+        fill = true,
         children,
         ...restProps
     }: Props = $props();
 </script>
 
-<label class="select-label" for={id}>
+<label class="select-label" for={id} style={`${ fill ? 'width: 100%' : '' }`}>
     {#if children}
         {@render children()}
     {/if}
@@ -49,7 +51,6 @@
         display: inline-flex;
         flex-direction: column;
         gap: var(--size-xxs);
-        width: 100%;
     }
 
     .select-container {

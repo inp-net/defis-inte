@@ -1,35 +1,49 @@
 <script lang="ts">
-    import { Toaster, toast } from 'svelte-sonner'
+    import { Toaster, toast } from 'svelte-sonner';
     import { invalidateAll } from '$app/navigation';
     import type { PageData } from "./$types";
-    import { CHALLENGE_PER_PAGE } from "$lib/types/types.d";
+    import { type ProofRead } from "$lib/types/types.d";
+    import { ProofItem } from '$lib/types/models.d';
     import { Flex, Stack, Button, Frame, Switch, TextInput } from "azucar-ui";
     import { User, Users, Clock, XIcon, Check, Video, House, Loader, Hammer } from "@lucide/svelte";
-    import type { Proof } from "$lib/types/types.d";
     import BackButton from "$lib/components/BackButton.svelte";
-    import ChallengeCard from "$lib/components/ChallengeCard.svelte";
-    import PageNavigation from "$lib/components/PageNavigation.svelte";
+    import RenderList from '$lib/components/RenderList.svelte';
+
+    let { data }: { data: PageData } = $props();
 
     let showPending = $state(false);
     let comments = $state<Record<number, string>>({});
 
-    let { data }: { data: PageData } = $props();
-    const proofsRaw: Proof[] = $derived(data.posts.proofs);
-    const proofs: Proof[] = $derived(proofsRaw
-        .filter((p) => p.status === "PENDING" || showPending)
-        .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
-        .filter((p) => 
-            p.challenge.name.toLowerCase().includes(search.toLowerCase()) || 
-            p.challenge.group.name.toLowerCase().includes(search.toLowerCase())
-        )
+    const rawProofs: ProofRead[] = $derived(
+        (data.posts.proofs ?? []).map((raw: any) => new ProofItem(raw))
     );
 
-    // Navigation
-    let page: number = $state(0);
-    const maxPage: number = $derived(Math.max(Math.round(proofs.length / CHALLENGE_PER_PAGE), 0));
-    let search: string = $state("");
+    // si le switch veut voir les preuves pending
+    const visibleProofs = $derived(
+        rawProofs.filter((p) => p.status === "PENDING" || showPending)
+    );
 
-    const renderProofs: Proof[] = $derived(proofs.slice(page * CHALLENGE_PER_PAGE, (page + 1) * CHALLENGE_PER_PAGE));
+    const proofSortOptions = [
+        {
+            label: "Date",
+            comparator: (a: ProofRead, b: ProofRead) =>
+                new Date(b.date).getTime() - new Date(a.date).getTime(),
+            groupBy: () => "Toutes les preuves"
+        },
+        {
+            label: "Groupe",
+            comparator: (a: ProofRead, b: ProofRead) =>
+                (a.user.groupInte?.name ?? "").localeCompare(b.user.groupInte?.name ?? ""),
+            groupBy: (p: ProofRead) => p.user.groupInte?.name ?? "Inconnu",
+            categoryUrl: (p: ProofRead) => p.user.groupInte.pictureURL
+        },
+        {
+            label: "Club",
+            comparator: (a: ProofRead, b: ProofRead) =>
+                (a.alt ?? "").localeCompare(b.alt ?? ""),
+            groupBy: (p: ProofRead) => p.alt ?? "Inconnu"
+        }
+    ];
 
     async function approveProof(id: number): Promise<void> {
         try {
@@ -108,6 +122,16 @@
             hour12: false,
         });
     }
+
+    const metadata = (proof: ProofRead) => [
+        { name: "Par", icon: User, values: [`${proof.user.firstName} ${proof.user.lastName}`] },
+        { name: "Groupe", icon: Users, values: [proof.user.groupInte?.name ?? "Inconnu"] },
+        { name: "Pour", icon: House, values: [proof.alt ?? "Inconnu"] },
+        { name: "Status", icon: Loader, values: [proof.status] },
+        { name: "Droit TVn7 ?", icon: Video, values: [proof.isOkTVn7 ? 'oui' : 'non'] },
+        { name: "Date", icon: Clock, values: [formatDateTime(proof.date)] },
+        { name: "Id du validateur", icon: Hammer, values: [proof.validatorId ?? "personne"] },
+    ];
 </script>
 
 <Flex direction="column" gap="xxl" margin="lg">
@@ -120,121 +144,78 @@
     <Frame border={true}>
         <Stack>
             <Switch bind:checked={showPending}>Afficher les preuves traités</Switch>
-            <Flex justify="space-between" align="center" wrap={false}>
-                <p>Recherche</p>
-                <TextInput
-                    placeholder="Citer l'unique asso technique ..."
-                    oninput={(e) => (search = ( e.target as HTMLInputElement).value)}
-                />
-            </Flex>
         </Stack>
     </Frame>
 
-    <Stack align="center">
-        <PageNavigation bind:page {maxPage} />
-    </Stack>
-
-    <Stack
-        style="max-width: 100%; width: 100%; min-width: 0; display: flex; flex-direction: column;"
-    >
-        <Flex
-            gap="xs"
-            direction="column"
-            style="display: flex; flex-direction: column; width: 100%; min-width: 0;"
+    <Stack style="max-width: 100%; width: 100%; min-width: 0;">
+        <RenderList
+            items={visibleProofs}
+            {metadata}
+            sortOptions={proofSortOptions}
+            getSearchableText={(p) =>
+                `${p.text} ${p.alt ?? ''} ${p.user.firstName} ${p.user.lastName} ${p.user.groupInte?.name ?? ''} ${p.challenge?.group?.name ?? ''}`
+            }
         >
-            {#each renderProofs as proof (proof.proofId)}
-                <ChallengeCard
-                    title={"Défi : " + proof.challenge.name}
-                    points={proof.challenge.nbPoints}
-                    badges={[
-                        { name: "Par", icon: User, values: [proof.user.firstName + " " + proof.user.lastName] },
-                        { name: "Groupe", icon: Users, values: [proof.user.groupInte?.name ?? "Inconnu"] },
-                        { name: "Pour", icon: House, values: [proof.challenge.group?.name ?? "Inconnu"] },
-                        { name: "Status", icon: Loader, values: [proof.status] },
-                        { name: "Droit TVn7 ?", icon: Video, values: [proof.isOkTVn7 ? 'oui' : 'non'] },
-                        { name: "Date", icon: Clock, values: [formatDateTime(proof.date)] },
-                        { name: "Id du validateur", icon: Hammer, values: [proof.validatorId ?? "personne"] },
-                    ]}
-                >
-                    {#snippet header()}
-                        <img src={proof.challenge.group.pictureURL} alt={proof.challenge.group.pictureURL} />
-                    {/snippet}
-                    {#snippet content()}
-                        <p><b>Description :</b> {proof.challenge.description}</p>
-                        <Flex direction="column" gap="xs">
-                            {#if proof.type !== "TEXT"}
-                                {#each proof.content as proofContent, index}
-                                    <!-- fait confiant au navigateur pour
-                                         ouvrir les fichiers car le gérer sur
-                                         le site est chiant -->
-                                    <a href={proofContent}>Média preuve {index}</a>
-                                {/each}
-                            {:else}
-                                <p><b>Réponse :</b> {proof.content}</p>
-                            {/if}
-                        </Flex>
-                        {#if proof.status === "PENDING"}
-                            <TextInput
-                                placeholder="Optionnel, visible par le groupe"
-                                oninput={(e) => (comments[proof.proofId] = ( e.target as HTMLInputElement).value)
-                            }>
-                                Commentaire
-                            </TextInput >
-                        {:else if proof.comment}
-                            <p><b>Commentaire :</b> {proof.comment}</p>
-                        {/if}
-                    {/snippet}
-                    {#snippet actions()}
-                        {#if proof.status === "PENDING"}
-                            <Flex gap="xs" style="margin-left: auto; flex-shrink: 0;">
-                                <Button
-                                    icon={XIcon}
-                                    class="danger"
-                                    name="Delete"
-                                    onclick={() =>
-                                        toast('Voulez-vous refuser la preuve ?', {
-                                            action: {
-                                                label: 'Oui',
-                                                onClick: () => handleDeny(proof.proofId)
-                                            },
-                                        })
-                                    }
-                                />
-                                <Button
-                                    icon={Check}
-                                    class="success"
-                                    name="Success"
-                                    onclick={() =>
-                                        toast('Voulez-vous valider la preuve ?', {
-                                            action: {
-                                                label: 'Oui',
-                                                onClick: () => handleAccept(proof.proofId)
-                                            },
-                                        })
-                                    }
-                                />
-                            </Flex>
-                        {/if}
-                    {/snippet}
-                </ChallengeCard>
-            {/each}
-        </Flex>
+            {#snippet children(proof: ProofRead)}
+                {#if proof.description}
+                    <p><b>Description :</b> {proof.description}</p>
+                {/if}
+                <Flex direction="column" gap="xs">
+                    {#if proof.type !== "TEXT"}
+                        {#each proof.content as proofContent, index}
+                            <a href={proofContent}>Média preuve {index + 1}</a>
+                        {/each}
+                    {:else}
+                        <p><b>Réponse :</b> {proof.content.join(', ')}</p>
+                    {/if}
+                </Flex>
+                {#if proof.status === "PENDING"}
+                    <TextInput
+                        placeholder="Optionnel, visible par le groupe"
+                        oninput={(e) => (comments[proof.id] = (e.target as HTMLInputElement).value)}
+                    >
+                        Commentaire
+                    </TextInput>
+                {:else if proof.comment}
+                    <p><b>Commentaire :</b> {proof.comment}</p>
+                {/if}
+            {/snippet}
+
+            {#snippet actionsSnippet(proof: ProofRead)}
+                {#if proof.status === "PENDING"}
+                    <Flex gap="xs" style="margin-left: auto; flex-shrink: 0;">
+                        <Button
+                            icon={XIcon}
+                            class="danger"
+                            name="Delete"
+                            onclick={() =>
+                                toast('Voulez-vous refuser la preuve ?', {
+                                    action: {
+                                        label: 'Oui',
+                                        onClick: () => handleDeny(proof.id)
+                                    },
+                                })
+                            }
+                        />
+                        <Button
+                            icon={Check}
+                            class="success"
+                            name="Success"
+                            onclick={() =>
+                                toast('Voulez-vous valider la preuve ?', {
+                                    action: {
+                                        label: 'Oui',
+                                        onClick: () => handleAccept(proof.id)
+                                    },
+                                })
+                            }
+                        />
+                    </Flex>
+                {/if}
+            {/snippet}
+        </RenderList>
     </Stack>
 
-    {#if renderProofs.length > 0}
-        <Stack align="center">
-            <PageNavigation bind:page {maxPage} />
-        </Stack>
-    {/if}
 </Flex>
 
 <Toaster richColors  />
-
-<style>
-    img {
-        width: var(--size-lg);
-        height: var(--size-lg);
-        border-radius: var(--size-xl);
-        object-fit: cover;
-    }
-</style>

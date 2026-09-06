@@ -22,17 +22,39 @@ export const load: PageServerLoad = async ({ locals }) => {
                 }
             }
         },
-        include: {
+        select: {
+            proofId: true,
+            type: true,
+            content: true,
+            date: true,
+            status: true,
+            validatorId: true,
+            comment: true,
+            isOkTVn7: true,
             user: {
-                include: {
-                    groupInte: true,
+                select: {
+                    firstName: true,
+                    lastName: true,
+                    groupInte: {
+                        select: {
+                            name: true
+                        }
+                    }
                 }
             },
             challenge: {
-                include: {
-                    group: true,
-                },
-            },
+                select: {
+                    name: true,
+                    nbPoints: true,
+                    description: true,
+                    group: {
+                        select: {
+                            name: true,
+                            pictureURL: true
+                        }
+                    }
+                }
+            }
         }
     });
 

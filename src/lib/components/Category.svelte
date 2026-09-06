@@ -7,7 +7,7 @@
         // Nom de la catégorie
         name: string;
         // Logo affiché dans la catégorie
-        src?: string;
+        src?: string | null;
         // La catégorie est masquée
         folded?: boolean;
     }

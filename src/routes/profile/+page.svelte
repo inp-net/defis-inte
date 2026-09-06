@@ -2,14 +2,40 @@
     import type { PageData } from "./$types";
     import { Flex, Stack, Frame } from "azucar-ui";
     import { Clock, User, Loader } from "@lucide/svelte";
-    import { CHALLENGE_PER_PAGE } from "$lib/types/types.d";
-    import { type ProofRead, Status } from "$lib/types/types.d";
+    import { type ProofRead } from "$lib/types/types.d";
+    import { ProfileProofItem } from '$lib/types/models.d';
     import BackButton from "$lib/components/BackButton.svelte";
     import Profile from "$lib/components/Profile.svelte";
-    import ChallengeCard from "$lib/components/ChallengeCard.svelte";
-    import PageNavigation from "$lib/components/PageNavigation.svelte";
+    import RenderList from '$lib/components/RenderList.svelte';
 
     let { data }: { data: PageData } = $props();
+
+    const proofs: ProofRead[] = $derived(
+        (data.posts.userProofs ?? []).map((raw: any) => new ProfileProofItem(raw))
+    );
+
+    const proofSortOptions = [
+        {
+            label: "Date",
+            comparator: (a: ProofRead, b: ProofRead) =>
+                new Date(b.date).getTime() - new Date(a.date).getTime(),
+            groupBy: () => "Toutes les preuves"
+        },
+        {
+            label: "Nom",
+            comparator: (a: ProofRead, b: ProofRead) =>
+                (a.user.firstName ?? "").localeCompare(b.user.firstName ?? ""),
+            groupBy: (p: ProofRead) => (p.user?.firstName + " " + p.user?.lastName),
+            categoryUrl: (p: ProofRead) => p.user.profilePictureURL
+        },
+        {
+            label: "Club",
+            comparator: (a: ProofRead, b: ProofRead) =>
+                (a.alt ?? "").localeCompare(b.alt ?? ""),
+            groupBy: (p: ProofRead) => p.alt ?? "Inconnu",
+            categoryUrl: (p: ProofRead) => p.challenge?.group?.pictureURL ?? ''
+        }
+    ];
 
     let user = $derived(data.user);
     const groupName = $derived(data.posts.groupInteName);
@@ -29,11 +55,6 @@
 
     categories.push({ key: "Statistiques", valeurs: statsPersonnels });
 
-    const proofsRaw : ProofRead[] = $derived(data.posts.userProofs);
-    const proofs = $derived(proofsRaw
-        .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
-    );
-
     function formatDateTime(date: Date | string): string {
         const d = new Date(date);
         return d.toLocaleString("fr-FR", {
@@ -46,22 +67,11 @@
         });
     }
 
-    let emojiStatus = (status: Status | string): string => {
-        if (status === "PENDING" || status === Status.PENDING) {
-            return "⏳";
-        } else if (status === "DENIED" || status === Status.DENIED) {
-            return "❌";
-        } else if (status === "VALID" || status === Status.VALID) {
-            return "✅";
-        } else {
-            return "LEGENDAIRE";
-        }
-    }
-
-    // navigation and paging
-    let page: number = $state(0);
-    const maxPage: number = $derived(Math.max(Math.round(proofs.length / CHALLENGE_PER_PAGE), 0));
-    const renderProofs = $derived(proofs.slice(page * CHALLENGE_PER_PAGE, (page + 1) * CHALLENGE_PER_PAGE));
+    const metadata = (proof: ProofRead) => [
+        { name: "Par", icon: User, values: [proof.user.firstName + " " + proof.user.lastName] },
+        { name: "Date", icon: Clock, values: [formatDateTime(proof.date)] },
+        { name: "Status", icon: Loader, values: [proof.status] },
+    ];
 </script>
 
 <Flex direction="column" gap="xxl" margin="lg">
@@ -99,49 +109,29 @@
     <Stack>
         <h3>Preuves de votre groupe</h3>
 
-        <Stack align="center">
-            <PageNavigation bind:page {maxPage} />
-        </Stack>
+        <RenderList
+            items={proofs}
+            {metadata}
+            sortOptions={proofSortOptions}
+            getSearchableText={(p) =>
+                `${p.text} ${p.alt ?? ''} ${p.user.firstName} ${p.user.lastName} ${p.user.groupInte?.name ?? ''} ${p.challenge?.group?.name ?? ''}`
+            }
+        >
+            {#snippet children(proof: ProofRead)}
+                <Flex direction="column" gap="xs">
+                    {#if proof.type !== "TEXT"}
+                        {#each proof.content as proofContent, index}
+                            <a href={proofContent}>Média preuve {index + 1}</a>
+                        {/each}
+                    {:else}
+                        <p><b>Réponse :</b> {proof.content.join(', ')}</p>
+                    {/if}
+                </Flex>
+                {#if proof.comment}
+                    <p><b>Commentaire :</b> {proof.comment}</p>
+                {/if}
+            {/snippet}
+        </RenderList>
 
-        <Flex direction="column" gap="xs">
-            {#each renderProofs as proof}
-                <ChallengeCard
-                    title={emojiStatus((proof.status as Status) ?? Status.PENDING) + " : " + (proof.challenge?.name ?? "Défi inconnu")}
-                    points={proof.challenge?.nbPoints ?? 0}
-                    badges={[
-                        { name: "Par", icon: User, values: [proof.user.firstName + " " + proof.user.lastName] },
-                        { name: "Date", icon: Clock, values: [formatDateTime(proof.date)] },
-                        { name: "Status", icon: Loader, values: [proof.status] },
-                    ]}
-                >
-                    {#snippet content()}
-                        <Flex direction="column" gap="xs">
-                            {#if proof.type !== "TEXT"}
-                                {#each proof.content as proofContent, index}
-                                    <!-- fait confiant au navigateur pour
-                                         ouvrir les fichiers car le gérer sur
-                                         le site est chiant -->
-                                    <a href={proofContent}>Média preuve {index}</a>
-                                {/each}
-                            {:else}
-                                <p><b>Réponse :</b> {proof.content}</p>
-                            {/if}
-                            {#if proof.comment}
-                                <p><b>Commentaire :</b> {proof.comment}</p>
-                            {/if}
-                        </Flex>
-                    {/snippet}
-                </ChallengeCard>
-            {/each}
-            {#if proofs.length == 0}
-                <p><i>(rien pour le moment)</i></p>
-            {/if}
-        </Flex>
     </Stack>
-
-    {#if renderProofs.length > 0}
-        <Stack align="center">
-            <PageNavigation bind:page {maxPage} />
-        </Stack>
-    {/if}
 </Flex>

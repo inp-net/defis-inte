@@ -32,23 +32,23 @@ export const load: PageServerLoad = async ({ locals }) => {
                 }
             },
             proofs: {
-            where: {
-                status: "VALID",
-            },
-            select: {
-                status: true,
-                user: {
-                    select: {
-                        groupInte: {
-                            select: {
-                                groupId: true,
-                                name: true
+                where: {
+                    status: "VALID",
+                },
+                select: {
+                    status: true,
+                    user: {
+                        select: {
+                            groupInte: {
+                                select: {
+                                    groupId: true,
+                                    name: true
+                                }
                             }
                         }
                     }
                 }
             }
-        }
         }
     });
 

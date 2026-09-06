@@ -1,57 +1,68 @@
 <script lang="ts">
-    // TS
     import type { PageData } from "./$types";
-    import { type ChallengeRead, UploadType } from "$lib/types/types.d";
+    import { type ChallengeRead, type MetadataCard, UploadType } from "$lib/types/types.d";
     import { signIn } from "@auth/sveltekit/client";
     import { Churros1ATo2A } from "$lib/env";
     import { Toaster, toast } from "svelte-sonner";
     import { invalidateAll } from "$app/navigation";
     import { deserialize } from '$app/forms';
-    
+    import { ChallengeItem } from '$lib/types/models.d';
 
-    // composants
     import { Flex, Stack, Button } from "azucar-ui";
     import { MapPin, UsersRound, Trophy, LogIn, Paperclip } from "@lucide/svelte";
     import Header from "$lib/components/Header.svelte";
     import AddChallenge from "$lib/components/AddChallenge.svelte";
-    import Sort from "$lib/components/Sort.svelte";
-    import SearchBar from "$lib/components/SearchBar.svelte";
-    import Category from "$lib/components/Category.svelte";
     import HomepageTitle from "$lib/components/HomepageTitle.svelte";
-    import ChallengeCard from "$lib/components/ChallengeCard.svelte";
     import UploadProof from "$lib/components/UploadProof.svelte";
-    import PageNavigation from "$lib/components/PageNavigation.svelte";
+    import RenderList from '$lib/components/RenderList.svelte';
 
     let { data }: { data: PageData } = $props();
-    let challenges: ChallengeRead[] = $derived(data.posts.challenges);
-
-    // Données liées au profil de l'utilisateur
-    const user = $derived(data?.user);
-
-    // Recherche de défis
-    let searchValue: string = $state("");
-    let searchedItems = $derived(
-        challenges.filter((a) => {
-            // On met tout en minuscule moins sensible
-            const search = searchValue.toLowerCase();
-            if (!search) return true;
-            // True ou false si contient
-            const containsName = a.name.toLowerCase().includes(search);
-            const containsClub = a.groupName.toLowerCase().includes(search);
-            return containsName || containsClub;
-        }),
+    
+    let challenges: ChallengeRead[] = $derived(
+        data.posts.challenges.map((raw: any) => new ChallengeItem(raw))
     );
 
+    const user = $derived(data?.user);
+    const isConnected: boolean = $derived(Boolean(user));
     let isSending = $state(false);
 
-    /** Fonction pour gérer l'envoie d'une preuve
-     * @param fichiers - Les fichiers à envoyer (peut être null)
-     * @param textePreuve - Le texte de la preuve (peut être vide)
-     * @param type - Le type de preuve (texte ou fichier)
-     * @param isOkTVn7 - Indique si l'utilisateur est OK avec TVn7
-     * @param challengeId - L'ID du défi
-     * @returns void
-     */
+    const challengeSortOptions = [
+        {
+            label: "Clubs",
+            comparator: (a: ChallengeRead, b: ChallengeRead) =>
+                (Number(a.isDone) - Number(b.isDone)) ||
+                (a.groupName || "").localeCompare(b.groupName || "") ||
+                (b.nbPoints - a.nbPoints),
+            groupBy: (c: ChallengeRead) => c.groupName || "Autres",
+            categoryUrl: (c: ChallengeRead) => c.groupUrl
+        },
+        {
+            label: "Points",
+            comparator: (a: ChallengeRead, b: ChallengeRead) =>
+                (Number(a.isDone) - Number(b.isDone)) ||
+                b.nbPoints - a.nbPoints ||
+                (a.groupName || "").localeCompare(b.groupName || "")
+        },
+        {
+            label: "Lieux",
+            comparator: (a: ChallengeRead, b: ChallengeRead) =>
+                (Number(a.isDone) - Number(b.isDone)) ||
+                (b.locationName || "").localeCompare(a.locationName || ""),
+            groupBy: (c: ChallengeRead) => c.locationName || "Autres"
+        },
+        {
+            label: "Date",
+            comparator: (a: ChallengeRead, b: ChallengeRead) =>
+                (Number(a.isDone) - Number(b.isDone)) || (b.challengeId - a.challengeId)
+        },
+        {
+            label: "Tendance",
+            comparator: (a: ChallengeRead, b: ChallengeRead) =>
+                (Number(a.isDone) - Number(b.isDone)) ||
+                ((b.allSucceedGroupNames?.length ?? 0) - (a.allSucceedGroupNames?.length ?? 0))
+        }
+    ];
+
     async function handleSave(
         fichiers: FileList | null,
         textePreuve: string,
@@ -61,10 +72,7 @@
     ) {
         if (isSending) return;
 
-        // Vérifie que le groupe n'a pas déjà fait le défi
-        const currentChallenge = challenges.find(
-            (c) => c.challengeId === challengeId,
-        );
+        const currentChallenge = challenges.find((c) => c.challengeId === challengeId);
         if (currentChallenge?.isDone) {
             toast.error("Votre groupe a déjà validé ce défi !");
             return;
@@ -82,9 +90,7 @@
             } else {
                 formData.append("isOkTVn7", isOkTVn7.toString());
                 if (fichiers) {
-                    for (const file of fichiers) {
-                        formData.append("file", file);
-                    }
+                    for (const file of fichiers) formData.append("file", file);
                 }
             }
 
@@ -93,6 +99,7 @@
                 headers: { "x-sveltekit-action": "true" },
                 body: formData,
             });
+
             if (response.ok) {
                 const resultNoReadable = await response.text();
                 const result = deserialize(resultNoReadable);
@@ -102,135 +109,31 @@
                     invalidateAll();
                 }
                 if (result.type === "failure") {
-                    const message = result.data?.message ?? result.data ?? "" ;
-                    toast.error(
-                        `Impossible d'envoyer la preuve. ${message}`
-                    );
+                    const message = result.data?.message ?? result.data ?? "";
+                    toast.error(`Impossible d'envoyer la preuve. ${message}`);
                 }
             }
         } catch (err) {
             toast.error("Erreur dans l'envoie du défi : " + err);
-            console.error("Erreur lors de l'envoi du form : ", err);
         } finally {
             isSending = false;
             invalidateAll();
         }
     }
 
-    // Trier les défis
-
-    const sortList: string[] = ["Points", "Clubs", "Lieux", "Date", "Tendance"];
-    let sortBind: string = $state(sortList[1]);
-    let isSortDesc = $state(true);
-
-    let hiddenClub: string[] = $state([]);
-
-    let sortedSearchedChallenges = $derived.by(() => {
-        const items = [...searchedItems];
-        const flip = isSortDesc ? 1 : -1;
-
-        const sortByClub = (a: any, b: any) =>
-            flip * (b.groupName || "").localeCompare(a.groupName || "");
-        const sortByPoints = (a: any, b: any) =>
-            flip * (Number(b.nbPoints) - Number(a.nbPoints));
-        const sortByDone = (a: any, b: any) =>
-            a.isDone === b.isDone ? 0 : a.isDone ? 1 : -1;
-        // Le trie secondaire trie par clubs puis par points
-        const secondarySort = (a: any, b: any) =>
-            sortByClub(a, b) || sortByPoints(a, b);
-
-        switch (sortBind) {
-            case "Points":
-                return items.sort(
-                    (a, b) =>
-                        sortByDone(a, b) ||
-                        sortByPoints(a, b) ||
-                        sortByClub(a, b),
-                );
-            case "Clubs":
-                return items.sort(
-                    (a, b) =>
-                        sortByDone(a, b) ||
-                        sortByClub(a, b) ||
-                        sortByPoints(a, b),
-                );
-            case "Lieux":
-                return items.sort(
-                    (a, b) =>
-                        sortByDone(a, b) ||
-                        flip *
-                            (b.locationName || "").localeCompare(
-                                a.locationName || "",
-                            ) ||
-                        secondarySort(a, b),
-                );
-            case "Date":
-                return items.sort(
-                    (a, b) =>
-                        sortByDone(a, b) ||
-                        flip * (b.challengeId - a.challengeId) ||
-                        secondarySort(a, b),
-                );
-            case "Tendance":
-                return items.sort(
-                    (a, b) =>
-                        sortByDone(a, b) ||
-                        flip *
-                            ((b.allSucceedGroupNames?.length ?? 0) -
-                                (a.allSucceedGroupNames?.length ?? 0)) ||
-                        secondarySort(a, b),
-                );
-            default:
-                return items.sort(secondarySort);
-        }
-    });
-    let isConnected: boolean = $derived(Boolean(user));
-
-    let categoryChallenge: Record<string, ChallengeRead[]> = $derived.by(() => {
-        const groups: Record<string, ChallengeRead[]> = {};
-
-        for (const challenge of sortedSearchedChallenges) {
-            let key = "";
-            if (sortBind === "Clubs") {
-                key = challenge.groupName || "Autres";
-            } else if (sortBind === "Lieux") {
-                key = challenge.locationName || "Autres";
-            } else {
-                key = "Général";
-            }
-
-            if (!groups[key]) {
-                groups[key] = [];
-            }
-            groups[key].push(challenge);
-        }
-
-        return groups;
-    });
-
-    // pagination et navigation
-    let page: number = $state(0);
-    const showPerPage: number = $derived(sortBind === "Clubs" || sortBind === "Lieux" ? 5 : 35);
-    const maxPage: number = $derived.by(() => {
-        if (sortBind === "Clubs" || sortBind === "Lieux") {
-            return Math.max(0, Math.ceil(Object.keys(categoryChallenge).length / showPerPage) - 1);
-        } else {
-            return Math.max(0, Math.ceil(sortedSearchedChallenges.length / showPerPage) - 1);
-        }
-    });
-
-    // VARIABLE FINALE
-    const renderCategory = $derived(Object.entries(categoryChallenge).slice(page * showPerPage, (page + 1) * showPerPage));
+    const metadata = (c: ChallengeRead): MetadataCard[] => [
+        { name: "Club", icon: UsersRound, values: [ c.groupName ?? 'inconnu' ] },
+        { name: "Lieu", icon: MapPin, values: [ c.locationName ?? 'inconnu' ] },
+        { name: "Type de preuve", icon: Paperclip, values: [ UploadType[c.type as keyof typeof UploadType]] },
+        ...(c.allSucceedGroupNames?.length
+            ? [{ name: "Défi réussi par", icon: Trophy, values: c.allSucceedGroupNames }]
+            : [])
+    ];
 </script>
-
-<!-- End Script -->
 
 {#if !isConnected}
     <Flex gap="xs" margin="lg" justify="right">
-        <Button
-            onclick={() => signIn("authentik", { callbackUrl: "/" })}
-            icon={LogIn}
-        >
+        <Button onclick={() => signIn("authentik", { callbackUrl: "/" })} icon={LogIn}>
             Se connecter
         </Button>
     </Flex>
@@ -241,127 +144,45 @@
         groupName={user?.is1A ? user?.groupInte?.name : ""}
         picture={user?.profilePictureURL ?? undefined}
         accessAdmin={user?.isAdmin}
-        accessBoard={user?.groupBoard.length > 0 }
+        accessBoard={user?.groupBoard.length > 0}
         notificationsDefis={data.posts.pendingChallengeCount}
         notificationsPreuves={data.posts.pendingProofCount}
-    ></Header>
+    />
 {/if}
-<Flex direction="column" gap="xxl" margin="lg">
 
+<Flex direction="column" gap="xxl" margin="lg">
     <HomepageTitle />
 
-    <!-- A afficher que pour les membres 2A de groupes et plus -->
-    {#if user && (!(user.is1A && Churros1ATo2A) || !user.is1A) }
+    {#if user && (!(user.is1A && Churros1ATo2A) || !user.is1A)}
         <Stack>
             <AddChallenge />
         </Stack>
     {/if}
 
-    <!-- Liste des défis -->
     <Stack gap="xl" style="max-width: 100%; min-width: 0; overflow: hidden;">
-        <Flex gap="xl" wrap={true} justify="center" align="center" style="width: 100%;">
-            <Flex gap="xxs" wrap={true} style="margin-right: auto;">
-                <SearchBar bind:value={searchValue} />
-                <Sort
-                    bind:bind={sortBind}
-                    options={sortList}
-                    bind:isDesc={isSortDesc}
-                />
-            </Flex>
-
-            <PageNavigation bind:page {maxPage} />
-        </Flex>
-
-        <Flex
-            gap="xs"
-            direction="column"
-            style="max-width: 100%; width: 100%;"
-            wrap={false}
+        <RenderList
+            items={challenges}
+            {metadata}
+            sortOptions={challengeSortOptions}
+            getSearchableText={(c) => `${c.name} ${c.groupName} ${c.locationName ?? ''}`}
         >
-            <Flex
-                gap="xs"
-                direction="column"
-                style="max-width: 100%; width: 100%;"
-                wrap={false}
-            >
-                {#if sortBind === "Clubs" || sortBind === "Lieux"}
-                    {#each renderCategory as [key, values]} 
-                        <Category 
-                            name={key} 
-                            src={sortBind == "Clubs" ? values[0]?.groupUrl : undefined} 
-                            folded={false}
-                        > 
-                            {#each values as challenge (challenge.challengeId)} 
-                                {@render card(challenge)} 
-                            {/each} 
-                        </Category> 
-                    {/each}
-                {:else}
-                    {@const paginatedChallenges = sortedSearchedChallenges.slice(page * showPerPage, (page + 1) * showPerPage)}
-                    {#each paginatedChallenges as challenge (challenge.challengeId)} 
-                        {@render card(challenge)} 
-                    {/each}
+            {#snippet children(challenge: ChallengeRead)}
+                {@const isDone = challenge.isDone}
+                {@const isPending = challenge.isPending}
+
+                <p><b>Description :</b> {challenge.description}</p>
+                {#if user && (user.is1A && Churros1ATo2A) && !isDone && !isPending}
+                    <UploadProof
+                        challengeId={challenge.challengeId}
+                        type={challenge.type}
+                        onSave={handleSave}
+                        defaultTVn7={user?.isOkTVn7 ?? undefined}
+                    />
                 {/if}
-            </Flex>
-        </Flex>
 
-        {#if renderCategory.length > 0}
-            <Stack align="center">
-                <PageNavigation bind:page {maxPage} />
-            </Stack>
-        {/if}
-
+            {/snippet}
+        </RenderList>
     </Stack>
 
     <Toaster />
 </Flex>
-
-
-{#snippet card(challenge: ChallengeRead)}
-    {@const isDone = challenge.isDone}
-    {@const isPending = challenge.isPending}
-    {@const challengeTitle = isDone
-        ? `✔ ${challenge.name}`
-        : isPending
-          ? `⏳ ${challenge.name} (En attente)`
-          : challenge.name}
-
-    <ChallengeCard
-        title={challengeTitle}
-        points={challenge.nbPoints}
-        badges={[
-            { name: "Club", icon: UsersRound, values: [ challenge.groupName ] },
-            { name: "Lieu", icon: MapPin, values: [ challenge.locationName ] },
-            { name: "Type de preuve", icon: Paperclip, values: [ UploadType[challenge.type as keyof typeof UploadType]] },
-            ...(challenge.allSucceedGroupNames?.length
-            ? [{ name: "Défi réussi par", icon: Trophy, values: challenge.allSucceedGroupNames }]
-            : [])
-        ]}
-    >
-        {#snippet header()}
-            {#if challenge.groupUrl && !(sortBind === "Clubs")}
-                <img src={challenge.groupUrl} alt={challenge.groupName} loading="lazy" />
-            {/if}
-        {/snippet}
-        {#snippet content()}
-            <p><b>Description :</b> {challenge.description}</p>
-            {#if user && (user.is1A && Churros1ATo2A) && !isDone && !isPending}
-                <UploadProof
-                    challengeId={challenge.challengeId}
-                    type={challenge.type}
-                    onSave={handleSave}
-                    defaultTVn7={user?.isOkTVn7 ?? undefined}
-                />
-            {/if}
-        {/snippet}
-    </ChallengeCard>
-{/snippet}
-
-<style>
-    img {
-        width: var(--size-lg);
-        height: var(--size-lg);
-        border-radius: var(--size-xl);
-        object-fit: cover;
-    }
-</style>
