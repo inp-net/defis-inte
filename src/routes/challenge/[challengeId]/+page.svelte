@@ -128,36 +128,39 @@
                     </Flex>
                 </Flex>
 
-                <Flex gap="md" align="center">
-                    <Select
+                <Flex gap="md" align="center" wrap={true}>
+                    <TextInput
                         options={clubOptions}
                         bind:value={formState.groupName}
-                        icon={SearchIcon}
                         placeholder="Choisir un club"
                         required
-                        type="datalist"
-                        id="1">Club Organisateur</Select
+                        id="1"
                     >
+                        Club Organisateur
+                    </TextInput>
 
-                    <Select
+                    <TextInput
                         options={locationOptions}
                         bind:value={formState.locationName}
-                        icon={SearchIcon}
                         placeholder="Lieu du défi"
                         required
-                        type="datalist"
-                        id="2">Lieu</Select
-                    >
+                        id="2">
+                        Lieu
+                    </TextInput>
 
                     <Select
+                        variant="outline"
+                        fill={false}
                         options={uploadTypes}
                         bind:value={formState.type}
-                        icon={SearchIcon}
                         placeholder="Type de rendu"
+                        id='3'
                         required>Type de preuve</Select
                     >
+                </Flex>
 
-                    <Flex direction="column" gap="xxs">
+                <Flex>
+                    <Flex direction="column" gap="xxs" justify="left">
                         <span>Nombre de Points</span>
                         <div
                             style="display: flex; flex-direction: column; gap: 8px;"
