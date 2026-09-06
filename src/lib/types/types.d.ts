@@ -1,3 +1,5 @@
+import type { LucideIcon } from '@lucide/svelte';
+
 import type {
     User,
     GroupClub,
@@ -107,3 +109,7 @@ export type ChallengeRead = Pick<
 export type GroupChallenge = Pick<GroupClub, "name" | "pictureURL"> & { challenges: ChallengeRead[] };
 
 export const CHALLENGE_PER_PAGE = 25;
+
+export type MetadataCard = { name: string, icon: LucideIcon, values: string[] };
+
+export type ListPrimitive = { text: string, description?: string, id: number, url?: string, alt?: string, points: number}
