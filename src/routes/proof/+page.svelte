@@ -34,7 +34,8 @@
             label: "Groupe",
             comparator: (a: ProofRead, b: ProofRead) =>
                 (a.user.groupInte?.name ?? "").localeCompare(b.user.groupInte?.name ?? ""),
-            groupBy: (p: ProofRead) => p.user.groupInte?.name ?? "Inconnu"
+            groupBy: (p: ProofRead) => p.user.groupInte?.name ?? "Inconnu",
+            categoryUrl: (p: ProofRead) => p.user.groupInte.pictureURL
         },
         {
             label: "Club",
@@ -187,7 +188,7 @@
                 {/if}
             {/snippet}
 
-            {#snippet actions(proof: ProofRead)}
+            {#snippet actionsSnippet(proof: ProofRead)}
                 {#if proof.status === "PENDING"}
                     <Flex gap="xs" style="margin-left: auto; flex-shrink: 0;">
                         <Button
@@ -225,12 +226,3 @@
 </Flex>
 
 <Toaster richColors  />
-
-<style>
-    img {
-        width: var(--size-lg);
-        height: var(--size-lg);
-        border-radius: var(--size-xl);
-        object-fit: cover;
-    }
-</style>

@@ -33,7 +33,8 @@
                 (Number(a.isDone) - Number(b.isDone)) ||
                 (b.groupName || "").localeCompare(a.groupName || "") ||
                 b.nbPoints - a.nbPoints,
-            groupBy: (c: ChallengeRead) => c.groupName || "Autres"
+            groupBy: (c: ChallengeRead) => c.groupName || "Autres",
+            categoryUrl: (c: ChallengeRead) => c.groupUrl
         },
         {
             label: "Points",
@@ -164,7 +165,8 @@
             {metadata}
             sortOptions={challengeSortOptions}
             getSearchableText={(c) => `${c.name} ${c.groupName} ${c.locationName ?? ''}`}
-        />
+        >
+        </RenderList>
     </Stack>
 
     <Toaster />

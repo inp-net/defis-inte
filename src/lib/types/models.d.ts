@@ -39,7 +39,7 @@ export class ProofItem implements ProofRead {
     proofId!: number;
     type!: UploadType;
     content!: string[];
-    date!: Date | string;
+    date!: Date;
     status!: Status;
     validatorId!: string | null;
     comment!: string | null;

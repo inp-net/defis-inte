@@ -13,6 +13,7 @@
         label: string;
         comparator: (a: Item, b: Item) => number;
         groupBy?: (item: Item) => string;
+        categoryUrl?: (item: Item) => string;
     };
 
     type Props = HTMLAttributes<HTMLDivElement> & {
@@ -131,7 +132,11 @@
 <Flex gap="xs" direction="column" style="max-width: 100%; width: 100%;" wrap={false}>
     {#if !isFlat}
         {#each renderCategories as [key, values]}
-            <Category name={key} src={values[0]?.url} folded={false}>
+            <Category
+                name={key}
+                src={sortOptions?.find((s) => s.label === sortBind)?.categoryUrl?.(values[0])}
+                folded={false}
+            >
                 {#each values as value (value.id)}
                     {@render card(value)}
                 {/each}
