@@ -83,7 +83,7 @@
         cursor: pointer;
         user-select: none;
         padding: var(--padding-y-icon) calc(var(--size-md) * 2) var(--padding-y-icon) var(--size-md);
-        margin: 0; /* Removed margin: 0 var(--size-xxs) to avoid overflow */
+        margin: 0;
 
         -webkit-appearance: none;
         -moz-appearance: none;
