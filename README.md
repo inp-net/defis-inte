@@ -1,10 +1,12 @@
 # Site des défis d'intégration 2026 - 2027
 
+[TOC]
+
 ## Projet
 
 Ce site a été réalisé dans le cadre du [stage de 2026](https://git.inpt.fr/net7/stage-26-27).
 
-![ImagePreview](preview1.png)
+![ImagePreview](https://cloud.inpt.fr/apps/files_sharing/publicpreview/empiYj3CbZX8XAj?file=/&fileId=713845&x=1920&y=1080&a=true&etag=1f2b04cfead05ee674b8c75f5411a97d)
 
 Ce site est connecté à l'API de Churros.
 Il permet d'effectuer les actions suivantes :
@@ -111,3 +113,11 @@ Ce projet a été développé en Svelte. Il utilise
 
 L'UI a été réalisée à l'aide de la librairie de composants
 [Azucar-UI](https://git.inpt.fr/inp-net/azucar-ui) développée en interne.
+
+# Preview
+
+![Image1](https://cloud.inpt.fr/apps/files_sharing/publicpreview/dS7542bQiSbGtfy?file=/&fileId=713848&x=1920&y=1080&a=true&etag=1a50a116c2fa68faf4985df3e1470f82)
+
+![Image2](https://cloud.inpt.fr/apps/files_sharing/publicpreview/oaGC9DTk3McRATF?file=/&fileId=713846&x=1920&y=1080&a=true&etag=75d8a4158acddc4aa78cd2cbb8bede2d)
+
+![Image2](https://cloud.inpt.fr/apps/files_sharing/publicpreview/empiYj3CbZX8XAj?file=/&fileId=713845&x=1920&y=1080&a=true&etag=1f2b04cfead05ee674b8c75f5411a97d)
